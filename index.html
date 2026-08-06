@@ -147,10 +147,10 @@
               <div class="flex">
                 <input type="number" id="purchaseQty" placeholder="e.g. 500" step="0.01" class="w-full px-2 py-2 border border-r-0 border-slate-300 rounded-l-xl text-sm font-mono outline-none focus:ring-2 focus:ring-purple-600 bg-white" />
                 <select id="purchaseUnit" class="bg-slate-100 border border-slate-300 rounded-r-xl px-1.5 text-xs font-bold text-slate-700 outline-none">
-                  <option value="Gram">Gram</option>
-                  <option value="kg">kG</option>
+                  <option value="g">Grams (g)</option>
+                  <option value="kg">KG</option>
                   <option value="ml">ml</option>
-                  <option value="l">L</option>
+                  <option value="l">Litre (L)</option>
                 </select>
               </div>
             </div>
@@ -312,7 +312,7 @@
           Download PNG
         </button>
         <button id="printBtn" class="bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold py-3 px-3 rounded-xl shadow-lg transition duration-200 flex items-center justify-center gap-1.5 active:scale-[0.99]">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
           Print Standee
         </button>
       </div>
@@ -666,12 +666,13 @@
       const name = itemNameInput.value.trim() || 'Item';
       const rate = parseFloat(ratePerKg.value) || 0;
       const qty = parseFloat(purchaseQty.value) || 0;
-      const unit = purchaseUnit.value;
+      const unit = purchaseUnit.value.toLowerCase();
       if (rate <= 0 || qty <= 0) return;
 
-      let itemCost = (unit === 'g' || unit === 'ml') ? (rate / 1000) * qty : rate * qty;
+      // FIXED CALCULATOR LOGIC: Correctly scales grams/ml vs kg/l
+      let itemCost = (unit === 'g' || unit === 'gram' || unit === 'ml') ? (rate / 1000) * qty : rate * qty;
 
-      cartItems.push({ name, rate, qty, unit, cost: itemCost });
+      cartItems.push({ name, rate, qty, unit: purchaseUnit.value, cost: itemCost });
       itemNameInput.value = '';
       ratePerKg.value = '';
       purchaseQty.value = '';
@@ -693,7 +694,7 @@
           <tr>
             <td class="p-2.5 font-mono">
               <span class="font-sans font-bold text-slate-800 block">${item.name}</span>
-              <span class="text-[11px] text-slate-500">₹${item.rate}/unit × ${item.qty}${item.unit}</span>
+              <span class="text-[11px] text-slate-500">₹${item.rate}/unit × ${item.qty} ${item.unit}</span>
             </td>
             <td class="p-2.5 text-right font-mono font-bold text-slate-800">₹${item.cost.toFixed(2)}</td>
             <td class="p-2.5 text-center">
@@ -814,7 +815,7 @@
       let itemsListStr = "";
       if (cartItems.length > 0) {
         itemsListStr = cartItems.map((item, index) => 
-          `*${index + 1}. ${item.name}*\n   ${item.qty}${item.unit} × ₹${item.rate} = *₹${item.cost.toFixed(2)}*`
+          `*${index + 1}. ${item.name}*\n   ${item.qty} ${item.unit} × ₹${item.rate} = *₹${item.cost.toFixed(2)}*`
         ).join('\n\n');
       } else {
         itemsListStr = `*1. Custom Item Purchase*\n   1 Unit = *₹${grandTotal.toFixed(2)}*`;
@@ -839,9 +840,8 @@
       }
 
       const upiPayLink = `upi://pay?pa=${vpa}&pn=${encodeURIComponent(merchant)}&am=${remainingUpi.toFixed(2)}&cu=INR`;
-
       const msg = `🏪 *${merchant.toUpperCase()}*\n` +
-                  `📍 *OFFICIAL DIGITAL RECEIPT*\n` +
+                  `📜 *OFFICIAL DIGITAL RECEIPT*\n` +
                   `📅 Date: ${dateStr} | 🕒 ${timeStr}\n` +
                   `👤 Customer: ${customer}\n` +
                   `───────────────────────────\n\n` +
