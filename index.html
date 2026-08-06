@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solid Money App - Merchant Standee & Billing POS Suite</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- QRCode.js Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    .theme-purple { --primary: #5f259f; --primary-dark: #391163; --accent: #eb7c28; }
+    .theme-blue { --primary: #002e6e; --primary-dark: #00193d; --accent: #00baf2; }
+    .theme-teal { --primary: #00796b; --primary-dark: #004d40; --accent: #00bfa5; }
+    .theme-emerald { --primary: #047857; --primary-dark: #064e3b; --accent: #10b981; }
+    .theme-dark { --primary: #0f172a; --primary-dark: #020617; --accent: #6366f1; }
+
+    .brand-gradient {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    }
+    .brand-text {
+      color: var(--primary);
+    }
+    .brand-border {
+      border-color: var(--primary);
+    }
+    .brand-bg {
+      background-color: var(--primary);
+    }
+
+    @media print {
+      body * { visibility: hidden; }
+      #printableArea, #printableArea * { visibility: visible; }
+      #printableArea { position: absolute; left: 0; top: 0; width: 100%; display: flex; justify-content: center; }
+    }
+  </style>
+</head>
+<body class="theme-purple bg-slate-900/5 text-slate-800 min-h-screen flex flex-col items-center justify-between p-3 sm:p-6 antialiased selection:bg-purple-500 selection:text-white">
+
+  <!-- Side Navigation Drawer Backdrop -->
+  <div id="drawerOverlay" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-40 hidden transition-opacity duration-300 opacity-0"></div>
+
+  <!-- Side Navigation Drawer -->
+  <aside id="sideDrawer" class="fixed top-0 left-0 h-full w-80 bg-white z-50 shadow-2xl transform -translate-x-full transition-transform duration-300 ease-in-out flex flex-col justify-between">
+    <div>
+      <div class="brand-gradient p-6 text-white flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center brand-text font-black text-lg shadow-inner">
+            <span>SM</span>
+          </div>
+          <div>
+            <h2 class="font-extrabold text-lg leading-none">Solid Money App</h2>
+            <p class="text-xs text-white/70 mt-1">Pro Merchant Suite</p>
+          </div>
+        </div>
+        <button id="closeDrawerBtn" class="text-white/80 hover:text-white p-1 rounded-lg hover:bg-white/10 transition">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <nav class="p-4 space-y-2">
+        <button type="button" id="drawerStandeeBtn" class="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold brand-text bg-slate-100 rounded-2xl text-left">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+          Merchant Standee Mode
+        </button>
+        <button type="button" id="drawerGenericBtn" class="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-2xl transition text-left">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+          Personal UPI QR Mode
+        </button>
+        <button type="button" id="openCalcModalBtn" class="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-2xl transition text-left">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+          Weight & POS Calculator
+        </button>
+        <button type="button" id="openLedgerModalBtn" class="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-2xl transition text-left">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+          Daily Sales Ledger & History
+        </button>
+      </nav>
+    </div>
+
+    <div class="p-4 border-t border-slate-100 text-xs text-slate-400 text-center font-medium">
+      SMGC PVT LTD • v4.2 Pro POS
+    </div>
+  </aside>
+
+  <!-- POPUP MODAL: Multi-Item POS Calculator -->
+  <div id="calcModalOverlay" class="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl border border-slate-100 overflow-hidden transform transition-all flex flex-col max-h-[92vh]">
+      
+      <div class="brand-gradient p-4 sm:p-5 text-white flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-2.5">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+          <h3 class="font-bold text-lg">Weight & Billing POS Calculator</h3>
+        </div>
+        <button type="button" id="closeCalcModalBtn" class="text-white/80 hover:text-white p-1 rounded-lg hover:bg-white/10 transition">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <div class="p-4 sm:p-6 space-y-4 overflow-y-auto grow">
+        
+        <!-- Customer Details (Optional) -->
+        <div class="grid grid-cols-2 gap-2 bg-slate-50 p-2.5 rounded-2xl border border-slate-200">
+          <div>
+            <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Customer Name</label>
+            <input type="text" id="custName" placeholder="e.g. Suhan" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-600 bg-white" />
+          </div>
+          <div>
+            <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">WhatsApp Mobile</label>
+            <input type="tel" id="custPhone" placeholder="e.g. 9133359954" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-xl text-xs font-mono font-bold outline-none focus:ring-2 focus:ring-purple-600 bg-white" />
+          </div>
+        </div>
+
+        <!-- Item Entry Inputs -->
+        <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 space-y-2">
+          <div>
+            <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Item Name <span class="text-slate-400 font-normal">(Optional)</span></label>
+            <input type="text" id="itemNameInput" placeholder="e.g. Rice, Sugar, Almonds" class="w-full px-3 py-1.5 border border-slate-300 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-600 bg-white" />
+          </div>
+
+          <div class="grid grid-cols-12 gap-2">
+            <div class="col-span-5">
+              <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">1 KG / L Rate (₹)</label>
+              <input type="number" id="ratePerKg" placeholder="e.g. 120" step="0.01" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm font-mono outline-none focus:ring-2 focus:ring-purple-600 bg-white" />
+            </div>
+            <div class="col-span-5">
+              <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Qty / Weight</label>
+              <div class="flex">
+                <input type="number" id="purchaseQty" placeholder="e.g. 500" step="0.01" class="w-full px-2 py-2 border border-r-0 border-slate-300 rounded-l-xl text-sm font-mono outline-none focus:ring-2 focus:ring-purple-600 bg-white" />
+                <select id="purchaseUnit" class="bg-slate-100 border border-slate-300 rounded-r-xl px-1.5 text-xs font-bold text-slate-700 outline-none">
+                  <option value="Gram">Gram</option>
+                  <option value="kg">kG</option>
+                  <option value="ml">ml</option>
+                  <option value="l">L</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-span-2 flex items-end">
+              <button type="button" id="addItemBtn" class="w-full brand-bg text-white font-bold py-2 rounded-xl text-xs hover:opacity-90 transition">Add</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Bill Items List</span>
+          <button type="button" id="clearCartBtn" class="text-xs font-bold text-red-600 hover:text-red-700 flex items-center gap-1 hover:underline">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+            Clear All Items
+          </button>
+        </div>
+
+        <div class="border border-slate-200 rounded-2xl overflow-hidden min-h-[100px] max-h-[140px] overflow-y-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-100 text-slate-600 font-bold uppercase tracking-wider text-[10px] sticky top-0">
+              <tr>
+                <th class="p-2.5">Item Details</th>
+                <th class="p-2.5 text-right">Cost</th>
+                <th class="p-2.5 text-center">Action</th>
+              </tr>
+            </thead>
+            <tbody id="cartTableBody" class="divide-y divide-slate-100 font-medium">
+              <tr id="emptyCartRow"><td colspan="3" class="p-6 text-center text-slate-400 italic">No items added to bill yet.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Tax, Discount & Cash Split Section -->
+        <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-2">
+          <div class="flex justify-between items-center text-xs font-semibold text-slate-600">
+            <span>Subtotal:</span>
+            <span id="subtotalText" class="font-mono">₹ 0.00</span>
+          </div>
+          
+          <div class="flex justify-between items-center text-xs font-semibold text-slate-600">
+            <span class="flex items-center gap-1">Apply GST Tax (%):</span>
+            <select id="gstRateSelect" class="px-2 py-1 border border-slate-300 rounded-lg text-xs font-mono font-bold bg-white outline-none">
+              <option value="0">0% Tax</option>
+              <option value="5">5% GST</option>
+              <option value="12">12% GST</option>
+              <option value="18">18% GST</option>
+            </select>
+          </div>
+
+          <div class="flex justify-between items-center text-xs font-semibold text-slate-600">
+            <span>Discount (₹):</span>
+            <input type="number" id="discountInput" value="" min="0" step="1" placeholder="0" class="w-20 px-2 py-1 text-right border border-slate-300 rounded-lg font-mono text-xs outline-none bg-white">
+          </div>
+
+          <!-- Cash + UPI Split Payment Option -->
+          <div class="flex justify-between items-center text-xs font-semibold text-slate-600 pt-1 border-t border-slate-200">
+            <span class="text-amber-700 font-bold flex items-center gap-1">
+              💵 Cash Paid (Split):
+            </span>
+            <input type="number" id="cashSplitInput" value="" min="0" step="1" placeholder="0" class="w-20 px-2 py-1 text-right border border-amber-300 rounded-lg font-mono text-xs outline-none bg-amber-50/50 font-bold text-amber-800">
+          </div>
+
+          <div class="pt-2 border-t border-slate-200 flex justify-between items-center">
+            <div>
+              <span class="text-xs font-bold text-slate-500 block">Remaining UPI QR Pay:</span>
+              <span id="billResult" class="font-mono text-xl font-black brand-text">₹ 0.00</span>
+            </div>
+            <div class="text-right text-[11px] font-semibold text-slate-400">
+              Total Bill: <span id="grandTotalText" class="font-mono text-slate-700">₹0.00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-4 bg-slate-50 border-t border-slate-100 shrink-0">
+        <button type="button" id="applyCalcToAmountBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-2xl shadow-lg transition duration-200 flex items-center justify-center gap-2 text-sm">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+          Set as Fixed Amount in QR
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- POPUP MODAL: Daily Sales Ledger History -->
+  <div id="ledgerModalOverlay" class="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white w-full max-w-xl rounded-3xl shadow-2xl border border-slate-100 overflow-hidden transform transition-all flex flex-col max-h-[90vh]">
+      
+      <div class="brand-gradient p-4 sm:p-5 text-white flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-2.5">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+          <h3 class="font-bold text-lg">Daily Sales Ledger & History</h3>
+        </div>
+        <button type="button" id="closeLedgerModalBtn" class="text-white/80 hover:text-white p-1 rounded-lg hover:bg-white/10 transition">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <div class="p-4 sm:p-6 space-y-4 overflow-y-auto grow">
+        <div class="grid grid-cols-2 gap-3">
+          <div class="bg-purple-50 border border-purple-100 p-3.5 rounded-2xl">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-purple-600 block mb-0.5">Today's Sales</span>
+            <span id="ledgerTotalSales" class="font-mono text-2xl font-black brand-text">₹ 0.00</span>
+          </div>
+          <div class="bg-slate-50 border border-slate-200 p-3.5 rounded-2xl">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-0.5">Transactions</span>
+            <span id="ledgerCount" class="font-mono text-2xl font-black text-slate-800">0</span>
+          </div>
+        </div>
+
+        <div class="border border-slate-200 rounded-2xl overflow-hidden min-h-[180px] max-h-[260px] overflow-y-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-100 text-slate-600 font-bold uppercase tracking-wider text-[10px] sticky top-0">
+              <tr>
+                <th class="p-2.5">Time</th>
+                <th class="p-2.5">Customer</th>
+                <th class="p-2.5 text-right">Amount</th>
+              </tr>
+            </thead>
+            <tbody id="ledgerTableBody" class="divide-y divide-slate-100 font-medium">
+              <tr><td colspan="3" class="p-8 text-center text-slate-400 italic">No transactions recorded today yet.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="p-4 bg-slate-50 border-t border-slate-100 shrink-0 flex gap-2">
+        <button type="button" id="exportCsvBtn" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 rounded-2xl shadow-md transition flex items-center justify-center gap-2 text-xs">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+          Export CSV Log
+        </button>
+        <button type="button" id="clearLedgerBtn" class="px-4 bg-red-50 hover:bg-red-100 text-red-600 font-bold py-3 rounded-2xl transition text-xs">Clear</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- POPUP MODAL: Generated QR Preview Standee -->
+  <div id="qrResultModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl border border-slate-100 overflow-hidden transform transition-all flex flex-col items-center p-6 space-y-4 max-h-[95vh]">
+      
+      <div class="flex justify-between items-center w-full border-b border-slate-100 pb-3">
+        <h3 class="font-extrabold text-lg brand-text flex items-center gap-2">
+          <span>✨</span> Generated Standee
+        </h3>
+        <button type="button" id="closeQrModalBtn" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100 transition">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <div id="printableArea" class="bg-white p-2.5 rounded-2xl shadow-lg border border-slate-200/80 flex items-center justify-center overflow-auto max-h-[55vh]">
+        <canvas id="standeeCanvas" width="800" height="1080" class="w-60 h-[324px] sm:w-72 sm:h-[388px] rounded-xl border border-slate-100 shadow-sm"></canvas>
+      </div>
+
+      <!-- Actions Grid -->
+      <div class="grid grid-cols-2 gap-2.5 w-full">
+        <button id="downloadBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-3 px-3 rounded-xl shadow-lg transition duration-200 flex items-center justify-center gap-1.5 active:scale-[0.99]">
+          <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"/></svg>
+          Download PNG
+        </button>
+        <button id="printBtn" class="bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold py-3 px-3 rounded-xl shadow-lg transition duration-200 flex items-center justify-center gap-1.5 active:scale-[0.99]">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+          Print Standee
+        </button>
+      </div>
+
+      <!-- Professional WhatsApp Receipt Action -->
+      <button id="whatsappInvoiceBtn" class="w-full bg-green-600 hover:bg-green-700 text-white text-xs font-bold py-3 px-3 rounded-xl shadow transition flex items-center justify-center gap-1.5">
+        <span>💬</span> Send Digital Invoice via WhatsApp
+      </button>
+
+    </div>
+  </div>
+
+  <!-- Header Banner -->
+  <header class="text-center my-3 w-full max-w-2xl brand-gradient p-5 sm:p-6 rounded-3xl shadow-xl text-white relative overflow-hidden">
+    <div class="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-3.5">
+        <button type="button" id="openDrawerBtn" class="p-2.5 rounded-2xl bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 transition text-white" aria-label="Open Menu">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+        <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center brand-text font-black text-xl shadow-lg">
+          <span>SM</span>
+        </div>
+        <div class="text-left">
+          <h1 class="text-2xl sm:text-3xl font-black tracking-tight">Solid Money App</h1>
+          <p class="text-white/80 text-xs sm:text-sm font-medium">Merchant Standee & Payment Tools</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 bg-black/20 backdrop-blur-md p-1.5 rounded-2xl border border-white/15">
+        <span class="text-xs font-bold pl-2 text-white/80 hidden sm:inline">Theme:</span>
+        <button type="button" data-theme="theme-purple" class="w-6 h-6 rounded-full bg-[#5f259f] border-2 border-white transition transform hover:scale-110" title="PhonePe Purple"></button>
+        <button type="button" data-theme="theme-blue" class="w-6 h-6 rounded-full bg-[#002e6e] border-2 border-white transition transform hover:scale-110" title="Paytm Blue"></button>
+        <button type="button" data-theme="theme-teal" class="w-6 h-6 rounded-full bg-[#00796b] border-2 border-white transition transform hover:scale-110" title="GPay Teal"></button>
+        <button type="button" data-theme="theme-emerald" class="w-6 h-6 rounded-full bg-[#047857] border-2 border-white transition transform hover:scale-110" title="Emerald Green"></button>
+        <button type="button" data-theme="theme-dark" class="w-6 h-6 rounded-full bg-[#0f172a] border-2 border-white transition transform hover:scale-110" title="Dark Obsidian"></button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Generator Form Card -->
+  <main class="max-w-2xl w-full bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-200/80 my-auto p-6 sm:p-8 space-y-6">
+
+    <!-- Feature Quick Cards -->
+    <div>
+      <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-500 mb-2.5">Select Utility Feature</label>
+      <div class="grid grid-cols-3 gap-2.5">
+        
+        <button type="button" id="cardStandeeBtn" class="p-3.5 rounded-2xl border-2 border-purple-600 bg-purple-50 brand-text font-bold text-xs transition flex flex-col items-center justify-center gap-2 shadow-sm">
+          <div class="w-9 h-9 rounded-xl brand-bg text-white flex items-center justify-center">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+          </div>
+          <span>Standee Mode</span>
+        </button>
+
+        <button type="button" id="cardGenericBtn" class="p-3.5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs transition flex flex-col items-center justify-center gap-2">
+          <div class="w-9 h-9 rounded-xl bg-slate-200 text-slate-700 flex items-center justify-center">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+          </div>
+          <span>Personal QR</span>
+        </button>
+
+        <button type="button" id="cardCalcBtn" class="p-3.5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs transition flex flex-col items-center justify-center gap-2">
+          <div class="w-9 h-9 rounded-xl bg-slate-200 text-slate-700 flex items-center justify-center">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+          </div>
+          <span>POS Bill Calc</span>
+        </button>
+
+      </div>
+    </div>
+
+    <form id="qrForm" class="space-y-4" onsubmit="return false;">
+      <!-- Merchant / Payee Name with Fix Toggle -->
+      <div>
+        <div class="flex items-center justify-between mb-1">
+          <label for="merchantName" class="block text-xs font-extrabold uppercase tracking-wider text-slate-600">
+            Merchant / Payee Name <span class="text-red-500">*</span>
+          </label>
+          <label class="flex items-center gap-1.5 cursor-pointer text-xs font-bold text-slate-600 select-none">
+            <span id="nameFixLabel">Fix Details</span>
+            <input type="checkbox" id="fixNameToggle" class="sr-only peer">
+            <div class="w-8 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-emerald-600 relative"></div>
+          </label>
+        </div>
+        <input type="text" id="merchantName" value="" placeholder="e.g. Suhan Traders" required class="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-purple-600 outline-none transition bg-slate-50/50 focus:bg-white font-semibold" />
+      </div>
+
+      <!-- Terminal Digits / UPI ID with Fix Toggle -->
+      <div>
+        <div class="flex items-center justify-between mb-1">
+          <label id="upiFieldLabel" for="upiInput" class="block text-xs font-extrabold uppercase tracking-wider text-slate-600">
+            Terminal Digits (9 Digits) <span class="text-red-500">*</span>
+          </label>
+          <label class="flex items-center gap-1.5 cursor-pointer text-xs font-bold text-slate-600 select-none">
+            <span id="upiFixLabel">Fix Details</span>
+            <input type="checkbox" id="fixUpiToggle" class="sr-only peer">
+            <div class="w-8 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-emerald-600 relative"></div>
+          </label>
+        </div>
+        <input type="text" id="upiInput" value="" maxlength="9" placeholder="e.g. 9133359954" required class="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-purple-600 outline-none transition bg-slate-50/50 focus:bg-white font-mono font-bold" />
+        <p class="text-[11px] text-slate-400 mt-1.5 flex items-center justify-between font-medium">
+          <span>Payload VPA:</span>
+          <span id="vpaPreview" class="font-mono brand-text font-bold bg-slate-100 px-2 py-0.5 rounded-lg border border-slate-200">-</span>
+        </p>
+      </div>
+
+      <div>
+        <label for="amount" class="block text-xs font-extrabold uppercase tracking-wider text-slate-600 mb-1">
+          Fixed Amount (₹) <span class="text-slate-400 font-normal">(Optional)</span>
+        </label>
+        <input type="number" id="amount" step="0.01" min="1" placeholder="Leave blank for dynamic user input" class="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-purple-600 outline-none transition bg-slate-50/50 focus:bg-white font-mono font-bold brand-text" />
+        
+        <div class="flex items-center gap-2 mt-2">
+          <span class="text-[10px] font-bold uppercase text-slate-400">Quick Add:</span>
+          <button type="button" class="quick-amt-btn px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-bold text-slate-700 transition" data-amt="50">₹50</button>
+          <button type="button" class="quick-amt-btn px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-bold text-slate-700 transition" data-amt="100">₹100</button>
+          <button type="button" class="quick-amt-btn px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-bold text-slate-700 transition" data-amt="200">₹200</button>
+          <button type="button" class="quick-amt-btn px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-bold text-slate-700 transition" data-amt="500">₹500</button>
+          <button type="button" id="clearAmtBtn" class="px-2 py-1 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg text-xs font-bold transition">Clear</button>
+        </div>
+      </div>
+
+      <div id="rawQrWrapper" class="hidden"></div>
+
+      <button type="button" id="renderBtn" class="w-full brand-bg hover:opacity-95 text-white font-black py-4 rounded-2xl shadow-xl transition duration-200 active:scale-[0.99] flex items-center justify-center gap-2 text-base">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+        Generate
+      </button>
+    </form>
+
+  </main>
+
+  <footer class="text-center my-4 text-xs font-semibold text-slate-400">
+    &copy; All rights reserved by SMGC PVT LTD
+  </footer>
+
+  <script>
+    let currentMode = 'standee';
+    let cartItems = [];
+    let salesLedger = JSON.parse(localStorage.getItem('salesLedgerLogs') || '[]');
+
+    const themeMap = {
+      'theme-purple': { primary: '#5f259f', dark: '#391163', pill: '#eb7c28' },
+      'theme-blue': { primary: '#002e6e', dark: '#00193d', pill: '#00baf2' },
+      'theme-teal': { primary: '#00796b', dark: '#004d40', pill: '#00bfa5' },
+      'theme-emerald': { primary: '#047857', dark: '#064e3b', pill: '#10b981' },
+      'theme-dark': { primary: '#0f172a', dark: '#020617', pill: '#6366f1' }
+    };
+    let activeThemeKey = 'theme-purple';
+
+    // UI Elements
+    const merchantNameInput = document.getElementById('merchantName');
+    const upiInput = document.getElementById('upiInput');
+    const upiFieldLabel = document.getElementById('upiFieldLabel');
+    const amountInput = document.getElementById('amount');
+    const vpaPreview = document.getElementById('vpaPreview');
+
+    // Fix Toggles Elements
+    const fixNameToggle = document.getElementById('fixNameToggle');
+    const fixUpiToggle = document.getElementById('fixUpiToggle');
+    const nameFixLabel = document.getElementById('nameFixLabel');
+    const upiFixLabel = document.getElementById('upiFixLabel');
+    
+    // Feature Quick Cards & Navigation
+    const cardStandeeBtn = document.getElementById('cardStandeeBtn');
+    const cardGenericBtn = document.getElementById('cardGenericBtn');
+    const cardCalcBtn = document.getElementById('cardCalcBtn');
+
+    const openDrawerBtn = document.getElementById('openDrawerBtn');
+    const closeDrawerBtn = document.getElementById('closeDrawerBtn');
+    const sideDrawer = document.getElementById('sideDrawer');
+    const drawerOverlay = document.getElementById('drawerOverlay');
+    const drawerStandeeBtn = document.getElementById('drawerStandeeBtn');
+    const drawerGenericBtn = document.getElementById('drawerGenericBtn');
+
+    // Calculator Modal Elements
+    const openCalcModalBtn = document.getElementById('openCalcModalBtn');
+    const closeCalcModalBtn = document.getElementById('closeCalcModalBtn');
+    const calcModalOverlay = document.getElementById('calcModalOverlay');
+    const custName = document.getElementById('custName');
+    const custPhone = document.getElementById('custPhone');
+    const itemNameInput = document.getElementById('itemNameInput');
+    const ratePerKg = document.getElementById('ratePerKg');
+    const purchaseQty = document.getElementById('purchaseQty');
+    const purchaseUnit = document.getElementById('purchaseUnit');
+    const addItemBtn = document.getElementById('addItemBtn');
+    const clearCartBtn = document.getElementById('clearCartBtn');
+    const cartTableBody = document.getElementById('cartTableBody');
+    const subtotalText = document.getElementById('subtotalText');
+    const gstRateSelect = document.getElementById('gstRateSelect');
+    const discountInput = document.getElementById('discountInput');
+    const cashSplitInput = document.getElementById('cashSplitInput');
+    const billResult = document.getElementById('billResult');
+    const grandTotalText = document.getElementById('grandTotalText');
+    const applyCalcToAmountBtn = document.getElementById('applyCalcToAmountBtn');
+
+    // Ledger Modal Elements
+    const openLedgerModalBtn = document.getElementById('openLedgerModalBtn');
+    const closeLedgerModalBtn = document.getElementById('closeLedgerModalBtn');
+    const ledgerModalOverlay = document.getElementById('ledgerModalOverlay');
+    const ledgerTotalSales = document.getElementById('ledgerTotalSales');
+    const ledgerCount = document.getElementById('ledgerCount');
+    const ledgerTableBody = document.getElementById('ledgerTableBody');
+    const exportCsvBtn = document.getElementById('exportCsvBtn');
+    const clearLedgerBtn = document.getElementById('clearLedgerBtn');
+
+    // QR Pop-up Modal Elements
+    const qrResultModal = document.getElementById('qrResultModal');
+    const closeQrModalBtn = document.getElementById('closeQrModalBtn');
+    const whatsappInvoiceBtn = document.getElementById('whatsappInvoiceBtn');
+
+    // Canvas Elements
+    const renderBtn = document.getElementById('renderBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const printBtn = document.getElementById('printBtn');
+    const rawQrWrapper = document.getElementById('rawQrWrapper');
+    const canvas = document.getElementById('standeeCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const SCALE = 2;
+
+    // --- Fix / Lock Toggle Handlers ---
+    fixNameToggle.addEventListener('change', () => {
+      if (fixNameToggle.checked) {
+        merchantNameInput.readOnly = true;
+        merchantNameInput.classList.add('bg-slate-200', 'cursor-not-allowed');
+        nameFixLabel.textContent = "Fixed 🔒";
+        nameFixLabel.classList.add('text-emerald-600');
+        localStorage.setItem('fixedMerchantName', merchantNameInput.value);
+        localStorage.setItem('isNameFixed', 'true');
+      } else {
+        merchantNameInput.readOnly = false;
+        merchantNameInput.classList.remove('bg-slate-200', 'cursor-not-allowed');
+        nameFixLabel.textContent = "Fix Details";
+        nameFixLabel.classList.remove('text-emerald-600');
+        localStorage.removeItem('isNameFixed');
+      }
+    });
+
+    fixUpiToggle.addEventListener('change', () => {
+      if (fixUpiToggle.checked) {
+        upiInput.readOnly = true;
+        upiInput.classList.add('bg-slate-200', 'cursor-not-allowed');
+        upiFixLabel.textContent = "Fixed 🔒";
+        upiFixLabel.classList.add('text-emerald-600');
+        localStorage.setItem('fixedUpiValue', upiInput.value);
+        localStorage.setItem('isUpiFixed', 'true');
+      } else {
+        upiInput.readOnly = false;
+        upiInput.classList.remove('bg-slate-200', 'cursor-not-allowed');
+        upiFixLabel.textContent = "Fix Details";
+        upiFixLabel.classList.remove('text-emerald-600');
+        localStorage.removeItem('isUpiFixed');
+      }
+    });
+
+    function loadFixedStates() {
+      if (localStorage.getItem('isNameFixed') === 'true') {
+        merchantNameInput.value = localStorage.getItem('fixedMerchantName') || '';
+        fixNameToggle.checked = true;
+        fixNameToggle.dispatchEvent(new Event('change'));
+      }
+      if (localStorage.getItem('isUpiFixed') === 'true') {
+        upiInput.value = localStorage.getItem('fixedUpiValue') || '';
+        fixUpiToggle.checked = true;
+        fixUpiToggle.dispatchEvent(new Event('change'));
+      }
+    }
+
+    // --- Drawer Navigation Controls ---
+    function openDrawer() {
+      drawerOverlay.classList.remove('hidden');
+      setTimeout(() => {
+        drawerOverlay.classList.remove('opacity-0');
+        sideDrawer.classList.remove('-translate-x-full');
+      }, 10);
+    }
+
+    function closeDrawer() {
+      drawerOverlay.classList.add('opacity-0');
+      sideDrawer.classList.add('-translate-x-full');
+      setTimeout(() => { drawerOverlay.classList.add('hidden'); }, 300);
+    }
+
+    openDrawerBtn.addEventListener('click', openDrawer);
+    closeDrawerBtn.addEventListener('click', closeDrawer);
+    drawerOverlay.addEventListener('click', closeDrawer);
+
+    // --- Theme Switcher ---
+    document.querySelectorAll('[data-theme]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const theme = e.currentTarget.getAttribute('data-theme');
+        document.body.className = `${theme} bg-slate-900/5 text-slate-800 min-h-screen flex flex-col items-center justify-between p-3 sm:p-6 antialiased`;
+        activeThemeKey = theme;
+      });
+    });
+
+    // --- Mode Switcher ---
+    cardStandeeBtn.addEventListener('click', () => setMode('standee'));
+    cardGenericBtn.addEventListener('click', () => setMode('generic'));
+    drawerStandeeBtn.addEventListener('click', () => { setMode('standee'); closeDrawer(); });
+    drawerGenericBtn.addEventListener('click', () => { setMode('generic'); closeDrawer(); });
+
+    function setMode(mode) {
+      currentMode = mode;
+      if (!fixUpiToggle.checked) upiInput.value = "";
+      
+      if (mode === 'standee') {
+        cardStandeeBtn.className = "p-3.5 rounded-2xl border-2 border-purple-600 bg-purple-50 brand-text font-bold text-xs transition flex flex-col items-center justify-center gap-2 shadow-sm";
+        cardGenericBtn.className = "p-3.5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs transition flex flex-col items-center justify-center gap-2";
+        upiFieldLabel.innerHTML = 'Terminal Digits (9 Digits) <span class="text-red-500">*</span>';
+        upiInput.placeholder = "e.g. 9133359954";
+        upiInput.setAttribute('maxlength', '9');
+      } else {
+        cardGenericBtn.className = "p-3.5 rounded-2xl border-2 border-purple-600 bg-purple-50 brand-text font-bold text-xs transition flex flex-col items-center justify-center gap-2 shadow-sm";
+        cardStandeeBtn.className = "p-3.5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs transition flex flex-col items-center justify-center gap-2";
+        upiFieldLabel.innerHTML = 'UPI ID / VPA <span class="text-red-500">*</span>';
+        upiInput.placeholder = "e.g. 9133359954@AXL";
+        upiInput.removeAttribute('maxlength');
+      }
+      updateVpaPreview();
+    }
+
+    upiInput.addEventListener('input', function() {
+      if (currentMode === 'standee') {
+        this.value = this.value.replace(/\D/g, '').slice(0, 9);
+      }
+      updateVpaPreview();
+    });
+
+    // --- Quick Amount Buttons ---
+    document.querySelectorAll('.quick-amt-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const amt = parseFloat(btn.getAttribute('data-amt'));
+        const current = parseFloat(amountInput.value) || 0;
+        amountInput.value = (current + amt).toFixed(2);
+      });
+    });
+
+    document.getElementById('clearAmtBtn').addEventListener('click', () => { amountInput.value = ''; });
+
+    // --- POS Calculator Modal Trigger & Multi-Item Computation ---
+    function openCalcModal() { closeDrawer(); calcModalOverlay.classList.remove('hidden'); }
+    function closeCalcModal() { calcModalOverlay.classList.add('hidden'); }
+
+    cardCalcBtn.addEventListener('click', openCalcModal);
+    openCalcModalBtn.addEventListener('click', openCalcModal);
+    closeCalcModalBtn.addEventListener('click', closeCalcModal);
+
+    addItemBtn.addEventListener('click', () => {
+      const name = itemNameInput.value.trim() || 'Item';
+      const rate = parseFloat(ratePerKg.value) || 0;
+      const qty = parseFloat(purchaseQty.value) || 0;
+      const unit = purchaseUnit.value;
+      if (rate <= 0 || qty <= 0) return;
+
+      let itemCost = (unit === 'g' || unit === 'ml') ? (rate / 1000) * qty : rate * qty;
+
+      cartItems.push({ name, rate, qty, unit, cost: itemCost });
+      itemNameInput.value = '';
+      ratePerKg.value = '';
+      purchaseQty.value = '';
+      renderCartTable();
+    });
+
+    clearCartBtn.addEventListener('click', () => {
+      cartItems = [];
+      discountInput.value = "";
+      cashSplitInput.value = "";
+      renderCartTable();
+    });
+
+    function renderCartTable() {
+      if (cartItems.length === 0) {
+        cartTableBody.innerHTML = '<tr id="emptyCartRow"><td colspan="3" class="p-6 text-center text-slate-400 italic">No items added to bill yet.</td></tr>';
+      } else {
+        cartTableBody.innerHTML = cartItems.map((item, idx) => `
+          <tr>
+            <td class="p-2.5 font-mono">
+              <span class="font-sans font-bold text-slate-800 block">${item.name}</span>
+              <span class="text-[11px] text-slate-500">₹${item.rate}/unit × ${item.qty}${item.unit}</span>
+            </td>
+            <td class="p-2.5 text-right font-mono font-bold text-slate-800">₹${item.cost.toFixed(2)}</td>
+            <td class="p-2.5 text-center">
+              <button onclick="removeCartItem(${idx})" class="text-red-500 font-bold hover:underline">×</button>
+            </td>
+          </tr>
+        `).join('');
+      }
+      calculateCartTotals();
+    }
+
+    window.removeCartItem = function(index) {
+      cartItems.splice(index, 1);
+      renderCartTable();
+    };
+
+    function calculateCartTotals() {
+      const subtotal = cartItems.reduce((acc, i) => acc + i.cost, 0);
+      const gstPct = parseFloat(gstRateSelect.value) || 0;
+      const taxAmount = (subtotal * gstPct) / 100;
+      const discount = parseFloat(discountInput.value) || 0;
+      const grandTotal = Math.max(0, subtotal + taxAmount - discount);
+      
+      const cashPaid = parseFloat(cashSplitInput.value) || 0;
+      const remainingUpi = Math.max(0, grandTotal - cashPaid);
+
+      subtotalText.textContent = `₹ ${subtotal.toFixed(2)}`;
+      grandTotalText.textContent = `₹${grandTotal.toFixed(2)}`;
+      billResult.textContent = `₹ ${remainingUpi.toFixed(2)}`;
+      return { subtotal, gstPct, taxAmount, discount, grandTotal, cashPaid, remainingUpi };
+    }
+
+    gstRateSelect.addEventListener('change', calculateCartTotals);
+    discountInput.addEventListener('input', calculateCartTotals);
+    cashSplitInput.addEventListener('input', calculateCartTotals);
+
+    applyCalcToAmountBtn.addEventListener('click', async () => {
+      const { grandTotal, remainingUpi } = calculateCartTotals();
+      if (grandTotal > 0) {
+        amountInput.value = remainingUpi.toFixed(2);
+        
+        logTransaction({
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          customer: custName.value.trim() || 'Walk-in',
+          amount: grandTotal,
+          upiAmount: remainingUpi
+        });
+
+        closeCalcModal();
+        await generateAndShowStandee();
+      }
+    });
+
+    // --- Daily Sales Ledger & Local Storage ---
+    function logTransaction(item) {
+      salesLedger.unshift(item);
+      localStorage.setItem('salesLedgerLogs', JSON.stringify(salesLedger));
+    }
+
+    function renderLedgerModal() {
+      const totalRevenue = salesLedger.reduce((sum, i) => sum + i.amount, 0);
+      ledgerTotalSales.textContent = `₹ ${totalRevenue.toFixed(2)}`;
+      ledgerCount.textContent = salesLedger.length;
+
+      if (salesLedger.length === 0) {
+        ledgerTableBody.innerHTML = `<tr><td colspan="3" class="p-8 text-center text-slate-400 italic">No transactions recorded today yet.</td></tr>`;
+      } else {
+        ledgerTableBody.innerHTML = salesLedger.map(item => `
+          <tr>
+            <td class="p-2.5 font-mono text-slate-500">${item.time}</td>
+            <td class="p-2.5 font-bold text-slate-800">${item.customer}</td>
+            <td class="p-2.5 text-right font-mono font-extrabold brand-text">₹${item.amount.toFixed(2)}</td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    openLedgerModalBtn.addEventListener('click', () => {
+      closeDrawer();
+      renderLedgerModal();
+      ledgerModalOverlay.classList.remove('hidden');
+    });
+
+    closeLedgerModalBtn.addEventListener('click', () => ledgerModalOverlay.classList.add('hidden'));
+
+    clearLedgerBtn.addEventListener('click', () => {
+      salesLedger = [];
+      localStorage.removeItem('salesLedgerLogs');
+      renderLedgerModal();
+    });
+
+    exportCsvBtn.addEventListener('click', () => {
+      if (salesLedger.length === 0) return;
+      let csvContent = "data:text/csv;charset=utf-8,Time,Customer,Total Bill Amount\n";
+      salesLedger.forEach(row => {
+        csvContent += `"${row.time}","${row.customer}","${row.amount}"\n`;
+      });
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `UPI_Studio_Sales_Ledger_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+
+    // --- Professional WhatsApp Digital Invoice Generator ---
+    whatsappInvoiceBtn.addEventListener('click', () => {
+      const merchant = merchantNameInput.value.trim() || 'Merchant Store';
+      const phone = custPhone.value.trim().replace(/\D/g, '');
+      const customer = custName.value.trim() || 'Valued Customer';
+      const vpa = getVpa();
+      const dateStr = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+      const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      const { subtotal, gstPct, taxAmount, discount, grandTotal, cashPaid, remainingUpi } = calculateCartTotals();
+
+      let itemsListStr = "";
+      if (cartItems.length > 0) {
+        itemsListStr = cartItems.map((item, index) => 
+          `*${index + 1}. ${item.name}*\n   ${item.qty}${item.unit} × ₹${item.rate} = *₹${item.cost.toFixed(2)}*`
+        ).join('\n\n');
+      } else {
+        itemsListStr = `*1. Custom Item Purchase*\n   1 Unit = *₹${grandTotal.toFixed(2)}*`;
+      }
+
+      let summaryStr = `───────────────────────────\n` +
+                       `*Subtotal:* ₹${subtotal.toFixed(2)}\n`;
+      
+      if (gstPct > 0) {
+        summaryStr += `*GST Tax (${gstPct}%):* +₹${taxAmount.toFixed(2)}\n`;
+      }
+      if (discount > 0) {
+        summaryStr += `*Discount:* -₹${discount.toFixed(2)}\n`;
+      }
+      summaryStr += `*Grand Total Bill:* ₹${grandTotal.toFixed(2)}\n` +
+                     `───────────────────────────\n`;
+
+      if (cashPaid > 0) {
+        summaryStr += `*Paid in Cash:* ₹${cashPaid.toFixed(2)}\n` +
+                       `*Balance Paid via UPI:* ₹${remainingUpi.toFixed(2)}\n` +
+                       `───────────────────────────\n`;
+      }
+
+      const upiPayLink = `upi://pay?pa=${vpa}&pn=${encodeURIComponent(merchant)}&am=${remainingUpi.toFixed(2)}&cu=INR`;
+
+      const msg = `🏪 *${merchant.toUpperCase()}*\n` +
+                  `📍 *OFFICIAL DIGITAL RECEIPT*\n` +
+                  `📅 Date: ${dateStr} | 🕒 ${timeStr}\n` +
+                  `👤 Customer: ${customer}\n` +
+                  `───────────────────────────\n\n` +
+                  `*PURCHASED ITEMS:*\n\n${itemsListStr}\n\n` +
+                  `${summaryStr}\n` +
+                  `💳 *Pay Balance via UPI QR:* \n${upiPayLink}\n\n` +
+                  `✨ *Thank you for shopping with us!*`;
+
+      const targetPhone = phone ? `91${phone}` : '';
+      const waUrl = `https://api.whatsapp.com/send?phone=${targetPhone}&text=${encodeURIComponent(msg)}`;
+      window.open(waUrl, '_blank');
+    });
+
+    // --- QR Pop-up Modal Handlers ---
+    function openQrModal() { qrResultModal.classList.remove('hidden'); }
+    function closeQrModal() { qrResultModal.classList.add('hidden'); }
+
+    closeQrModalBtn.addEventListener('click', closeQrModal);
+    qrResultModal.addEventListener('click', (e) => {
+      if (e.target === qrResultModal) closeQrModal();
+    });
+
+    // --- Helpers & Canvas Drawing ---
+    function getDigits() { return upiInput.value.replace(/\D/g, '').slice(0, 9) || '000000000'; }
+    function getVpa() {
+      if (currentMode === 'standee') return `Q${getDigits()}@ybl`;
+      return upiInput.value.trim() || 'yourvpa@upi';
+    }
+
+    function updateVpaPreview() { vpaPreview.textContent = getVpa(); }
+
+    function drawRoundedRect(ctx, x, y, width, height, radius) {
+      ctx.beginPath();
+      if (ctx.roundRect) ctx.roundRect(x, y, width, height, radius);
+      else {
+        ctx.moveTo(x + radius, y);
+        ctx.arcTo(x + width, y, x + width, y + height, radius);
+        ctx.arcTo(x + width, y + height, x, y + height, radius);
+        ctx.arcTo(x, y + height, x, y, radius);
+        ctx.arcTo(x, y, x + width, y, radius);
+      }
+      ctx.fill();
+    }
+
+    function generateQrCode(text) {
+      return new Promise((resolve) => {
+        rawQrWrapper.innerHTML = '';
+        new QRCode(rawQrWrapper, {
+          text: text,
+          width: 560,
+          height: 560,
+          colorDark: "#000000",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.M
+        });
+
+        const checkCanvas = setInterval(() => {
+          const qrCanvas = rawQrWrapper.querySelector('canvas');
+          if (qrCanvas) {
+            clearInterval(checkCanvas);
+            resolve(qrCanvas);
+          }
+        }, 20);
+      });
+    }
+
+    async function generateAndShowStandee() {
+      const merchant = merchantNameInput.value.trim() || 'Merchant Name';
+      const vpa = getVpa();
+      const amount = amountInput.value.trim();
+      const activeTheme = themeMap[activeThemeKey] || themeMap['theme-purple'];
+
+      let upiUri = `upi://pay?pa=${vpa}&pn=${encodeURIComponent(merchant)}&mc=0000&mode=02&purpose=00&cu=INR`;
+      if (amount) upiUri += `&am=${encodeURIComponent(amount)}`;
+
+      const qrSourceCanvas = await generateQrCode(upiUri);
+
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      if (currentMode === 'standee') {
+        ctx.fillStyle = activeTheme.primary;
+        ctx.beginPath();
+        ctx.arc(200 * SCALE, 48 * SCALE, 26 * SCALE, 0, 2 * Math.PI);
+        ctx.fill();
+
+        ctx.fillStyle = "#ffffff";
+        ctx.font = `800 ${20 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("SM", 200 * SCALE, 48 * SCALE);
+
+        ctx.fillStyle = activeTheme.primary;
+        ctx.font = `800 ${26 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
+        ctx.textBaseline = "alphabetic";
+        ctx.fillText("Solid Money App", 200 * SCALE, 100 * SCALE);
+
+        ctx.font = `700 ${14 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
+        const textWidth = ctx.measureText(merchant).width;
+        const pillWidth = Math.max(180 * SCALE, Math.min(340 * SCALE, textWidth + (36 * SCALE)));
+        const pillHeight = 36 * SCALE;
+        const pillX = (canvas.width - pillWidth) / 2;
+        const pillY = 114 * SCALE;
+
+        ctx.fillStyle = activeTheme.pill;
+        drawRoundedRect(ctx, pillX, pillY, pillWidth, pillHeight, 18 * SCALE);
+
+        ctx.fillStyle = "#ffffff";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(merchant, 200 * SCALE, pillY + (18 * SCALE));
+
+        ctx.drawImage(qrSourceCanvas, 60 * SCALE, 168 * SCALE, 280 * SCALE, 280 * SCALE);
+
+        if (amount) {
+          ctx.fillStyle = "#10b981";
+          ctx.font = `800 ${14 * SCALE}px 'JetBrains Mono', monospace`;
+          ctx.textAlign = "center";
+          ctx.fillText(`PAY: ₹${amount}`, 200 * SCALE, 458 * SCALE);
+        }
+
+        ctx.fillStyle = "#1e293b";
+        ctx.font = `800 ${16 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "alphabetic";
+        ctx.fillText("BHIM  |  UPI", 200 * SCALE, 482 * SCALE);
+
+        ctx.fillStyle = "#64748b";
+        ctx.font = `600 ${8.5 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
+        ctx.fillText("BHARAT INTERFACE FOR MONEY     UNIFIED PAYMENTS INTERFACE", 200 * SCALE, 496 * SCALE);
+
+        const digits = getDigits();
+        ctx.fillStyle = "#0f172a";
+        ctx.font = `700 ${11 * SCALE}px 'JetBrains Mono', monospace`;
+        ctx.fillText(`Terminal 1-Q${digits}`, 200 * SCALE, 518 * SCALE);
+
+      } else {
+        ctx.fillStyle = activeTheme.primary;
+        ctx.fillRect(0, 0, canvas.width, 90 * SCALE);
+
+        ctx.fillStyle = "#ffffff";
+        ctx.font = `800 ${20 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "alphabetic";
+        ctx.fillText("SCAN & PAY WITH ANY UPI APP", 200 * SCALE, 42 * SCALE);
+
+        ctx.font = `600 ${11 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
+        ctx.fillStyle = "#ffffff";
+        ctx.globalAlpha = 0.8;
+        ctx.fillText("GPay • PhonePe • Paytm • BHIM", 200 * SCALE, 64 * SCALE);
+        ctx.globalAlpha = 1.0;
+
+        ctx.fillStyle = "#0f172a";
+        ctx.font = `800 ${20 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
+        ctx.textAlign = "center";
+        ctx.fillText(merchant, 200 * SCALE, 130 * SCALE);
+
+        ctx.fillStyle = activeTheme.primary;
+        ctx.font = `700 ${13 * SCALE}px 'JetBrains Mono', monospace`;
+        ctx.fillText(vpa, 200 * SCALE, 150 * SCALE);
+
+        ctx.drawImage(qrSourceCanvas, 60 * SCALE, 172 * SCALE, 280 * SCALE, 280 * SCALE);
+
+        if (amount) {
+          ctx.fillStyle = "#10b981";
+          ctx.font = `800 ${14 * SCALE}px 'JetBrains Mono', monospace`;
+          ctx.textAlign = "center";
+          ctx.fillText(`Amount: ₹${amount}`, 200 * SCALE, 465 * SCALE);
+        }
+
+        ctx.fillStyle = "#1e293b";
+        ctx.font = `800 ${16 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
+        ctx.textAlign = "center";
+        ctx.fillText("BHIM  |  UPI", 200 * SCALE, 488 * SCALE);
+      }
+
+      openQrModal();
+    }
+
+    // Window Init
+    window.addEventListener('load', () => {
+      document.fonts.ready.then(() => {
+        loadFixedStates();
+        updateVpaPreview();
+      });
+    });
+
+    renderBtn.addEventListener('click', generateAndShowStandee);
+
+    // Download Handler
+    downloadBtn.addEventListener('click', function() {
+      const link = document.createElement('a');
+      const sanitizedName = merchantNameInput.value.trim().replace(/\s+/g, '_') || 'Merchant';
+      link.href = canvas.toDataURL("image/png");
+      link.download = `UPI-Studio-${sanitizedName}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+
+    // Direct Print Handler
+    printBtn.addEventListener('click', () => { window.print(); });
+  </script>
+</body>
+</html>
