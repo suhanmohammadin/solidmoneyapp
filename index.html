@@ -56,6 +56,31 @@
 </head>
 <body class="theme-purple bg-slate-900/5 text-slate-800 min-h-screen flex flex-col items-center justify-between p-3 sm:p-6 antialiased selection:bg-purple-500 selection:text-white">
 
+  <!-- PIN Authentication Modal Overlay -->
+  <div id="pinAuthModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 z-[100]">
+    <div class="bg-white rounded-3xl shadow-2xl p-6 md:p-8 max-w-sm w-full text-center space-y-4 border border-slate-100">
+      <div class="w-12 h-12 bg-purple-100 brand-text rounded-2xl flex items-center justify-center mx-auto shadow-inner">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 002-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+        </svg>
+      </div>
+      <div>
+        <h2 class="text-xl font-black text-slate-800">Authentication Required</h2>
+        <p class="text-xs text-slate-500 mt-1 font-medium">Please enter the security PIN to access the application.</p>
+      </div>
+      
+      <form id="pinForm" onsubmit="return false;" class="space-y-3">
+        <input type="password" id="pinInput" placeholder="Enter 8-digit PIN" maxlength="8"
+          class="w-full text-center tracking-widest text-lg font-mono px-4 py-3 border border-slate-300 rounded-2xl focus:ring-2 focus:ring-purple-600 outline-none transition bg-slate-50 font-bold" />
+        <p id="pinErrorMsg" class="text-xs text-red-500 hidden font-bold">Incorrect PIN! Try again.</p>
+        <button type="button" id="submitPinBtn"
+          class="w-full brand-bg hover:opacity-95 text-white font-bold py-3 rounded-2xl shadow-lg transition duration-200">
+          Unlock App
+        </button>
+      </form>
+    </div>
+  </div>
+
   <!-- Side Navigation Drawer Backdrop -->
   <div id="drawerOverlay" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-40 hidden transition-opacity duration-300 opacity-0"></div>
 
@@ -189,6 +214,7 @@
           <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">
             Item Name <span class="text-slate-400 font-normal">(Type to search)</span>
           </label>
+          <!-- Feature #1 Add-on: Direct Flat Amount Toggle -->
           <label class="flex items-center gap-1.5 cursor-pointer text-xs font-bold text-slate-600 select-none">
             <span class="text-[10px] uppercase text-purple-700 font-extrabold">Flat Amount (₹)</span>
             <input type="checkbox" id="flatPriceToggle" class="sr-only peer">
@@ -212,6 +238,7 @@
             <input type="number" id="ratePerKg" placeholder="e.g. 120" step="0.01" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm font-mono outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
           </div>
 
+          <!-- Feature #1 Add-on: Direct Flat Amount Container -->
           <div id="flatPriceContainer" class="col-span-10 hidden">
             <label class="text-[10px] font-bold uppercase tracking-wider text-purple-700 block mb-1">Direct Total Cost (₹)</label>
             <input type="number" id="flatPriceInput" placeholder="e.g. 50" step="0.01" class="w-full px-3 py-2 border border-purple-300 rounded-xl text-sm font-mono font-bold text-purple-900 outline-none focus:ring-2 focus:ring-purple-600 bg-purple-50/30" />
@@ -329,7 +356,7 @@
     </div>
   </div>
 
-  <!-- POPUP MODAL: Daily Sales Ledger History -->
+  <!-- POPUP MODAL: Daily Sales Ledger History with Date Filter & Payment Mode Analytics -->
   <div id="ledgerModalOverlay" class="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 sm:p-4">
     <div class="bg-white w-full max-w-xl rounded-3xl shadow-2xl border border-slate-100 overflow-hidden transform transition-all flex flex-col max-h-[90vh]">
       
@@ -345,7 +372,7 @@
 
       <div class="p-4 sm:p-6 space-y-4 overflow-y-auto grow">
 
-        <!-- Date Range Filter Bar -->
+        <!-- Feature #3 Add-on: Date Range Filter Bar -->
         <div class="flex items-center justify-between bg-slate-50 p-2.5 rounded-2xl border border-slate-200">
           <span class="text-xs font-bold text-slate-600 uppercase tracking-wider">Filter Date:</span>
           <select id="ledgerDateFilter" class="px-3 py-1.5 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-purple-600">
@@ -366,14 +393,14 @@
           </div>
         </div>
 
-        <!-- Cash vs. UPI Payment Split Analytics Card -->
+        <!-- Feature #3 Add-on: Cash vs. UPI Payment Split Analytics Card -->
         <div class="grid grid-cols-2 gap-2 bg-slate-50 p-2.5 rounded-2xl border border-slate-200 text-xs font-semibold">
           <div class="flex justify-between items-center bg-amber-50/70 p-2 rounded-xl border border-amber-200/80">
             <span class="text-amber-800">💵 Cash Paid:</span>
             <span id="ledgerCashTotal" class="font-mono font-bold text-amber-900">₹0.00</span>
           </div>
           <div class="flex justify-between items-center bg-emerald-50/70 p-2 rounded-xl border border-emerald-200/80">
-            <span class="text-emerald-800">📱 UPI Paid:</span>
+            <span class="text-emerald-800">💳 UPI Paid:</span>
             <span id="ledgerUpiTotal" class="font-mono font-bold text-emerald-900">₹0.00</span>
           </div>
         </div>
@@ -436,7 +463,7 @@
 
       <!-- Professional WhatsApp Receipt Action -->
       <button id="whatsappInvoiceBtn" class="w-full bg-green-600 hover:bg-green-700 text-white text-xs font-bold py-3 px-3 rounded-xl shadow transition flex items-center justify-center gap-1.5">
-        <span>📲</span> Send Digital Invoice via WhatsApp
+        <span>💬</span> Send Digital Invoice via WhatsApp
       </button>
 
     </div>
@@ -477,7 +504,7 @@
   <!-- Main Generator Form Card -->
   <main class="max-w-2xl w-full bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-200/80 my-auto p-4 sm:p-8 space-y-5 sm:space-y-6">
 
-    <!-- Feature Quick Cards -->
+    <!-- Feature Quick Cards: Mobile Optimized Layout -->
     <div>
       <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-500 mb-2.5">Select Utility Feature</label>
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
@@ -583,12 +610,53 @@
   </footer>
 
   <script>
-    // --- Application State & Local Storage Persistence ---
+    // --- PIN Authentication Logic ---
+    const pinAuthModal = document.getElementById('pinAuthModal');
+    const pinInput = document.getElementById('pinInput');
+    const submitPinBtn = document.getElementById('submitPinBtn');
+    const pinErrorMsg = document.getElementById('pinErrorMsg');
+
+    function getTodayPin() {
+      const today = new Date();
+      const year = today.getFullYear().toString();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      return `${year}${month}${day}`;
+    }
+
+    function checkAuth() {
+      if (localStorage.getItem('appUnlocked') === 'true') {
+        pinAuthModal.classList.add('hidden');
+      } else {
+        pinAuthModal.classList.remove('hidden');
+      }
+    }
+
+    function validatePin() {
+      const expectedPin = getTodayPin();
+      if (pinInput.value.trim() === expectedPin) {
+        localStorage.setItem('appUnlocked', 'true');
+        pinAuthModal.classList.add('hidden');
+        pinErrorMsg.classList.add('hidden');
+        pinInput.value = '';
+      } else {
+        pinErrorMsg.classList.remove('hidden');
+      }
+    }
+
+    submitPinBtn.addEventListener('click', validatePin);
+    pinInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') validatePin();
+    });
+
+    checkAuth();
+
+    // --- Main Application Logic ---
     let currentMode = 'standee';
     let cartItems = [];
     let salesLedger = JSON.parse(localStorage.getItem('salesLedgerLogs') || '[]');
     
-    // Default Inventory Master
+    // Default Item Inventory Master List
     let inventoryMaster = JSON.parse(localStorage.getItem('inventoryMasterList') || JSON.stringify([
       { name: 'Apples', rate: 180 },
       { name: 'Rice', rate: 60 },
@@ -619,7 +687,7 @@
     const nameFixLabel = document.getElementById('nameFixLabel');
     const upiFixLabel = document.getElementById('upiFixLabel');
     
-    // Quick Cards & Navigation
+    // Feature Quick Cards & Navigation
     const cardStandeeBtn = document.getElementById('cardStandeeBtn');
     const cardGenericBtn = document.getElementById('cardGenericBtn');
     const cardCalcBtn = document.getElementById('cardCalcBtn');
@@ -647,6 +715,7 @@
     const itemNameInput = document.getElementById('itemNameInput');
     const suggestionsBox = document.getElementById('suggestionsBox');
     
+    // Add-on #1 Elements: Flat Amount & Unit Multipliers
     const flatPriceToggle = document.getElementById('flatPriceToggle');
     const rateContainer = document.getElementById('rateContainer');
     const flatPriceContainer = document.getElementById('flatPriceContainer');
@@ -685,7 +754,7 @@
     const exportCsvBtn = document.getElementById('exportCsvBtn');
     const clearLedgerBtn = document.getElementById('clearLedgerBtn');
 
-    // QR Modal Elements
+    // QR Pop-up Modal Elements
     const qrResultModal = document.getElementById('qrResultModal');
     const closeQrModalBtn = document.getElementById('closeQrModalBtn');
     const whatsappInvoiceBtn = document.getElementById('whatsappInvoiceBtn');
@@ -758,7 +827,7 @@
       masterInventoryModalOverlay.classList.add('hidden');
     });
 
-    // --- Auto-Suggest Search in POS Calculator ---
+    // --- Smart Auto-Suggest Search in POS Calculator ---
     itemNameInput.addEventListener('input', function() {
       const query = this.value.trim().toLowerCase();
       if (!query) {
@@ -787,6 +856,7 @@
       suggestionsBox.classList.add('hidden');
     };
 
+    // Close suggestion box if user clicks outside
     document.addEventListener('click', (e) => {
       if (!itemNameInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
         suggestionsBox.classList.add('hidden');
@@ -924,6 +994,7 @@
     cardCalcBtn.addEventListener('click', openCalcModal);
     closeCalcModalBtn.addEventListener('click', closeCalcModal);
 
+    // Feature #1 Add-on: Calculation supporting Pcs unit & Flat Price mode
     addItemBtn.addEventListener('click', () => {
       const name = itemNameInput.value.trim() || 'Custom Item';
       let itemCost = 0;
@@ -939,9 +1010,9 @@
         if (rate <= 0 || qty <= 0) return;
 
         if (unit === 'pcs') {
-          itemCost = rate * qty;
+          itemCost = rate * qty; // Direct Multiplier for Pieces
         } else if (unit === 'g' || unit === 'gram' || unit === 'ml') {
-          itemCost = (rate / 1000) * qty;
+          itemCost = (rate / 1000) * qty; // Divided by 1000 for grams/ml
         } else {
           itemCost = rate * qty;
         }
@@ -1002,6 +1073,7 @@
       const cashPaid = parseFloat(cashSplitInput.value) || 0;
       const remainingUpi = Math.max(0, grandTotal - cashPaid);
 
+      // UI Summary Displays
       subtotalText.textContent = `₹ ${subtotal.toFixed(2)}`;
       gstPctDisplay.textContent = gstPct.toString();
       gstCalculatedText.textContent = `+₹ ${taxAmount.toFixed(2)}`;
@@ -1035,7 +1107,7 @@
       }
     });
 
-    // --- Daily Sales Ledger ---
+    // --- Feature #3 Add-on: Daily Sales Ledger with Date Filtering & Payment Analytics ---
     function logTransaction(item) {
       salesLedger.unshift(item);
       localStorage.setItem('salesLedgerLogs', JSON.stringify(salesLedger));
@@ -1053,7 +1125,7 @@
         const itemDate = item.isoDate || todayStr;
         if (filterValue === 'today') return itemDate === todayStr;
         if (filterValue === 'yesterday') return itemDate === yesterdayStr;
-        return true;
+        return true; // 'all'
       });
 
       const totalRevenue = filteredLogs.reduce((sum, i) => sum + i.amount, 0);
@@ -1109,7 +1181,7 @@
       document.body.removeChild(link);
     });
 
-    // --- WhatsApp Digital Invoice Generator ---
+    // --- Professional WhatsApp Digital Invoice Generator ---
     whatsappInvoiceBtn.addEventListener('click', () => {
       const merchant = merchantNameInput.value.trim() || 'Merchant Store';
       const phone = custPhone.value.trim().replace(/\D/g, '');
@@ -1148,14 +1220,14 @@
       }
 
       const upiPayLink = `upi://pay?pa=${vpa}&pn=${encodeURIComponent(merchant)}&am=${remainingUpi.toFixed(2)}&cu=INR`;
-      const msg = `🧾 *${merchant.toUpperCase()}*\n` +
-                  `📄 *OFFICIAL DIGITAL RECEIPT*\n` +
-                  `📅 Date: ${dateStr} | ⏰ ${timeStr}\n` +
+      const msg = `🏪 *${merchant.toUpperCase()}*\n` +
+                  `📜 *OFFICIAL DIGITAL RECEIPT*\n` +
+                  `📅 Date: ${dateStr} | 🕒 ${timeStr}\n` +
                   `👤 Customer: ${customer}\n` +
                   `───────────────────────────\n\n` +
                   `*PURCHASED ITEMS:*\n\n${itemsListStr}\n\n` +
                   `${summaryStr}\n` +
-                  `📲 *Pay Balance via UPI QR:* \n${upiPayLink}\n\n` +
+                  `💳 *Pay Balance via UPI QR:* \n${upiPayLink}\n\n` +
                   `✨ *Thank you for shopping with us!*`;
 
       const targetPhone = phone ? `91${phone}` : '';
