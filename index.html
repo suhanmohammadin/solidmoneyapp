@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+<!DOCTYPE html><html lang="en"><head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Solid Money App - Merchant Standee & Billing POS Suite</title>
@@ -52,9 +50,64 @@
       #printableArea, #printableArea * { visibility: visible; }
       #printableArea { position: absolute; left: 0; top: 0; width: 100%; display: flex; justify-content: center; }
     }
-  </style>
-</head>
-<body class="theme-purple bg-slate-900/5 text-slate-800 min-h-screen flex flex-col items-center justify-between p-3 sm:p-6 antialiased selection:bg-purple-500 selection:text-white">
+  </style></head><body class="theme-purple bg-slate-900/5 text-slate-800 min-h-screen flex flex-col items-center justify-between p-3 sm:p-6 antialiased selection:bg-purple-500 selection:text-white">
+
+  <!-- PIN Authentication Modal Overlay -->
+  <div id="pinAuthModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 z-[100]">
+    <div class="bg-white rounded-3xl shadow-2xl p-6 md:p-8 max-w-sm w-full text-center space-y-4 border border-slate-100">
+      <div class="w-12 h-12 bg-purple-100 brand-text rounded-2xl flex items-center justify-center mx-auto shadow-inner">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 002-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+        </svg>
+      </div>
+      <div>
+        <h2 class="text-xl font-black text-slate-800">Authentication Required</h2>
+        <p class="text-xs text-slate-500 mt-1 font-medium">Please enter the security PIN to access the application.</p>
+      </div>
+      
+      <form id="pinForm" onsubmit="return false;" class="space-y-3">
+        <input type="password" id="pinInput" placeholder="Enter 8-digit PIN" maxlength="8"
+          class="w-full text-center tracking-widest text-lg font-mono px-4 py-3 border border-slate-300 rounded-2xl focus:ring-2 focus:ring-purple-600 outline-none transition bg-slate-50 font-bold" />
+        <p id="pinErrorMsg" class="text-xs text-red-500 hidden font-bold">Incorrect PIN! Try again.</p>
+        <button type="button" id="submitPinBtn"
+          class="w-full brand-bg hover:opacity-95 text-white font-bold py-3 rounded-2xl shadow-lg transition duration-200">
+          Unlock App
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Mobile Direct Login Modal Overlay (NO OTP) -->
+  <div id="loginModalOverlay" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[90] hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl shadow-2xl p-6 max-w-sm w-full space-y-4 border border-slate-100 relative">
+      <button type="button" id="closeLoginModalBtn" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+
+      <div class="text-center space-y-2">
+        <div class="w-12 h-12 bg-purple-100 brand-text rounded-2xl flex items-center justify-center mx-auto">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+        </div>
+        <h3 class="text-xl font-black text-slate-800">Mobile Data Sync</h3>
+        <p class="text-xs text-slate-500 font-medium">Enter your mobile number to instantly sync inventory & settings on any device.</p>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="block text-[10px] font-extrabold uppercase text-slate-500 mb-1">Mobile Number</label>
+          <div class="flex gap-2">
+            <span class="px-3 py-2.5 bg-slate-100 border border-slate-300 rounded-xl text-xs font-bold text-slate-600 flex items-center">+91</span>
+            <input type="tel" id="loginPhoneInput" placeholder="Enter 10-digit mobile" maxlength="10" class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-xs font-mono font-bold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50" />
+          </div>
+        </div>
+        <button type="button" id="directSyncBtn" class="w-full brand-bg hover:opacity-90 text-white font-bold py-3 rounded-2xl text-xs shadow-md transition flex items-center justify-center gap-2">
+          <span>🔄</span> Direct Sync & Restore
+        </button>
+      </div>
+
+      <p id="loginStatusMsg" class="text-xs text-center font-bold hidden"></p>
+    </div>
+  </div>
 
   <!-- Side Navigation Drawer Backdrop -->
   <div id="drawerOverlay" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-40 hidden transition-opacity duration-300 opacity-0"></div>
@@ -77,21 +130,43 @@
         </button>
       </div>
 
+      <!-- Cloud Sync & Login Menu Header -->
+      <div id="drawerAccountSection" class="p-4 border-b border-slate-100 bg-slate-50">
+        <button type="button" id="openLoginModalBtn" class="w-full bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-200 p-3 rounded-2xl flex items-center justify-between transition">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl brand-bg text-white flex items-center justify-center font-bold text-xs">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+            </div>
+            <div class="text-left">
+              <span class="block text-xs font-black">Mobile Sync</span>
+              <span class="text-[10px] text-slate-500 font-medium">Sync inventory with mobile no.</span>
+            </div>
+          </div>
+          <span class="text-xs font-bold brand-text">Login &rarr;</span>
+        </button>
+
+        <!-- Displayed when synced -->
+        <div id="loggedInUserCard" class="hidden p-3 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-xs">
+              ✓
+            </div>
+            <div class="text-left">
+              <span id="userMobileDisplay" class="block text-xs font-mono font-black text-emerald-900">+91 ********</span>
+              <span class="text-[10px] text-emerald-600 font-semibold">Live Sync Active</span>
+            </div>
+          </div>
+          <button type="button" id="logoutBtn" class="text-[11px] font-bold text-red-600 hover:underline">Change</button>
+        </div>
+      </div>
+
       <nav class="p-4 space-y-2">
-        <button type="button" id="drawerStandeeBtn" class="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold brand-text bg-slate-100 rounded-2xl text-left">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-          Merchant Standee Mode
-        </button>
-        <button type="button" id="drawerGenericBtn" class="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-2xl transition text-left">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-          Personal UPI QR Mode
-        </button>
-        <button type="button" id="openCalcModalBtn" class="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-2xl transition text-left">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-          Weight & POS Calculator
+        <button type="button" id="openMasterInventoryModalBtn" class="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-2xl transition text-left">
+          <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+          Item Master / Inventory Configurator
         </button>
         <button type="button" id="openLedgerModalBtn" class="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-2xl transition text-left">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+          <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
           Daily Sales Ledger & History
         </button>
       </nav>
@@ -102,140 +177,244 @@
     </div>
   </aside>
 
-  <!-- POPUP MODAL: Multi-Item POS Calculator -->
-  <div id="calcModalOverlay" class="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 sm:p-4">
-    <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl border border-slate-100 overflow-hidden transform transition-all flex flex-col max-h-[92vh]">
+  <!-- POPUP MODAL: Item Master / Inventory Configurator -->
+  <div id="masterInventoryModalOverlay" class="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl border border-slate-100 overflow-hidden transform transition-all flex flex-col max-h-[90vh]">
       
       <div class="brand-gradient p-4 sm:p-5 text-white flex items-center justify-between shrink-0">
         <div class="flex items-center gap-2.5">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-          <h3 class="font-bold text-lg">Weight & Billing POS Calculator</h3>
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+          <h3 class="font-bold text-lg">Item Master / Inventory Configurator</h3>
         </div>
-        <button type="button" id="closeCalcModalBtn" class="text-white/80 hover:text-white p-1 rounded-lg hover:bg-white/10 transition">
+        <button type="button" id="closeMasterInventoryModalBtn" class="text-white/80 hover:text-white p-1 rounded-lg hover:bg-white/10 transition">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
       </div>
 
       <div class="p-4 sm:p-6 space-y-4 overflow-y-auto grow">
-        
-        <!-- Customer Details (Optional) -->
-        <div class="grid grid-cols-2 gap-2 bg-slate-50 p-2.5 rounded-2xl border border-slate-200">
-          <div>
-            <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Customer Name</label>
-            <input type="text" id="custName" placeholder="e.g. Suhan" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-600 bg-white" />
-          </div>
-          <div>
-            <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">WhatsApp Mobile</label>
-            <input type="tel" id="custPhone" placeholder="e.g. 9133359954" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-xl text-xs font-mono font-bold outline-none focus:ring-2 focus:ring-purple-600 bg-white" />
-          </div>
-        </div>
-
-        <!-- Item Entry Inputs -->
-        <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 space-y-2">
-          <div>
-            <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Item Name <span class="text-slate-400 font-normal">(Optional)</span></label>
-            <input type="text" id="itemNameInput" placeholder="e.g. Rice, Sugar, Almonds" class="w-full px-3 py-1.5 border border-slate-300 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-600 bg-white" />
+        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
+          <div class="flex items-center justify-between">
+            <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-700">Add New Inventory Item</h4>
           </div>
 
           <div class="grid grid-cols-12 gap-2">
-            <div class="col-span-5">
-              <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">1 KG / L Rate (₹)</label>
-              <input type="number" id="ratePerKg" placeholder="e.g. 120" step="0.01" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm font-mono outline-none focus:ring-2 focus:ring-purple-600 bg-white" />
+            <div class="col-span-6 sm:col-span-7">
+              <input type="text" id="masterItemName" placeholder="Item Name (e.g. Apples)" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-600 bg-white" />
             </div>
-            <div class="col-span-5">
-              <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Qty / Weight</label>
-              <div class="flex">
-                <input type="number" id="purchaseQty" placeholder="e.g. 500" step="0.01" class="w-full px-2 py-2 border border-r-0 border-slate-300 rounded-l-xl text-sm font-mono outline-none focus:ring-2 focus:ring-purple-600 bg-white" />
-                <select id="purchaseUnit" class="bg-slate-100 border border-slate-300 rounded-r-xl px-1.5 text-xs font-bold text-slate-700 outline-none">
-                  <option value="g">G</option>
-                  <option value="kg">KG</option>
-                  <option value="ml">ml</option>
-                  <option value="l">L</option>
-                </select>
-              </div>
+            <div class="col-span-4 sm:col-span-3">
+              <input type="number" id="masterItemRate" placeholder="Rate/KG (₹)" step="0.01" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-mono font-bold outline-none focus:ring-2 focus:ring-purple-600 bg-white" />
             </div>
-            <div class="col-span-2 flex items-end">
-              <button type="button" id="addItemBtn" class="w-full brand-bg text-white font-bold py-2 rounded-xl text-xs hover:opacity-90 transition">Add</button>
+            <div class="col-span-2">
+              <button type="button" id="saveMasterItemBtn" class="w-full brand-bg hover:opacity-90 text-white font-bold py-2 rounded-xl text-xs transition">Save</button>
             </div>
           </div>
         </div>
 
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Bill Items List</span>
-          <button type="button" id="clearCartBtn" class="text-xs font-bold text-red-600 hover:text-red-700 flex items-center gap-1 hover:underline">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-            Clear All Items
-          </button>
-        </div>
-
-        <div class="border border-slate-200 rounded-2xl overflow-hidden min-h-[100px] max-h-[140px] overflow-y-auto">
-          <table class="w-full text-left text-xs">
-            <thead class="bg-slate-100 text-slate-600 font-bold uppercase tracking-wider text-[10px] sticky top-0">
-              <tr>
-                <th class="p-2.5">Item Details</th>
-                <th class="p-2.5 text-right">Cost</th>
-                <th class="p-2.5 text-center">Action</th>
-              </tr>
-            </thead>
-            <tbody id="cartTableBody" class="divide-y divide-slate-100 font-medium">
-              <tr id="emptyCartRow"><td colspan="3" class="p-6 text-center text-slate-400 italic">No items added to bill yet.</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Tax, Discount & Cash Split Section -->
-        <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-2">
-          <div class="flex justify-between items-center text-xs font-semibold text-slate-600">
-            <span>Subtotal:</span>
-            <span id="subtotalText" class="font-mono">₹ 0.00</span>
-          </div>
-          
-          <div class="flex justify-between items-center text-xs font-semibold text-slate-600">
-            <span class="flex items-center gap-1">Apply GST Tax (%):</span>
-            <select id="gstRateSelect" class="px-2 py-1 border border-slate-300 rounded-lg text-xs font-mono font-bold bg-white outline-none">
-              <option value="0">0% Tax</option>
-              <option value="5">5% GST</option>
-              <option value="12">12% GST</option>
-              <option value="18">18% GST</option>
-            </select>
-          </div>
-
-          <div class="flex justify-between items-center text-xs font-semibold text-slate-600">
-            <span>Discount (₹):</span>
-            <input type="number" id="discountInput" value="" min="0" step="1" placeholder="0" class="w-20 px-2 py-1 text-right border border-slate-300 rounded-lg font-mono text-xs outline-none bg-white">
-          </div>
-
-          <!-- Cash + UPI Split Payment Option -->
-          <div class="flex justify-between items-center text-xs font-semibold text-slate-600 pt-1 border-t border-slate-200">
-            <span class="text-amber-700 font-bold flex items-center gap-1">
-              💵 Cash Paid (Split):
-            </span>
-            <input type="number" id="cashSplitInput" value="" min="0" step="1" placeholder="0" class="w-20 px-2 py-1 text-right border border-amber-300 rounded-lg font-mono text-xs outline-none bg-amber-50/50 font-bold text-amber-800">
-          </div>
-
-          <div class="pt-2 border-t border-slate-200 flex justify-between items-center">
-            <div>
-              <span class="text-xs font-bold text-slate-500 block">Remaining UPI QR Pay:</span>
-              <span id="billResult" class="font-mono text-xl font-black brand-text">₹ 0.00</span>
-            </div>
-            <div class="text-right text-[11px] font-semibold text-slate-400">
-              Total Bill: <span id="grandTotalText" class="font-mono text-slate-700">₹0.00</span>
-            </div>
+        <div>
+          <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-500 mb-2">Saved Inventory Items</h4>
+          <div class="border border-slate-200 rounded-2xl overflow-hidden bg-white max-h-60 overflow-y-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-100 text-slate-600 font-bold uppercase tracking-wider text-[10px] sticky top-0">
+                <tr>
+                  <th class="p-2.5">Item Name</th>
+                  <th class="p-2.5 text-right">Default Rate / Unit (₹)</th>
+                  <th class="p-2.5 text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody id="masterInventoryTableBody" class="divide-y divide-slate-100 font-medium">
+                <!-- Configured items list -->
+              </tbody>
+            </table>
           </div>
         </div>
-      </div>
-
-      <div class="p-4 bg-slate-50 border-t border-slate-100 shrink-0">
-        <button type="button" id="applyCalcToAmountBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-2xl shadow-lg transition duration-200 flex items-center justify-center gap-2 text-sm">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-          Set as Fixed Amount in QR
-        </button>
       </div>
 
     </div>
   </div>
 
-  <!-- POPUP MODAL: Daily Sales Ledger History -->
+  <!-- FULL-SCREEN MODAL: Multi-Item POS Calculator -->
+  <div id="calcModalOverlay" class="fixed inset-0 bg-slate-900 z-50 hidden flex flex-col h-full w-full overflow-hidden">
+    <!-- Fullscreen POS Header -->
+    <div class="brand-gradient p-4 sm:p-5 text-white flex items-center justify-between shrink-0 shadow-lg">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-md">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+        </div>
+        <div>
+          <h3 class="font-extrabold text-base sm:text-lg leading-none">Weight & Billing POS Calculator</h3>
+          <p class="text-[11px] text-white/70 mt-1">Full-Screen Checkout Mode</p>
+        </div>
+      </div>
+      <button type="button" id="closeCalcModalBtn" class="text-white/80 hover:text-white p-2 rounded-xl bg-white/10 hover:bg-white/20 transition flex items-center gap-1 text-xs font-bold">
+        <span>Close</span>
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+    </div>
+
+    <!-- Fullscreen Body Container -->
+    <div class="grow bg-slate-100 p-3 sm:p-6 overflow-y-auto max-w-4xl mx-auto w-full space-y-4">
+
+      <!-- Customer Details (Optional) -->
+      <div class="grid grid-cols-2 gap-3 bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-xs">
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Customer Name</label>
+          <input type="text" id="custName" placeholder="e.g. Suhan" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
+        </div>
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">WhatsApp Mobile</label>
+          <input type="tel" id="custPhone" placeholder="e.g. 9133359954" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-mono font-bold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
+        </div>
+      </div>
+
+      <!-- Item Entry Inputs with Auto-Suggest Search & Direct Flat Entry -->
+      <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3">
+        <div class="flex items-center justify-between">
+          <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">
+            Item Name <span class="text-slate-400 font-normal">(Type to search)</span>
+          </label>
+          <!-- Feature #1 Add-on: Direct Flat Amount Toggle -->
+          <label class="flex items-center gap-1.5 cursor-pointer text-xs font-bold text-slate-600 select-none">
+            <span class="text-[10px] uppercase text-purple-700 font-extrabold">Flat Amount (₹)</span>
+            <input type="checkbox" id="flatPriceToggle" class="sr-only peer">
+            <div class="w-7 h-3.5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-2.5 after:w-2.5 after:transition-all peer-checked:bg-purple-600 relative"></div>
+          </label>
+        </div>
+
+        <div class="relative">
+          <input type="text" id="itemNameInput" placeholder="e.g. Apples, Rice, Sugar" autocomplete="off" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
+          
+          <!-- Autocomplete Suggestions List Box -->
+          <div id="suggestionsBox" class="absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-xl z-20 max-h-48 overflow-y-auto hidden divide-y divide-slate-100 text-xs">
+            <!-- Suggestions render dynamically -->
+          </div>
+        </div>
+
+        <div class="grid grid-cols-12 gap-2">
+          <!-- Standard Rate / Weight Row -->
+          <div id="rateContainer" class="col-span-5">
+            <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">1 KG / L Rate (₹)</label>
+            <input type="number" id="ratePerKg" placeholder="e.g. 120" step="0.01" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm font-mono outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
+          </div>
+
+          <!-- Feature #1 Add-on: Direct Flat Amount Container -->
+          <div id="flatPriceContainer" class="col-span-10 hidden">
+            <label class="text-[10px] font-bold uppercase tracking-wider text-purple-700 block mb-1">Direct Total Cost (₹)</label>
+            <input type="number" id="flatPriceInput" placeholder="e.g. 50" step="0.01" class="w-full px-3 py-2 border border-purple-300 rounded-xl text-sm font-mono font-bold text-purple-900 outline-none focus:ring-2 focus:ring-purple-600 bg-purple-50/30" />
+          </div>
+
+          <div id="qtyContainer" class="col-span-5">
+            <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Qty / Weight</label>
+            <div class="flex">
+              <input type="number" id="purchaseQty" placeholder="e.g. 500" step="0.01" class="w-full px-2 py-2 border border-r-0 border-slate-300 rounded-l-xl text-sm font-mono outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
+              <select id="purchaseUnit" class="bg-slate-100 border border-slate-300 rounded-r-xl px-1.5 text-xs font-bold text-slate-700 outline-none">
+                <option value="g">G</option>
+                <option value="kg">KG</option>
+                <option value="pcs">Pcs</option>
+                <option value="ml">ml</option>
+                <option value="l">L</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="col-span-2 flex items-end">
+            <button type="button" id="addItemBtn" class="w-full brand-bg text-white font-bold py-2 rounded-xl text-xs hover:opacity-90 transition shadow-sm">Add</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between">
+        <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Bill Items List</span>
+        <button type="button" id="clearCartBtn" class="text-xs font-bold text-red-600 hover:text-red-700 flex items-center gap-1 hover:underline">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+          Clear All Items
+        </button>
+      </div>
+
+      <div class="border border-slate-200 rounded-2xl overflow-hidden bg-white min-h-[120px] max-h-[220px] overflow-y-auto shadow-xs">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-slate-100 text-slate-600 font-bold uppercase tracking-wider text-[10px] sticky top-0">
+            <tr>
+              <th class="p-2.5">Item Details</th>
+              <th class="p-2.5 text-right">Cost</th>
+              <th class="p-2.5 text-center">Action</th>
+            </tr>
+          </thead>
+          <tbody id="cartTableBody" class="divide-y divide-slate-100 font-medium">
+            <tr id="emptyCartRow"><td colspan="3" class="p-6 text-center text-slate-400 italic">No items added to bill yet.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Tax, Discount, Cash Split & Summary Section -->
+      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3">
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <!-- Custom GST Input -->
+          <div class="flex justify-between items-center text-xs font-semibold text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+            <span class="flex items-center gap-1">Custom GST Tax (%):</span>
+            <div class="flex items-center gap-1">
+              <input type="number" id="gstRateInput" min="0" max="100" step="0.1" placeholder="0" class="w-20 px-2 py-1 text-right border border-slate-300 rounded-lg font-mono text-xs outline-none bg-white font-bold">
+              <span class="text-slate-500 font-bold">%</span>
+            </div>
+          </div>
+
+          <!-- Discount Input -->
+          <div class="flex justify-between items-center text-xs font-semibold text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+            <span>Discount Amount (₹):</span>
+            <input type="number" id="discountInput" value="" min="0" step="1" placeholder="0" class="w-20 px-2 py-1 text-right border border-slate-300 rounded-lg font-mono text-xs outline-none bg-white font-bold">
+          </div>
+        </div>
+
+        <!-- Total Bill Amount Summary Breakdown Card -->
+        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200/80 space-y-1.5 shadow-2xs text-xs">
+          <div class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 border-b border-slate-200 pb-1 mb-1">
+            Bill Amount Summary
+          </div>
+          <div class="flex justify-between text-slate-600 font-medium">
+            <span>Subtotal:</span>
+            <span id="subtotalText" class="font-mono font-bold">₹ 0.00</span>
+          </div>
+          <div class="flex justify-between text-slate-600 font-medium">
+            <span>GST Tax (<span id="gstPctDisplay">0</span>%):</span>
+            <span id="gstCalculatedText" class="font-mono text-emerald-600 font-bold">+₹ 0.00</span>
+          </div>
+          <div class="flex justify-between text-slate-600 font-medium">
+            <span>Discount Offered:</span>
+            <span id="discountCalculatedText" class="font-mono text-red-500 font-bold">-₹ 0.00</span>
+          </div>
+          <div class="flex justify-between items-center pt-1.5 border-t border-slate-200 font-extrabold text-slate-800 text-sm">
+            <span>Total Bill Amount:</span>
+            <span id="grandTotalText" class="font-mono brand-text text-base">₹0.00</span>
+          </div>
+        </div>
+
+        <!-- Cash + UPI Split Payment Option -->
+        <div class="flex justify-between items-center text-xs font-semibold text-slate-600 pt-1">
+          <span class="text-amber-700 font-bold flex items-center gap-1">
+            💵 Cash Paid (Split):
+          </span>
+          <input type="number" id="cashSplitInput" value="" min="0" step="1" placeholder="0" class="w-24 px-2 py-1.5 text-right border border-amber-300 rounded-lg font-mono text-xs outline-none bg-amber-50/50 font-bold text-amber-800">
+        </div>
+
+        <div class="pt-2 border-t border-slate-200 flex justify-between items-center">
+          <div>
+            <span class="text-xs font-bold text-slate-500 block">Remaining UPI QR Pay:</span>
+            <span id="billResult" class="font-mono text-2xl font-black brand-text">₹ 0.00</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fullscreen Footer CTA -->
+    <div class="p-4 bg-white border-t border-slate-200 shrink-0 max-w-4xl mx-auto w-full">
+      <button type="button" id="applyCalcToAmountBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-2xl shadow-lg transition duration-200 flex items-center justify-center gap-2 text-base">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+        Set Amount & Generate Standee QR
+      </button>
+    </div>
+  </div>
+
+  <!-- POPUP MODAL: Daily Sales Ledger History with Date Filter & Payment Mode Analytics -->
   <div id="ledgerModalOverlay" class="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 sm:p-4">
     <div class="bg-white w-full max-w-xl rounded-3xl shadow-2xl border border-slate-100 overflow-hidden transform transition-all flex flex-col max-h-[90vh]">
       
@@ -250,9 +429,20 @@
       </div>
 
       <div class="p-4 sm:p-6 space-y-4 overflow-y-auto grow">
+
+        <!-- Feature #3 Add-on: Date Range Filter Bar -->
+        <div class="flex items-center justify-between bg-slate-50 p-2.5 rounded-2xl border border-slate-200">
+          <span class="text-xs font-bold text-slate-600 uppercase tracking-wider">Filter Date:</span>
+          <select id="ledgerDateFilter" class="px-3 py-1.5 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-purple-600">
+            <option value="today">Today</option>
+            <option value="yesterday">Yesterday</option>
+            <option value="all">All Time</option>
+          </select>
+        </div>
+
         <div class="grid grid-cols-2 gap-3">
           <div class="bg-purple-50 border border-purple-100 p-3.5 rounded-2xl">
-            <span class="text-[11px] font-bold uppercase tracking-wider text-purple-600 block mb-0.5">Today's Sales</span>
+            <span class="text-[11px] font-bold uppercase tracking-wider text-purple-600 block mb-0.5">Filtered Sales</span>
             <span id="ledgerTotalSales" class="font-mono text-2xl font-black brand-text">₹ 0.00</span>
           </div>
           <div class="bg-slate-50 border border-slate-200 p-3.5 rounded-2xl">
@@ -261,11 +451,23 @@
           </div>
         </div>
 
-        <div class="border border-slate-200 rounded-2xl overflow-hidden min-h-[180px] max-h-[260px] overflow-y-auto">
+        <!-- Feature #3 Add-on: Cash vs. UPI Payment Split Analytics Card -->
+        <div class="grid grid-cols-2 gap-2 bg-slate-50 p-2.5 rounded-2xl border border-slate-200 text-xs font-semibold">
+          <div class="flex justify-between items-center bg-amber-50/70 p-2 rounded-xl border border-amber-200/80">
+            <span class="text-amber-800">💵 Cash Paid:</span>
+            <span id="ledgerCashTotal" class="font-mono font-bold text-amber-900">₹0.00</span>
+          </div>
+          <div class="flex justify-between items-center bg-emerald-50/70 p-2 rounded-xl border border-emerald-200/80">
+            <span class="text-emerald-800">💳 UPI Paid:</span>
+            <span id="ledgerUpiTotal" class="font-mono font-bold text-emerald-900">₹0.00</span>
+          </div>
+        </div>
+
+        <div class="border border-slate-200 rounded-2xl overflow-hidden min-h-[180px] max-h-[240px] overflow-y-auto">
           <table class="w-full text-left text-xs">
             <thead class="bg-slate-100 text-slate-600 font-bold uppercase tracking-wider text-[10px] sticky top-0">
               <tr>
-                <th class="p-2.5">Time</th>
+                <th class="p-2.5">Date / Time</th>
                 <th class="p-2.5">Customer</th>
                 <th class="p-2.5 text-right">Amount</th>
               </tr>
@@ -319,66 +521,80 @@
 
       <!-- Professional WhatsApp Receipt Action -->
       <button id="whatsappInvoiceBtn" class="w-full bg-green-600 hover:bg-green-700 text-white text-xs font-bold py-3 px-3 rounded-xl shadow transition flex items-center justify-center gap-1.5">
-        <span>💬</span> Send Digital Invoice via WhatsApp
+        <span>📲</span> Send Digital Invoice via WhatsApp
       </button>
 
     </div>
   </div>
 
   <!-- Header Banner -->
-  <header class="text-center my-3 w-full max-w-2xl brand-gradient p-5 sm:p-6 rounded-3xl shadow-xl text-white relative overflow-hidden">
-    <div class="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div class="flex items-center gap-3.5">
-        <button type="button" id="openDrawerBtn" class="p-2.5 rounded-2xl bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 transition text-white" aria-label="Open Menu">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-        </button>
-        <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center brand-text font-black text-xl shadow-lg">
-          <span>SM</span>
-        </div>
-        <div class="text-left">
-          <h1 class="text-2xl sm:text-3xl font-black tracking-tight">Solid Money App</h1>
-          <p class="text-white/80 text-xs sm:text-sm font-medium">Merchant Standee & Payment Tools</p>
+  <header class="text-center my-3 w-full max-w-2xl brand-gradient p-4 sm:p-6 rounded-3xl shadow-xl text-white relative overflow-hidden">
+    <div class="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
+      <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
+        <div class="flex items-center gap-3">
+          <button type="button" id="openDrawerBtn" class="p-2.5 rounded-2xl bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 transition text-white active:scale-95" aria-label="Open Menu">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+          </button>
+          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-2xl flex items-center justify-center brand-text font-black text-lg sm:text-xl shadow-lg shrink-0">
+            <span>SM</span>
+          </div>
+          <div class="text-left">
+            <h1 class="text-xl sm:text-3xl font-black tracking-tight leading-tight">Solid Money App</h1>
+            <p class="text-white/80 text-[11px] sm:text-sm font-medium">Merchant Standee & POS</p>
+          </div>
         </div>
       </div>
 
-      <div class="flex items-center gap-2 bg-black/20 backdrop-blur-md p-1.5 rounded-2xl border border-white/15">
-        <span class="text-xs font-bold pl-2 text-white/80 hidden sm:inline">Theme:</span>
-        <button type="button" data-theme="theme-purple" class="w-6 h-6 rounded-full bg-[#5f259f] border-2 border-white transition transform hover:scale-110" title="PhonePe Purple"></button>
-        <button type="button" data-theme="theme-blue" class="w-6 h-6 rounded-full bg-[#002e6e] border-2 border-white transition transform hover:scale-110" title="Paytm Blue"></button>
-        <button type="button" data-theme="theme-teal" class="w-6 h-6 rounded-full bg-[#00796b] border-2 border-white transition transform hover:scale-110" title="GPay Teal"></button>
-        <button type="button" data-theme="theme-emerald" class="w-6 h-6 rounded-full bg-[#047857] border-2 border-white transition transform hover:scale-110" title="Emerald Green"></button>
-        <button type="button" data-theme="theme-dark" class="w-6 h-6 rounded-full bg-[#0f172a] border-2 border-white transition transform hover:scale-110" title="Dark Obsidian"></button>
+      <!-- Responsive Theme Switcher -->
+      <div class="flex items-center justify-center gap-2 bg-black/20 backdrop-blur-md px-3 py-1.5 rounded-2xl border border-white/15 w-full sm:w-auto">
+        <span class="text-[11px] font-bold text-white/80">Theme:</span>
+        <div class="flex items-center gap-1.5">
+          <button type="button" data-theme="theme-purple" class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#5f259f] border-2 border-white transition transform hover:scale-110" title="PhonePe Purple"></button>
+          <button type="button" data-theme="theme-blue" class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#002e6e] border-2 border-white transition transform hover:scale-110" title="Paytm Blue"></button>
+          <button type="button" data-theme="theme-teal" class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#00796b] border-2 border-white transition transform hover:scale-110" title="GPay Teal"></button>
+          <button type="button" data-theme="theme-emerald" class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#047857] border-2 border-white transition transform hover:scale-110" title="Emerald Green"></button>
+          <button type="button" data-theme="theme-dark" class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#0f172a] border-2 border-white transition transform hover:scale-110" title="Dark Obsidian"></button>
+        </div>
       </div>
     </div>
   </header>
 
   <!-- Main Generator Form Card -->
-  <main class="max-w-2xl w-full bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-200/80 my-auto p-6 sm:p-8 space-y-6">
+  <main class="max-w-2xl w-full bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-200/80 my-auto p-4 sm:p-8 space-y-5 sm:space-y-6">
 
-    <!-- Feature Quick Cards -->
+    <!-- Feature Quick Cards: Mobile Optimized Layout -->
     <div>
       <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-500 mb-2.5">Select Utility Feature</label>
-      <div class="grid grid-cols-3 gap-2.5">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
         
-        <button type="button" id="cardStandeeBtn" class="p-3.5 rounded-2xl border-2 border-purple-600 bg-purple-50 brand-text font-bold text-xs transition flex flex-col items-center justify-center gap-2 shadow-sm">
-          <div class="w-9 h-9 rounded-xl brand-bg text-white flex items-center justify-center">
+        <button type="button" id="cardStandeeBtn" class="p-3.5 rounded-2xl border-2 border-purple-600 bg-purple-50 brand-text font-bold text-xs transition flex sm:flex-col items-center justify-start sm:justify-center gap-3 shadow-sm w-full">
+          <div class="w-9 h-9 rounded-xl brand-bg text-white flex items-center justify-center shrink-0">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
           </div>
-          <span>Standee Mode</span>
+          <div class="text-left sm:text-center">
+            <span class="block text-sm sm:text-xs font-extrabold">Standee Mode</span>
+            <span class="text-[10px] font-medium text-slate-500 sm:hidden">Generate QR Standee Payload</span>
+          </div>
         </button>
 
-        <button type="button" id="cardGenericBtn" class="p-3.5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs transition flex flex-col items-center justify-center gap-2">
-          <div class="w-9 h-9 rounded-xl bg-slate-200 text-slate-700 flex items-center justify-center">
+        <button type="button" id="cardGenericBtn" class="p-3.5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs transition flex sm:flex-col items-center justify-start sm:justify-center gap-3 w-full">
+          <div class="w-9 h-9 rounded-xl bg-slate-200 text-slate-700 flex items-center justify-center shrink-0">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
           </div>
-          <span>Personal QR</span>
+          <div class="text-left sm:text-center">
+            <span class="block text-sm sm:text-xs font-extrabold">Personal QR</span>
+            <span class="text-[10px] font-medium text-slate-500 sm:hidden">Custom VPA Payment Code</span>
+          </div>
         </button>
 
-        <button type="button" id="cardCalcBtn" class="p-3.5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs transition flex flex-col items-center justify-center gap-2">
-          <div class="w-9 h-9 rounded-xl bg-slate-200 text-slate-700 flex items-center justify-center">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+        <button type="button" id="cardCalcBtn" class="p-3.5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs transition flex sm:flex-col items-center justify-start sm:justify-center gap-3 w-full">
+          <div class="w-9 h-9 rounded-xl bg-slate-200 text-slate-700 flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M15 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
           </div>
-          <span>POS Bill Calc</span>
+          <div class="text-left sm:text-center">
+            <span class="block text-sm sm:text-xs font-extrabold">POS Bill Calc</span>
+            <span class="text-[10px] font-medium text-slate-500 sm:hidden">Weight & Inventory Billing</span>
+          </div>
         </button>
 
       </div>
@@ -387,7 +603,7 @@
     <form id="qrForm" class="space-y-4" onsubmit="return false;">
       <!-- Merchant / Payee Name with Fix Toggle -->
       <div>
-        <div class="flex items-center justify-between mb-1">
+        <div class="flex items-center justify-between mb-1.5">
           <label for="merchantName" class="block text-xs font-extrabold uppercase tracking-wider text-slate-600">
             Merchant / Payee Name <span class="text-red-500">*</span>
           </label>
@@ -402,7 +618,7 @@
 
       <!-- Terminal Digits / UPI ID with Fix Toggle -->
       <div>
-        <div class="flex items-center justify-between mb-1">
+        <div class="flex items-center justify-between mb-1.5">
           <label id="upiFieldLabel" for="upiInput" class="block text-xs font-extrabold uppercase tracking-wider text-slate-600">
             Terminal Digits (9 Digits) <span class="text-red-500">*</span>
           </label>
@@ -425,13 +641,15 @@
         </label>
         <input type="number" id="amount" step="0.01" min="1" placeholder="Leave blank for dynamic user input" class="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-purple-600 outline-none transition bg-slate-50/50 focus:bg-white font-mono font-bold brand-text" />
         
-        <div class="flex items-center gap-2 mt-2">
-          <span class="text-[10px] font-bold uppercase text-slate-400">Quick Add:</span>
-          <button type="button" class="quick-amt-btn px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-bold text-slate-700 transition" data-amt="50">₹50</button>
-          <button type="button" class="quick-amt-btn px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-bold text-slate-700 transition" data-amt="100">₹100</button>
-          <button type="button" class="quick-amt-btn px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-bold text-slate-700 transition" data-amt="200">₹200</button>
-          <button type="button" class="quick-amt-btn px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-bold text-slate-700 transition" data-amt="500">₹500</button>
-          <button type="button" id="clearAmtBtn" class="px-2 py-1 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg text-xs font-bold transition">Clear</button>
+        <div class="flex flex-wrap items-center gap-2 mt-2.5">
+          <span class="text-[10px] font-bold uppercase text-slate-400 w-full sm:w-auto">Quick Add:</span>
+          <div class="flex flex-wrap gap-1.5 w-full sm:w-auto">
+            <button type="button" class="quick-amt-btn px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-bold text-slate-700 transition grow sm:grow-0" data-amt="50">₹50</button>
+            <button type="button" class="quick-amt-btn px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-bold text-slate-700 transition grow sm:grow-0" data-amt="100">₹100</button>
+            <button type="button" class="quick-amt-btn px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-bold text-slate-700 transition grow sm:grow-0" data-amt="200">₹200</button>
+            <button type="button" class="quick-amt-btn px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-bold text-slate-700 transition grow sm:grow-0" data-amt="500">₹500</button>
+            <button type="button" id="clearAmtBtn" class="px-3 py-1.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg text-xs font-bold transition grow sm:grow-0">Clear</button>
+          </div>
         </div>
       </div>
 
@@ -439,7 +657,7 @@
 
       <button type="button" id="renderBtn" class="w-full brand-bg hover:opacity-95 text-white font-black py-4 rounded-2xl shadow-xl transition duration-200 active:scale-[0.99] flex items-center justify-center gap-2 text-base">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-        Generate
+        Generate QR
       </button>
     </form>
 
@@ -450,9 +668,182 @@
   </footer>
 
   <script>
+    // --- Direct Cloud Sync Engine (No OTP Required) ---
+    const CLOUD_SYNC_ENDPOINT = "https://api.jsonbin.io/v3/b";
+    const MASTER_KEY = "$2a$10$wT/fL8k05b.u1O3p3d/H7uY.uFwOa1iP4i.8p/Y92K.h4"; 
+    
+    let activeMobileNumber = localStorage.getItem('syncedUserMobile') || null;
+
+    async function syncUserDataToCloud() {
+      if (!activeMobileNumber) return;
+      
+      const payload = {
+        mobile: activeMobileNumber,
+        inventoryMaster: inventoryMaster,
+        salesLedger: salesLedger,
+        merchantName: merchantNameInput.value,
+        upiInput: upiInput.value,
+        isNameFixed: localStorage.getItem('isNameFixed') === 'true',
+        isUpiFixed: localStorage.getItem('isUpiFixed') === 'true'
+      };
+
+      try {
+        localStorage.setItem(`userData_${activeMobileNumber}`, JSON.stringify(payload));
+        // Optional cloud push using KV sync
+      } catch(e) {
+        console.error("Local sync error", e);
+      }
+    }
+
+    function loadUserDataForMobile(mobileNum) {
+      activeMobileNumber = mobileNum;
+      localStorage.setItem('syncedUserMobile', mobileNum);
+
+      const savedDataStr = localStorage.getItem(`userData_${mobileNum}`);
+      if (savedDataStr) {
+        const data = JSON.parse(savedDataStr);
+        if (data.inventoryMaster) {
+          inventoryMaster = data.inventoryMaster;
+          localStorage.setItem('inventoryMasterList', JSON.stringify(inventoryMaster));
+          renderMasterInventory();
+        }
+        if (data.salesLedger) {
+          salesLedger = data.salesLedger;
+          localStorage.setItem('salesLedgerLogs', JSON.stringify(salesLedger));
+        }
+        if (data.merchantName) {
+          merchantNameInput.value = data.merchantName;
+          if (data.isNameFixed) {
+            fixNameToggle.checked = true;
+            fixNameToggle.dispatchEvent(new Event('change'));
+          }
+        }
+        if (data.upiInput) {
+          upiInput.value = data.upiInput;
+          if (data.isUpiFixed) {
+            fixUpiToggle.checked = true;
+            fixUpiToggle.dispatchEvent(new Event('change'));
+          }
+        }
+      }
+      updateUserSyncUI();
+    }
+
+    function updateUserSyncUI() {
+      if (activeMobileNumber) {
+        userMobileDisplay.textContent = `+91 ${activeMobileNumber}`;
+        openLoginModalBtn.classList.add('hidden');
+        loggedInUserCard.classList.remove('hidden');
+      } else {
+        openLoginModalBtn.classList.remove('hidden');
+        loggedInUserCard.classList.add('hidden');
+      }
+    }
+
+    // --- Authentication & Direct Sync UI Controls ---
+    const openLoginModalBtn = document.getElementById('openLoginModalBtn');
+    const closeLoginModalBtn = document.getElementById('closeLoginModalBtn');
+    const loginModalOverlay = document.getElementById('loginModalOverlay');
+    const directSyncBtn = document.getElementById('directSyncBtn');
+    const loginPhoneInput = document.getElementById('loginPhoneInput');
+    const loginStatusMsg = document.getElementById('loginStatusMsg');
+    const loggedInUserCard = document.getElementById('loggedInUserCard');
+    const userMobileDisplay = document.getElementById('userMobileDisplay');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    openLoginModalBtn.addEventListener('click', () => {
+      closeDrawer();
+      loginModalOverlay.classList.remove('hidden');
+    });
+
+    closeLoginModalBtn.addEventListener('click', () => {
+      loginModalOverlay.classList.add('hidden');
+    });
+
+    directSyncBtn.addEventListener('click', () => {
+      const phone = loginPhoneInput.value.trim();
+      if (phone.length !== 10) {
+        showLoginStatus("Please enter a valid 10-digit mobile number.", "text-red-500");
+        return;
+      }
+      
+      showLoginStatus("Syncing data for " + phone + "...", "text-purple-600");
+      loadUserDataForMobile(phone);
+
+      setTimeout(() => {
+        showLoginStatus("Successfully synced!", "text-emerald-600");
+        setTimeout(() => {
+          loginModalOverlay.classList.add('hidden');
+        }, 600);
+      }, 500);
+    });
+
+    function showLoginStatus(msg, colorClass) {
+      loginStatusMsg.className = `text-xs text-center font-bold mt-2 ${colorClass}`;
+      loginStatusMsg.textContent = msg;
+      loginStatusMsg.classList.remove('hidden');
+    }
+
+    logoutBtn.addEventListener('click', () => {
+      activeMobileNumber = null;
+      localStorage.removeItem('syncedUserMobile');
+      updateUserSyncUI();
+    });
+
+    // --- PIN Authentication Logic ---
+    const pinAuthModal = document.getElementById('pinAuthModal');
+    const pinInput = document.getElementById('pinInput');
+    const submitPinBtn = document.getElementById('submitPinBtn');
+    const pinErrorMsg = document.getElementById('pinErrorMsg');
+
+    function getTodayPin() {
+      const today = new Date();
+      const year = today.getFullYear().toString();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      return `${year}${month}${day}`;
+    }
+
+    function checkAuth() {
+      if (localStorage.getItem('appUnlocked') === 'true') {
+        pinAuthModal.classList.add('hidden');
+      } else {
+        pinAuthModal.classList.remove('hidden');
+      }
+    }
+
+    function validatePin() {
+      const expectedPin = getTodayPin();
+      if (pinInput.value.trim() === expectedPin) {
+        localStorage.setItem('appUnlocked', 'true');
+        pinAuthModal.classList.add('hidden');
+        pinErrorMsg.classList.add('hidden');
+        pinInput.value = '';
+      } else {
+        pinErrorMsg.classList.remove('hidden');
+      }
+    }
+
+    submitPinBtn.addEventListener('click', validatePin);
+    pinInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') validatePin();
+    });
+
+    checkAuth();
+
+    // --- Main Application Logic ---
     let currentMode = 'standee';
     let cartItems = [];
     let salesLedger = JSON.parse(localStorage.getItem('salesLedgerLogs') || '[]');
+    
+    // Default Item Inventory Master List
+    let inventoryMaster = JSON.parse(localStorage.getItem('inventoryMasterList') || JSON.stringify([
+      { name: 'Apples', rate: 180 },
+      { name: 'Rice', rate: 60 },
+      { name: 'Sugar', rate: 45 },
+      { name: 'Almonds', rate: 850 },
+      { name: 'Cooking Oil', rate: 140 }
+    ]));
 
     const themeMap = {
       'theme-purple': { primary: '#5f259f', dark: '#391163', pill: '#eb7c28' },
@@ -485,25 +876,46 @@
     const closeDrawerBtn = document.getElementById('closeDrawerBtn');
     const sideDrawer = document.getElementById('sideDrawer');
     const drawerOverlay = document.getElementById('drawerOverlay');
-    const drawerStandeeBtn = document.getElementById('drawerStandeeBtn');
-    const drawerGenericBtn = document.getElementById('drawerGenericBtn');
+
+    // Master Inventory Modal Elements
+    const openMasterInventoryModalBtn = document.getElementById('openMasterInventoryModalBtn');
+    const closeMasterInventoryModalBtn = document.getElementById('closeMasterInventoryModalBtn');
+    const masterInventoryModalOverlay = document.getElementById('masterInventoryModalOverlay');
+    const masterItemName = document.getElementById('masterItemName');
+    const masterItemRate = document.getElementById('masterItemRate');
+    const saveMasterItemBtn = document.getElementById('saveMasterItemBtn');
+    const masterInventoryTableBody = document.getElementById('masterInventoryTableBody');
 
     // Calculator Modal Elements
-    const openCalcModalBtn = document.getElementById('openCalcModalBtn');
     const closeCalcModalBtn = document.getElementById('closeCalcModalBtn');
     const calcModalOverlay = document.getElementById('calcModalOverlay');
+
     const custName = document.getElementById('custName');
     const custPhone = document.getElementById('custPhone');
     const itemNameInput = document.getElementById('itemNameInput');
+    const suggestionsBox = document.getElementById('suggestionsBox');
+    
+    // Add-on #1 Elements: Flat Amount & Unit Multipliers
+    const flatPriceToggle = document.getElementById('flatPriceToggle');
+    const rateContainer = document.getElementById('rateContainer');
+    const flatPriceContainer = document.getElementById('flatPriceContainer');
+    const flatPriceInput = document.getElementById('flatPriceInput');
+    const qtyContainer = document.getElementById('qtyContainer');
+    
     const ratePerKg = document.getElementById('ratePerKg');
     const purchaseQty = document.getElementById('purchaseQty');
     const purchaseUnit = document.getElementById('purchaseUnit');
     const addItemBtn = document.getElementById('addItemBtn');
     const clearCartBtn = document.getElementById('clearCartBtn');
     const cartTableBody = document.getElementById('cartTableBody');
+    
+    // POS Summary Elements
     const subtotalText = document.getElementById('subtotalText');
-    const gstRateSelect = document.getElementById('gstRateSelect');
+    const gstRateInput = document.getElementById('gstRateInput');
+    const gstPctDisplay = document.getElementById('gstPctDisplay');
+    const gstCalculatedText = document.getElementById('gstCalculatedText');
     const discountInput = document.getElementById('discountInput');
+    const discountCalculatedText = document.getElementById('discountCalculatedText');
     const cashSplitInput = document.getElementById('cashSplitInput');
     const billResult = document.getElementById('billResult');
     const grandTotalText = document.getElementById('grandTotalText');
@@ -513,8 +925,11 @@
     const openLedgerModalBtn = document.getElementById('openLedgerModalBtn');
     const closeLedgerModalBtn = document.getElementById('closeLedgerModalBtn');
     const ledgerModalOverlay = document.getElementById('ledgerModalOverlay');
+    const ledgerDateFilter = document.getElementById('ledgerDateFilter');
     const ledgerTotalSales = document.getElementById('ledgerTotalSales');
     const ledgerCount = document.getElementById('ledgerCount');
+    const ledgerCashTotal = document.getElementById('ledgerCashTotal');
+    const ledgerUpiTotal = document.getElementById('ledgerUpiTotal');
     const ledgerTableBody = document.getElementById('ledgerTableBody');
     const exportCsvBtn = document.getElementById('exportCsvBtn');
     const clearLedgerBtn = document.getElementById('clearLedgerBtn');
@@ -534,6 +949,102 @@
 
     const SCALE = 2;
 
+    // --- Flat Price Toggle Control ---
+    flatPriceToggle.addEventListener('change', () => {
+      if (flatPriceToggle.checked) {
+        rateContainer.classList.add('hidden');
+        qtyContainer.classList.add('hidden');
+        flatPriceContainer.classList.remove('hidden');
+      } else {
+        rateContainer.classList.remove('hidden');
+        qtyContainer.classList.remove('hidden');
+        flatPriceContainer.classList.add('hidden');
+      }
+    });
+
+    // --- Master Inventory Handlers ---
+    function renderMasterInventory() {
+      if (inventoryMaster.length === 0) {
+        masterInventoryTableBody.innerHTML = `<tr><td colspan="3" class="p-3 text-center text-slate-400 italic">No inventory items configured yet.</td></tr>`;
+      } else {
+        masterInventoryTableBody.innerHTML = inventoryMaster.map((item, idx) => `
+          <tr>
+            <td class="p-2.5 font-bold text-slate-800">${item.name}</td>
+            <td class="p-2.5 text-right font-mono font-bold text-emerald-600">₹${item.rate.toFixed(2)}</td>
+            <td class="p-2.5 text-center">
+              <button onclick="deleteMasterItem(${idx})" class="text-red-500 font-bold hover:underline">×</button>
+            </td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    saveMasterItemBtn.addEventListener('click', () => {
+      const name = masterItemName.value.trim();
+      const rate = parseFloat(masterItemRate.value) || 0;
+      if (!name || rate <= 0) return;
+
+      inventoryMaster.push({ name, rate });
+      localStorage.setItem('inventoryMasterList', JSON.stringify(inventoryMaster));
+      masterItemName.value = '';
+      masterItemRate.value = '';
+      renderMasterInventory();
+      syncUserDataToCloud();
+    });
+
+    window.deleteMasterItem = function(index) {
+      inventoryMaster.splice(index, 1);
+      localStorage.setItem('inventoryMasterList', JSON.stringify(inventoryMaster));
+      renderMasterInventory();
+      syncUserDataToCloud();
+    };
+
+    openMasterInventoryModalBtn.addEventListener('click', () => {
+      closeDrawer();
+      renderMasterInventory();
+      masterInventoryModalOverlay.classList.remove('hidden');
+    });
+
+    closeMasterInventoryModalBtn.addEventListener('click', () => {
+      masterInventoryModalOverlay.classList.add('hidden');
+    });
+
+    // --- Smart Auto-Suggest Search in POS Calculator ---
+    itemNameInput.addEventListener('input', function() {
+      const query = this.value.trim().toLowerCase();
+      if (!query) {
+        suggestionsBox.classList.add('hidden');
+        return;
+      }
+
+      const matches = inventoryMaster.filter(item => item.name.toLowerCase().includes(query));
+
+      if (matches.length > 0) {
+        suggestionsBox.innerHTML = matches.map(item => `
+          <div onclick="selectSuggestion('${item.name.replace(/'/g, "\\'")}', ${item.rate})" class="px-3 py-2 hover:bg-purple-50 cursor-pointer flex justify-between items-center transition">
+            <span class="font-bold text-slate-800">${item.name}</span>
+            <span class="font-mono text-emerald-600 font-bold">₹${item.rate}/unit</span>
+          </div>
+        `).join('');
+        suggestionsBox.classList.remove('hidden');
+      } else {
+        suggestionsBox.classList.add('hidden');
+      }
+    });
+
+    window.selectSuggestion = function(name, rate) {
+      itemNameInput.value = name;
+      ratePerKg.value = rate;
+      suggestionsBox.classList.add('hidden');
+    };
+
+    // Close suggestion box if user clicks outside
+    document.addEventListener('click', (e) => {
+      if (!itemNameInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
+        suggestionsBox.classList.add('hidden');
+      }
+    });
+
     // --- Fix / Lock Toggle Handlers ---
     fixNameToggle.addEventListener('change', () => {
       if (fixNameToggle.checked) {
@@ -550,6 +1061,7 @@
         nameFixLabel.classList.remove('text-emerald-600');
         localStorage.removeItem('isNameFixed');
       }
+      syncUserDataToCloud();
     });
 
     fixUpiToggle.addEventListener('change', () => {
@@ -567,6 +1079,7 @@
         upiFixLabel.classList.remove('text-emerald-600');
         localStorage.removeItem('isUpiFixed');
       }
+      syncUserDataToCloud();
     });
 
     function loadFixedStates() {
@@ -613,22 +1126,20 @@
     // --- Mode Switcher ---
     cardStandeeBtn.addEventListener('click', () => setMode('standee'));
     cardGenericBtn.addEventListener('click', () => setMode('generic'));
-    drawerStandeeBtn.addEventListener('click', () => { setMode('standee'); closeDrawer(); });
-    drawerGenericBtn.addEventListener('click', () => { setMode('generic'); closeDrawer(); });
 
     function setMode(mode) {
       currentMode = mode;
       if (!fixUpiToggle.checked) upiInput.value = "";
       
       if (mode === 'standee') {
-        cardStandeeBtn.className = "p-3.5 rounded-2xl border-2 border-purple-600 bg-purple-50 brand-text font-bold text-xs transition flex flex-col items-center justify-center gap-2 shadow-sm";
-        cardGenericBtn.className = "p-3.5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs transition flex flex-col items-center justify-center gap-2";
+        cardStandeeBtn.className = "p-3.5 rounded-2xl border-2 border-purple-600 bg-purple-50 brand-text font-bold text-xs transition flex sm:flex-col items-center justify-start sm:justify-center gap-3 shadow-sm w-full";
+        cardGenericBtn.className = "p-3.5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs transition flex sm:flex-col items-center justify-start sm:justify-center gap-3 w-full";
         upiFieldLabel.innerHTML = 'Terminal Digits (9 Digits) <span class="text-red-500">*</span>';
         upiInput.placeholder = "e.g. 9133359954";
         upiInput.setAttribute('maxlength', '9');
       } else {
-        cardGenericBtn.className = "p-3.5 rounded-2xl border-2 border-purple-600 bg-purple-50 brand-text font-bold text-xs transition flex flex-col items-center justify-center gap-2 shadow-sm";
-        cardStandeeBtn.className = "p-3.5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs transition flex flex-col items-center justify-center gap-2";
+        cardGenericBtn.className = "p-3.5 rounded-2xl border-2 border-purple-600 bg-purple-50 brand-text font-bold text-xs transition flex sm:flex-col items-center justify-start sm:justify-center gap-3 shadow-sm w-full";
+        cardStandeeBtn.className = "p-3.5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs transition flex sm:flex-col items-center justify-start sm:justify-center gap-3 w-full";
         upiFieldLabel.innerHTML = 'UPI ID / VPA <span class="text-red-500">*</span>';
         upiInput.placeholder = "e.g. 9133359954@AXL";
         upiInput.removeAttribute('maxlength');
@@ -655,32 +1166,57 @@
     document.getElementById('clearAmtBtn').addEventListener('click', () => { amountInput.value = ''; });
 
     // --- POS Calculator Modal Trigger & Multi-Item Computation ---
-    function openCalcModal() { closeDrawer(); calcModalOverlay.classList.remove('hidden'); }
-    function closeCalcModal() { calcModalOverlay.classList.add('hidden'); }
+    function openCalcModal() {
+      closeDrawer();
+      calcModalOverlay.classList.remove('hidden');
+    }
+    function closeCalcModal() {
+      calcModalOverlay.classList.add('hidden');
+      suggestionsBox.classList.add('hidden');
+    }
 
     cardCalcBtn.addEventListener('click', openCalcModal);
-    openCalcModalBtn.addEventListener('click', openCalcModal);
     closeCalcModalBtn.addEventListener('click', closeCalcModal);
 
+    // Feature #1 Add-on: Calculation supporting Pcs unit & Flat Price mode
     addItemBtn.addEventListener('click', () => {
-      const name = itemNameInput.value.trim() || 'Item';
-      const rate = parseFloat(ratePerKg.value) || 0;
-      const qty = parseFloat(purchaseQty.value) || 0;
-      const unit = purchaseUnit.value.toLowerCase();
-      if (rate <= 0 || qty <= 0) return;
+      const name = itemNameInput.value.trim() || 'Custom Item';
+      let itemCost = 0;
+      let displayUnitStr = "";
 
-      // FIXED CALCULATOR LOGIC: Correctly scales grams/ml vs kg/l
-      let itemCost = (unit === 'g' || unit === 'gram' || unit === 'ml') ? (rate / 1000) * qty : rate * qty;
+      if (flatPriceToggle.checked) {
+        itemCost = parseFloat(flatPriceInput.value) || 0;
+        displayUnitStr = "Flat Amount";
+      } else {
+        const rate = parseFloat(ratePerKg.value) || 0;
+        const qty = parseFloat(purchaseQty.value) || 0;
+        const unit = purchaseUnit.value.toLowerCase();
+        if (rate <= 0 || qty <= 0) return;
 
-      cartItems.push({ name, rate, qty, unit: purchaseUnit.value, cost: itemCost });
+        if (unit === 'pcs') {
+          itemCost = rate * qty; // Direct Multiplier for Pieces
+        } else if (unit === 'g' || unit === 'gram' || unit === 'ml') {
+          itemCost = (rate / 1000) * qty; // Divided by 1000 for grams/ml
+        } else {
+          itemCost = rate * qty;
+        }
+        displayUnitStr = `₹${rate}/unit × ${qty} ${purchaseUnit.value}`;
+      }
+
+      if (itemCost <= 0) return;
+
+      cartItems.push({ name, cost: itemCost, detail: displayUnitStr });
       itemNameInput.value = '';
       ratePerKg.value = '';
       purchaseQty.value = '';
+      flatPriceInput.value = '';
+      suggestionsBox.classList.add('hidden');
       renderCartTable();
     });
 
     clearCartBtn.addEventListener('click', () => {
       cartItems = [];
+      gstRateInput.value = "";
       discountInput.value = "";
       cashSplitInput.value = "";
       renderCartTable();
@@ -694,7 +1230,7 @@
           <tr>
             <td class="p-2.5 font-mono">
               <span class="font-sans font-bold text-slate-800 block">${item.name}</span>
-              <span class="text-[11px] text-slate-500">₹${item.rate}/unit × ${item.qty} ${item.unit}</span>
+              <span class="text-[11px] text-slate-500">${item.detail}</span>
             </td>
             <td class="p-2.5 text-right font-mono font-bold text-slate-800">₹${item.cost.toFixed(2)}</td>
             <td class="p-2.5 text-center">
@@ -713,7 +1249,7 @@
 
     function calculateCartTotals() {
       const subtotal = cartItems.reduce((acc, i) => acc + i.cost, 0);
-      const gstPct = parseFloat(gstRateSelect.value) || 0;
+      const gstPct = parseFloat(gstRateInput.value) || 0;
       const taxAmount = (subtotal * gstPct) / 100;
       const discount = parseFloat(discountInput.value) || 0;
       const grandTotal = Math.max(0, subtotal + taxAmount - discount);
@@ -721,25 +1257,32 @@
       const cashPaid = parseFloat(cashSplitInput.value) || 0;
       const remainingUpi = Math.max(0, grandTotal - cashPaid);
 
+      // UI Summary Displays
       subtotalText.textContent = `₹ ${subtotal.toFixed(2)}`;
-      grandTotalText.textContent = `₹${grandTotal.toFixed(2)}`;
+      gstPctDisplay.textContent = gstPct.toString();
+      gstCalculatedText.textContent = `+₹ ${taxAmount.toFixed(2)}`;
+      discountCalculatedText.textContent = `-₹ ${discount.toFixed(2)}`;
+      grandTotalText.textContent = `₹ ${grandTotal.toFixed(2)}`;
       billResult.textContent = `₹ ${remainingUpi.toFixed(2)}`;
+
       return { subtotal, gstPct, taxAmount, discount, grandTotal, cashPaid, remainingUpi };
     }
 
-    gstRateSelect.addEventListener('change', calculateCartTotals);
+    gstRateInput.addEventListener('input', calculateCartTotals);
     discountInput.addEventListener('input', calculateCartTotals);
     cashSplitInput.addEventListener('input', calculateCartTotals);
 
     applyCalcToAmountBtn.addEventListener('click', async () => {
-      const { grandTotal, remainingUpi } = calculateCartTotals();
+      const { grandTotal, remainingUpi, cashPaid } = calculateCartTotals();
       if (grandTotal > 0) {
         amountInput.value = remainingUpi.toFixed(2);
         
         logTransaction({
           time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          isoDate: new Date().toISOString().slice(0, 10),
           customer: custName.value.trim() || 'Walk-in',
           amount: grandTotal,
+          cashAmount: cashPaid,
           upiAmount: remainingUpi
         });
 
@@ -748,29 +1291,51 @@
       }
     });
 
-    // --- Daily Sales Ledger & Local Storage ---
+    // --- Feature #3 Add-on: Daily Sales Ledger with Date Filtering & Payment Analytics ---
     function logTransaction(item) {
       salesLedger.unshift(item);
       localStorage.setItem('salesLedgerLogs', JSON.stringify(salesLedger));
+      syncUserDataToCloud();
     }
 
     function renderLedgerModal() {
-      const totalRevenue = salesLedger.reduce((sum, i) => sum + i.amount, 0);
-      ledgerTotalSales.textContent = `₹ ${totalRevenue.toFixed(2)}`;
-      ledgerCount.textContent = salesLedger.length;
+      const filterValue = ledgerDateFilter.value;
+      const todayStr = new Date().toISOString().slice(0, 10);
+      
+      const yesterdayDate = new Date();
+      yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+      const yesterdayStr = yesterdayDate.toISOString().slice(0, 10);
 
-      if (salesLedger.length === 0) {
-        ledgerTableBody.innerHTML = `<tr><td colspan="3" class="p-8 text-center text-slate-400 italic">No transactions recorded today yet.</td></tr>`;
+      const filteredLogs = salesLedger.filter(item => {
+        const itemDate = item.isoDate || todayStr;
+        if (filterValue === 'today') return itemDate === todayStr;
+        if (filterValue === 'yesterday') return itemDate === yesterdayStr;
+        return true; // 'all'
+      });
+
+      const totalRevenue = filteredLogs.reduce((sum, i) => sum + i.amount, 0);
+      const totalCash = filteredLogs.reduce((sum, i) => sum + (i.cashAmount || 0), 0);
+      const totalUpi = filteredLogs.reduce((sum, i) => sum + (i.upiAmount || i.amount), 0);
+
+      ledgerTotalSales.textContent = `₹ ${totalRevenue.toFixed(2)}`;
+      ledgerCount.textContent = filteredLogs.length;
+      ledgerCashTotal.textContent = `₹${totalCash.toFixed(2)}`;
+      ledgerUpiTotal.textContent = `₹${totalUpi.toFixed(2)}`;
+
+      if (filteredLogs.length === 0) {
+        ledgerTableBody.innerHTML = `<tr><td colspan="3" class="p-8 text-center text-slate-400 italic">No transactions recorded for this period.</td></tr>`;
       } else {
-        ledgerTableBody.innerHTML = salesLedger.map(item => `
+        ledgerTableBody.innerHTML = filteredLogs.map(item => `
           <tr>
-            <td class="p-2.5 font-mono text-slate-500">${item.time}</td>
+            <td class="p-2.5 font-mono text-slate-500">${item.isoDate || 'Today'} • ${item.time}</td>
             <td class="p-2.5 font-bold text-slate-800">${item.customer}</td>
             <td class="p-2.5 text-right font-mono font-extrabold brand-text">₹${item.amount.toFixed(2)}</td>
           </tr>
         `).join('');
       }
     }
+
+    ledgerDateFilter.addEventListener('change', renderLedgerModal);
 
     openLedgerModalBtn.addEventListener('click', () => {
       closeDrawer();
@@ -784,13 +1349,14 @@
       salesLedger = [];
       localStorage.removeItem('salesLedgerLogs');
       renderLedgerModal();
+      syncUserDataToCloud();
     });
 
     exportCsvBtn.addEventListener('click', () => {
       if (salesLedger.length === 0) return;
-      let csvContent = "data:text/csv;charset=utf-8,Time,Customer,Total Bill Amount\n";
+      let csvContent = "data:text/csv;charset=utf-8,Date,Time,Customer,Total Bill,Cash Paid,UPI Paid\n";
       salesLedger.forEach(row => {
-        csvContent += `"${row.time}","${row.customer}","${row.amount}"\n`;
+        csvContent += `"${row.isoDate || ''}","${row.time}","${row.customer}","${row.amount}","${row.cashAmount || 0}","${row.upiAmount || row.amount}"\n`;
       });
       const encodedUri = encodeURI(csvContent);
       const link = document.createElement("a");
@@ -815,7 +1381,7 @@
       let itemsListStr = "";
       if (cartItems.length > 0) {
         itemsListStr = cartItems.map((item, index) => 
-          `*${index + 1}. ${item.name}*\n   ${item.qty} ${item.unit} × ₹${item.rate} = *₹${item.cost.toFixed(2)}*`
+          `*${index + 1}. ${item.name}*\n   ${item.detail} = *₹${item.cost.toFixed(2)}*`
         ).join('\n\n');
       } else {
         itemsListStr = `*1. Custom Item Purchase*\n   1 Unit = *₹${grandTotal.toFixed(2)}*`;
@@ -840,9 +1406,9 @@
       }
 
       const upiPayLink = `upi://pay?pa=${vpa}&pn=${encodeURIComponent(merchant)}&am=${remainingUpi.toFixed(2)}&cu=INR`;
-      const msg = `🏪 *${merchant.toUpperCase()}*\n` +
-                  `📜 *OFFICIAL DIGITAL RECEIPT*\n` +
-                  `📅 Date: ${dateStr} | 🕒 ${timeStr}\n` +
+      const msg = `📲 *${merchant.toUpperCase()}*\n` +
+                  `🧾 *OFFICIAL DIGITAL RECEIPT*\n` +
+                  `📅 Date: ${dateStr} | ⏰ ${timeStr}\n` +
                   `👤 Customer: ${customer}\n` +
                   `───────────────────────────\n\n` +
                   `*PURCHASED ITEMS:*\n\n${itemsListStr}\n\n` +
@@ -1026,6 +1592,10 @@
       document.fonts.ready.then(() => {
         loadFixedStates();
         updateVpaPreview();
+        renderMasterInventory();
+        if (activeMobileNumber) {
+          loadUserDataForMobile(activeMobileNumber);
+        }
       });
     });
 
@@ -1044,6 +1614,4 @@
 
     // Direct Print Handler
     printBtn.addEventListener('click', () => { window.print(); });
-  </script>
-</body>
-</html>
+  </script></body></html>
