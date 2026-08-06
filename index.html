@@ -1,4 +1,6 @@
-<!DOCTYPE html><html lang="en"><head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Solid Money App - Merchant Standee & Billing POS Suite</title>
@@ -50,7 +52,9 @@
       #printableArea, #printableArea * { visibility: visible; }
       #printableArea { position: absolute; left: 0; top: 0; width: 100%; display: flex; justify-content: center; }
     }
-  </style></head><body class="theme-purple bg-slate-900/5 text-slate-800 min-h-screen flex flex-col items-center justify-between p-3 sm:p-6 antialiased selection:bg-purple-500 selection:text-white">
+  </style>
+</head>
+<body class="theme-purple bg-slate-900/5 text-slate-800 min-h-screen flex flex-col items-center justify-between p-3 sm:p-6 antialiased selection:bg-purple-500 selection:text-white">
 
   <!-- PIN Authentication Modal Overlay -->
   <div id="pinAuthModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 z-[100]">
@@ -101,7 +105,7 @@
           </div>
         </div>
         <button type="button" id="directSyncBtn" class="w-full brand-bg hover:opacity-90 text-white font-bold py-3 rounded-2xl text-xs shadow-md transition flex items-center justify-center gap-2">
-          <span>🔄</span> Direct Sync & Restore
+          <span>📱</span> Direct Sync & Restore
         </button>
       </div>
 
@@ -272,7 +276,6 @@
           <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">
             Item Name <span class="text-slate-400 font-normal">(Type to search)</span>
           </label>
-          <!-- Feature #1 Add-on: Direct Flat Amount Toggle -->
           <label class="flex items-center gap-1.5 cursor-pointer text-xs font-bold text-slate-600 select-none">
             <span class="text-[10px] uppercase text-purple-700 font-extrabold">Flat Amount (₹)</span>
             <input type="checkbox" id="flatPriceToggle" class="sr-only peer">
@@ -296,7 +299,7 @@
             <input type="number" id="ratePerKg" placeholder="e.g. 120" step="0.01" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm font-mono outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
           </div>
 
-          <!-- Feature #1 Add-on: Direct Flat Amount Container -->
+          <!-- Direct Flat Amount Container -->
           <div id="flatPriceContainer" class="col-span-10 hidden">
             <label class="text-[10px] font-bold uppercase tracking-wider text-purple-700 block mb-1">Direct Total Cost (₹)</label>
             <input type="number" id="flatPriceInput" placeholder="e.g. 50" step="0.01" class="w-full px-3 py-2 border border-purple-300 rounded-xl text-sm font-mono font-bold text-purple-900 outline-none focus:ring-2 focus:ring-purple-600 bg-purple-50/30" />
@@ -306,7 +309,7 @@
             <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Qty / Weight</label>
             <div class="flex">
               <input type="number" id="purchaseQty" placeholder="e.g. 500" step="0.01" class="w-full px-2 py-2 border border-r-0 border-slate-300 rounded-l-xl text-sm font-mono outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
-              <select id="purchaseUnit" class="bg-slate-100 border border-slate-300 rounded-r-xl px-1.5 text-xs font-bold text-slate-700 outline-none">
+              <select id="purchaseUnit" class="bg-slate-100 border border-slate-300 rounded-r-xl px-2 text-xs font-bold text-slate-700 outline-none">
                 <option value="g">G</option>
                 <option value="kg">KG</option>
                 <option value="pcs">Pcs</option>
@@ -430,7 +433,7 @@
 
       <div class="p-4 sm:p-6 space-y-4 overflow-y-auto grow">
 
-        <!-- Feature #3 Add-on: Date Range Filter Bar -->
+        <!-- Date Range Filter Bar -->
         <div class="flex items-center justify-between bg-slate-50 p-2.5 rounded-2xl border border-slate-200">
           <span class="text-xs font-bold text-slate-600 uppercase tracking-wider">Filter Date:</span>
           <select id="ledgerDateFilter" class="px-3 py-1.5 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-purple-600">
@@ -451,7 +454,7 @@
           </div>
         </div>
 
-        <!-- Feature #3 Add-on: Cash vs. UPI Payment Split Analytics Card -->
+        <!-- Cash vs. UPI Payment Split Analytics Card -->
         <div class="grid grid-cols-2 gap-2 bg-slate-50 p-2.5 rounded-2xl border border-slate-200 text-xs font-semibold">
           <div class="flex justify-between items-center bg-amber-50/70 p-2 rounded-xl border border-amber-200/80">
             <span class="text-amber-800">💵 Cash Paid:</span>
@@ -521,7 +524,7 @@
 
       <!-- Professional WhatsApp Receipt Action -->
       <button id="whatsappInvoiceBtn" class="w-full bg-green-600 hover:bg-green-700 text-white text-xs font-bold py-3 px-3 rounded-xl shadow transition flex items-center justify-center gap-1.5">
-        <span>📲</span> Send Digital Invoice via WhatsApp
+        <span>💬</span> Send Digital Invoice via WhatsApp
       </button>
 
     </div>
@@ -589,7 +592,7 @@
 
         <button type="button" id="cardCalcBtn" class="p-3.5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs transition flex sm:flex-col items-center justify-start sm:justify-center gap-3 w-full">
           <div class="w-9 h-9 rounded-xl bg-slate-200 text-slate-700 flex items-center justify-center shrink-0">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M15 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
           </div>
           <div class="text-left sm:text-center">
             <span class="block text-sm sm:text-xs font-extrabold">POS Bill Calc</span>
@@ -668,15 +671,11 @@
   </footer>
 
   <script>
-    // --- Direct Cloud Sync Engine (No OTP Required) ---
-    const CLOUD_SYNC_ENDPOINT = "https://api.jsonbin.io/v3/b";
-    const MASTER_KEY = "$2a$10$wT/fL8k05b.u1O3p3d/H7uY.uFwOa1iP4i.8p/Y92K.h4"; 
-    
+    // --- DIRECT LOCAL & CLOUD SYNC ENGINE ---
     let activeMobileNumber = localStorage.getItem('syncedUserMobile') || null;
 
-    async function syncUserDataToCloud() {
+    function syncUserDataToCloud() {
       if (!activeMobileNumber) return;
-      
       const payload = {
         mobile: activeMobileNumber,
         inventoryMaster: inventoryMaster,
@@ -689,7 +688,6 @@
 
       try {
         localStorage.setItem(`userData_${activeMobileNumber}`, JSON.stringify(payload));
-        // Optional cloud push using KV sync
       } catch(e) {
         console.error("Local sync error", e);
       }
@@ -701,46 +699,52 @@
 
       const savedDataStr = localStorage.getItem(`userData_${mobileNum}`);
       if (savedDataStr) {
-        const data = JSON.parse(savedDataStr);
-        if (data.inventoryMaster) {
-          inventoryMaster = data.inventoryMaster;
-          localStorage.setItem('inventoryMasterList', JSON.stringify(inventoryMaster));
-          renderMasterInventory();
-        }
-        if (data.salesLedger) {
-          salesLedger = data.salesLedger;
-          localStorage.setItem('salesLedgerLogs', JSON.stringify(salesLedger));
-        }
-        if (data.merchantName) {
-          merchantNameInput.value = data.merchantName;
-          if (data.isNameFixed) {
-            fixNameToggle.checked = true;
-            fixNameToggle.dispatchEvent(new Event('change'));
+        try {
+          const data = JSON.parse(savedDataStr);
+          if (data.inventoryMaster) {
+            inventoryMaster = data.inventoryMaster;
+            localStorage.setItem('inventoryMasterList', JSON.stringify(inventoryMaster));
+            renderMasterInventory();
           }
-        }
-        if (data.upiInput) {
-          upiInput.value = data.upiInput;
-          if (data.isUpiFixed) {
-            fixUpiToggle.checked = true;
-            fixUpiToggle.dispatchEvent(new Event('change'));
+          if (data.salesLedger) {
+            salesLedger = data.salesLedger;
+            localStorage.setItem('salesLedgerLogs', JSON.stringify(salesLedger));
           }
-        }
+          if (data.merchantName) {
+            merchantNameInput.value = data.merchantName;
+            if (data.isNameFixed) {
+              fixNameToggle.checked = true;
+              fixNameToggle.dispatchEvent(new Event('change'));
+            }
+          }
+          if (data.upiInput) {
+            upiInput.value = data.upiInput;
+            if (data.isUpiFixed) {
+              fixUpiToggle.checked = true;
+              fixUpiToggle.dispatchEvent(new Event('change'));
+            }
+          }
+        } catch(e) { console.error('Data parse error', e); }
       }
       updateUserSyncUI();
     }
 
     function updateUserSyncUI() {
+      const openLoginModalBtn = document.getElementById('openLoginModalBtn');
+      const loggedInUserCard = document.getElementById('loggedInUserCard');
+      const userMobileDisplay = document.getElementById('userMobileDisplay');
+
       if (activeMobileNumber) {
-        userMobileDisplay.textContent = `+91 ${activeMobileNumber}`;
-        openLoginModalBtn.classList.add('hidden');
-        loggedInUserCard.classList.remove('hidden');
+        if (userMobileDisplay) userMobileDisplay.textContent = `+91 ${activeMobileNumber}`;
+        if (openLoginModalBtn) openLoginModalBtn.classList.add('hidden');
+        if (loggedInUserCard) loggedInUserCard.classList.remove('hidden');
       } else {
-        openLoginModalBtn.classList.remove('hidden');
-        loggedInUserCard.classList.add('hidden');
+        if (openLoginModalBtn) openLoginModalBtn.classList.remove('hidden');
+        if (loggedInUserCard) loggedInUserCard.classList.add('hidden');
       }
     }
 
-    // --- Authentication & Direct Sync UI Controls ---
+    // --- Authentication & Mobile Sync UI Controls ---
     const openLoginModalBtn = document.getElementById('openLoginModalBtn');
     const closeLoginModalBtn = document.getElementById('closeLoginModalBtn');
     const loginModalOverlay = document.getElementById('loginModalOverlay');
@@ -751,44 +755,54 @@
     const userMobileDisplay = document.getElementById('userMobileDisplay');
     const logoutBtn = document.getElementById('logoutBtn');
 
-    openLoginModalBtn.addEventListener('click', () => {
-      closeDrawer();
-      loginModalOverlay.classList.remove('hidden');
-    });
-
-    closeLoginModalBtn.addEventListener('click', () => {
-      loginModalOverlay.classList.add('hidden');
-    });
-
-    directSyncBtn.addEventListener('click', () => {
-      const phone = loginPhoneInput.value.trim();
-      if (phone.length !== 10) {
-        showLoginStatus("Please enter a valid 10-digit mobile number.", "text-red-500");
-        return;
-      }
-      
-      showLoginStatus("Syncing data for " + phone + "...", "text-purple-600");
-      loadUserDataForMobile(phone);
-
-      setTimeout(() => {
-        showLoginStatus("Successfully synced!", "text-emerald-600");
-        setTimeout(() => {
-          loginModalOverlay.classList.add('hidden');
-        }, 600);
-      }, 500);
-    });
-
-    function showLoginStatus(msg, colorClass) {
-      loginStatusMsg.className = `text-xs text-center font-bold mt-2 ${colorClass}`;
-      loginStatusMsg.textContent = msg;
-      loginStatusMsg.classList.remove('hidden');
+    if (openLoginModalBtn) {
+      openLoginModalBtn.addEventListener('click', () => {
+        closeDrawer();
+        loginModalOverlay.classList.remove('hidden');
+      });
     }
 
-    logoutBtn.addEventListener('click', () => {
-      activeMobileNumber = null;
-      localStorage.removeItem('syncedUserMobile');
-      updateUserSyncUI();
-    });
+    if (closeLoginModalBtn) {
+      closeLoginModalBtn.addEventListener('click', () => {
+        loginModalOverlay.classList.add('hidden');
+      });
+    }
+
+    if (directSyncBtn) {
+      directSyncBtn.addEventListener('click', () => {
+        const phone = loginPhoneInput.value.trim();
+        if (phone.length !== 10) {
+          showLoginStatus("Please enter a valid 10-digit mobile number.", "text-red-500");
+          return;
+        }
+        
+        showLoginStatus("Syncing data for " + phone + "...", "text-purple-600");
+        loadUserDataForMobile(phone);
+
+        setTimeout(() => {
+          showLoginStatus("Successfully synced!", "text-emerald-600");
+          setTimeout(() => {
+            loginModalOverlay.classList.add('hidden');
+          }, 600);
+        }, 500);
+      });
+    }
+
+    function showLoginStatus(msg, colorClass) {
+      if (loginStatusMsg) {
+        loginStatusMsg.className = `text-xs text-center font-bold mt-2 ${colorClass}`;
+        loginStatusMsg.textContent = msg;
+        loginStatusMsg.classList.remove('hidden');
+      }
+    }
+
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', () => {
+        activeMobileNumber = null;
+        localStorage.removeItem('syncedUserMobile');
+        updateUserSyncUI();
+      });
+    }
 
     // --- PIN Authentication Logic ---
     const pinAuthModal = document.getElementById('pinAuthModal');
@@ -824,19 +838,20 @@
       }
     }
 
-    submitPinBtn.addEventListener('click', validatePin);
-    pinInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') validatePin();
-    });
+    if (submitPinBtn) submitPinBtn.addEventListener('click', validatePin);
+    if (pinInput) {
+      pinInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') validatePin();
+      });
+    }
 
     checkAuth();
 
-    // --- Main Application Logic ---
+    // --- Main Application State ---
     let currentMode = 'standee';
     let cartItems = [];
     let salesLedger = JSON.parse(localStorage.getItem('salesLedgerLogs') || '[]');
     
-    // Default Item Inventory Master List
     let inventoryMaster = JSON.parse(localStorage.getItem('inventoryMasterList') || JSON.stringify([
       { name: 'Apples', rate: 180 },
       { name: 'Rice', rate: 60 },
@@ -895,7 +910,6 @@
     const itemNameInput = document.getElementById('itemNameInput');
     const suggestionsBox = document.getElementById('suggestionsBox');
     
-    // Add-on #1 Elements: Flat Amount & Unit Multipliers
     const flatPriceToggle = document.getElementById('flatPriceToggle');
     const rateContainer = document.getElementById('rateContainer');
     const flatPriceContainer = document.getElementById('flatPriceContainer');
@@ -950,20 +964,23 @@
     const SCALE = 2;
 
     // --- Flat Price Toggle Control ---
-    flatPriceToggle.addEventListener('change', () => {
-      if (flatPriceToggle.checked) {
-        rateContainer.classList.add('hidden');
-        qtyContainer.classList.add('hidden');
-        flatPriceContainer.classList.remove('hidden');
-      } else {
-        rateContainer.classList.remove('hidden');
-        qtyContainer.classList.remove('hidden');
-        flatPriceContainer.classList.add('hidden');
-      }
-    });
+    if (flatPriceToggle) {
+      flatPriceToggle.addEventListener('change', () => {
+        if (flatPriceToggle.checked) {
+          rateContainer.classList.add('hidden');
+          qtyContainer.classList.add('hidden');
+          flatPriceContainer.classList.remove('hidden');
+        } else {
+          rateContainer.classList.remove('hidden');
+          qtyContainer.classList.remove('hidden');
+          flatPriceContainer.classList.add('hidden');
+        }
+      });
+    }
 
     // --- Master Inventory Handlers ---
     function renderMasterInventory() {
+      if (!masterInventoryTableBody) return;
       if (inventoryMaster.length === 0) {
         masterInventoryTableBody.innerHTML = `<tr><td colspan="3" class="p-3 text-center text-slate-400 italic">No inventory items configured yet.</td></tr>`;
       } else {
@@ -979,18 +996,20 @@
       }
     }
 
-    saveMasterItemBtn.addEventListener('click', () => {
-      const name = masterItemName.value.trim();
-      const rate = parseFloat(masterItemRate.value) || 0;
-      if (!name || rate <= 0) return;
+    if (saveMasterItemBtn) {
+      saveMasterItemBtn.addEventListener('click', () => {
+        const name = masterItemName.value.trim();
+        const rate = parseFloat(masterItemRate.value) || 0;
+        if (!name || rate <= 0) return;
 
-      inventoryMaster.push({ name, rate });
-      localStorage.setItem('inventoryMasterList', JSON.stringify(inventoryMaster));
-      masterItemName.value = '';
-      masterItemRate.value = '';
-      renderMasterInventory();
-      syncUserDataToCloud();
-    });
+        inventoryMaster.push({ name, rate });
+        localStorage.setItem('inventoryMasterList', JSON.stringify(inventoryMaster));
+        masterItemName.value = '';
+        masterItemRate.value = '';
+        renderMasterInventory();
+        syncUserDataToCloud();
+      });
+    }
 
     window.deleteMasterItem = function(index) {
       inventoryMaster.splice(index, 1);
@@ -999,38 +1018,44 @@
       syncUserDataToCloud();
     };
 
-    openMasterInventoryModalBtn.addEventListener('click', () => {
-      closeDrawer();
-      renderMasterInventory();
-      masterInventoryModalOverlay.classList.remove('hidden');
-    });
+    if (openMasterInventoryModalBtn) {
+      openMasterInventoryModalBtn.addEventListener('click', () => {
+        closeDrawer();
+        renderMasterInventory();
+        masterInventoryModalOverlay.classList.remove('hidden');
+      });
+    }
 
-    closeMasterInventoryModalBtn.addEventListener('click', () => {
-      masterInventoryModalOverlay.classList.add('hidden');
-    });
+    if (closeMasterInventoryModalBtn) {
+      closeMasterInventoryModalBtn.addEventListener('click', () => {
+        masterInventoryModalOverlay.classList.add('hidden');
+      });
+    }
 
     // --- Smart Auto-Suggest Search in POS Calculator ---
-    itemNameInput.addEventListener('input', function() {
-      const query = this.value.trim().toLowerCase();
-      if (!query) {
-        suggestionsBox.classList.add('hidden');
-        return;
-      }
+    if (itemNameInput) {
+      itemNameInput.addEventListener('input', function() {
+        const query = this.value.trim().toLowerCase();
+        if (!query) {
+          suggestionsBox.classList.add('hidden');
+          return;
+        }
 
-      const matches = inventoryMaster.filter(item => item.name.toLowerCase().includes(query));
+        const matches = inventoryMaster.filter(item => item.name.toLowerCase().includes(query));
 
-      if (matches.length > 0) {
-        suggestionsBox.innerHTML = matches.map(item => `
-          <div onclick="selectSuggestion('${item.name.replace(/'/g, "\\'")}', ${item.rate})" class="px-3 py-2 hover:bg-purple-50 cursor-pointer flex justify-between items-center transition">
-            <span class="font-bold text-slate-800">${item.name}</span>
-            <span class="font-mono text-emerald-600 font-bold">₹${item.rate}/unit</span>
-          </div>
-        `).join('');
-        suggestionsBox.classList.remove('hidden');
-      } else {
-        suggestionsBox.classList.add('hidden');
-      }
-    });
+        if (matches.length > 0) {
+          suggestionsBox.innerHTML = matches.map(item => `
+            <div onclick="selectSuggestion('${item.name.replace(/'/g, "\\'")}', ${item.rate})" class="px-3 py-2 hover:bg-purple-50 cursor-pointer flex justify-between items-center transition">
+              <span class="font-bold text-slate-800">${item.name}</span>
+              <span class="font-mono text-emerald-600 font-bold">₹${item.rate}/unit</span>
+            </div>
+          `).join('');
+          suggestionsBox.classList.remove('hidden');
+        } else {
+          suggestionsBox.classList.add('hidden');
+        }
+      });
+    }
 
     window.selectSuggestion = function(name, rate) {
       itemNameInput.value = name;
@@ -1038,49 +1063,52 @@
       suggestionsBox.classList.add('hidden');
     };
 
-    // Close suggestion box if user clicks outside
     document.addEventListener('click', (e) => {
-      if (!itemNameInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
+      if (itemNameInput && suggestionsBox && !itemNameInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
         suggestionsBox.classList.add('hidden');
       }
     });
 
     // --- Fix / Lock Toggle Handlers ---
-    fixNameToggle.addEventListener('change', () => {
-      if (fixNameToggle.checked) {
-        merchantNameInput.readOnly = true;
-        merchantNameInput.classList.add('bg-slate-200', 'cursor-not-allowed');
-        nameFixLabel.textContent = "Fixed 🔒";
-        nameFixLabel.classList.add('text-emerald-600');
-        localStorage.setItem('fixedMerchantName', merchantNameInput.value);
-        localStorage.setItem('isNameFixed', 'true');
-      } else {
-        merchantNameInput.readOnly = false;
-        merchantNameInput.classList.remove('bg-slate-200', 'cursor-not-allowed');
-        nameFixLabel.textContent = "Fix Details";
-        nameFixLabel.classList.remove('text-emerald-600');
-        localStorage.removeItem('isNameFixed');
-      }
-      syncUserDataToCloud();
-    });
+    if (fixNameToggle) {
+      fixNameToggle.addEventListener('change', () => {
+        if (fixNameToggle.checked) {
+          merchantNameInput.readOnly = true;
+          merchantNameInput.classList.add('bg-slate-200', 'cursor-not-allowed');
+          nameFixLabel.textContent = "Fixed 🔒";
+          nameFixLabel.classList.add('text-emerald-600');
+          localStorage.setItem('fixedMerchantName', merchantNameInput.value);
+          localStorage.setItem('isNameFixed', 'true');
+        } else {
+          merchantNameInput.readOnly = false;
+          merchantNameInput.classList.remove('bg-slate-200', 'cursor-not-allowed');
+          nameFixLabel.textContent = "Fix Details";
+          nameFixLabel.classList.remove('text-emerald-600');
+          localStorage.removeItem('isNameFixed');
+        }
+        syncUserDataToCloud();
+      });
+    }
 
-    fixUpiToggle.addEventListener('change', () => {
-      if (fixUpiToggle.checked) {
-        upiInput.readOnly = true;
-        upiInput.classList.add('bg-slate-200', 'cursor-not-allowed');
-        upiFixLabel.textContent = "Fixed 🔒";
-        upiFixLabel.classList.add('text-emerald-600');
-        localStorage.setItem('fixedUpiValue', upiInput.value);
-        localStorage.setItem('isUpiFixed', 'true');
-      } else {
-        upiInput.readOnly = false;
-        upiInput.classList.remove('bg-slate-200', 'cursor-not-allowed');
-        upiFixLabel.textContent = "Fix Details";
-        upiFixLabel.classList.remove('text-emerald-600');
-        localStorage.removeItem('isUpiFixed');
-      }
-      syncUserDataToCloud();
-    });
+    if (fixUpiToggle) {
+      fixUpiToggle.addEventListener('change', () => {
+        if (fixUpiToggle.checked) {
+          upiInput.readOnly = true;
+          upiInput.classList.add('bg-slate-200', 'cursor-not-allowed');
+          upiFixLabel.textContent = "Fixed 🔒";
+          upiFixLabel.classList.add('text-emerald-600');
+          localStorage.setItem('fixedUpiValue', upiInput.value);
+          localStorage.setItem('isUpiFixed', 'true');
+        } else {
+          upiInput.readOnly = false;
+          upiInput.classList.remove('bg-slate-200', 'cursor-not-allowed');
+          upiFixLabel.textContent = "Fix Details";
+          upiFixLabel.classList.remove('text-emerald-600');
+          localStorage.removeItem('isUpiFixed');
+        }
+        syncUserDataToCloud();
+      });
+    }
 
     function loadFixedStates() {
       if (localStorage.getItem('isNameFixed') === 'true') {
@@ -1110,9 +1138,9 @@
       setTimeout(() => { drawerOverlay.classList.add('hidden'); }, 300);
     }
 
-    openDrawerBtn.addEventListener('click', openDrawer);
-    closeDrawerBtn.addEventListener('click', closeDrawer);
-    drawerOverlay.addEventListener('click', closeDrawer);
+    if (openDrawerBtn) openDrawerBtn.addEventListener('click', openDrawer);
+    if (closeDrawerBtn) closeDrawerBtn.addEventListener('click', closeDrawer);
+    if (drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
 
     // --- Theme Switcher ---
     document.querySelectorAll('[data-theme]').forEach(btn => {
@@ -1124,8 +1152,8 @@
     });
 
     // --- Mode Switcher ---
-    cardStandeeBtn.addEventListener('click', () => setMode('standee'));
-    cardGenericBtn.addEventListener('click', () => setMode('generic'));
+    if (cardStandeeBtn) cardStandeeBtn.addEventListener('click', () => setMode('standee'));
+    if (cardGenericBtn) cardGenericBtn.addEventListener('click', () => setMode('generic'));
 
     function setMode(mode) {
       currentMode = mode;
@@ -1147,12 +1175,14 @@
       updateVpaPreview();
     }
 
-    upiInput.addEventListener('input', function() {
-      if (currentMode === 'standee') {
-        this.value = this.value.replace(/\D/g, '').slice(0, 9);
-      }
-      updateVpaPreview();
-    });
+    if (upiInput) {
+      upiInput.addEventListener('input', function() {
+        if (currentMode === 'standee') {
+          this.value = this.value.replace(/\D/g, '').slice(0, 9);
+        }
+        updateVpaPreview();
+      });
+    }
 
     // --- Quick Amount Buttons ---
     document.querySelectorAll('.quick-amt-btn').forEach(btn => {
@@ -1163,7 +1193,8 @@
       });
     });
 
-    document.getElementById('clearAmtBtn').addEventListener('click', () => { amountInput.value = ''; });
+    const clearAmtBtn = document.getElementById('clearAmtBtn');
+    if (clearAmtBtn) clearAmtBtn.addEventListener('click', () => { amountInput.value = ''; });
 
     // --- POS Calculator Modal Trigger & Multi-Item Computation ---
     function openCalcModal() {
@@ -1172,57 +1203,61 @@
     }
     function closeCalcModal() {
       calcModalOverlay.classList.add('hidden');
-      suggestionsBox.classList.add('hidden');
+      if (suggestionsBox) suggestionsBox.classList.add('hidden');
     }
 
-    cardCalcBtn.addEventListener('click', openCalcModal);
-    closeCalcModalBtn.addEventListener('click', closeCalcModal);
+    if (cardCalcBtn) cardCalcBtn.addEventListener('click', openCalcModal);
+    if (closeCalcModalBtn) closeCalcModalBtn.addEventListener('click', closeCalcModal);
 
-    // Feature #1 Add-on: Calculation supporting Pcs unit & Flat Price mode
-    addItemBtn.addEventListener('click', () => {
-      const name = itemNameInput.value.trim() || 'Custom Item';
-      let itemCost = 0;
-      let displayUnitStr = "";
+    if (addItemBtn) {
+      addItemBtn.addEventListener('click', () => {
+        const name = itemNameInput.value.trim() || 'Custom Item';
+        let itemCost = 0;
+        let displayUnitStr = "";
 
-      if (flatPriceToggle.checked) {
-        itemCost = parseFloat(flatPriceInput.value) || 0;
-        displayUnitStr = "Flat Amount";
-      } else {
-        const rate = parseFloat(ratePerKg.value) || 0;
-        const qty = parseFloat(purchaseQty.value) || 0;
-        const unit = purchaseUnit.value.toLowerCase();
-        if (rate <= 0 || qty <= 0) return;
-
-        if (unit === 'pcs') {
-          itemCost = rate * qty; // Direct Multiplier for Pieces
-        } else if (unit === 'g' || unit === 'gram' || unit === 'ml') {
-          itemCost = (rate / 1000) * qty; // Divided by 1000 for grams/ml
+        if (flatPriceToggle && flatPriceToggle.checked) {
+          itemCost = parseFloat(flatPriceInput.value) || 0;
+          displayUnitStr = "Flat Amount";
         } else {
-          itemCost = rate * qty;
+          const rate = parseFloat(ratePerKg.value) || 0;
+          const qty = parseFloat(purchaseQty.value) || 0;
+          const unit = purchaseUnit.value.toLowerCase();
+          if (rate <= 0 || qty <= 0) return;
+
+          if (unit === 'pcs') {
+            itemCost = rate * qty;
+          } else if (unit === 'g' || unit === 'gram' || unit === 'ml') {
+            itemCost = (rate / 1000) * qty;
+          } else {
+            itemCost = rate * qty;
+          }
+          displayUnitStr = `₹${rate}/unit × ${qty} ${purchaseUnit.value}`;
         }
-        displayUnitStr = `₹${rate}/unit × ${qty} ${purchaseUnit.value}`;
-      }
 
-      if (itemCost <= 0) return;
+        if (itemCost <= 0) return;
 
-      cartItems.push({ name, cost: itemCost, detail: displayUnitStr });
-      itemNameInput.value = '';
-      ratePerKg.value = '';
-      purchaseQty.value = '';
-      flatPriceInput.value = '';
-      suggestionsBox.classList.add('hidden');
-      renderCartTable();
-    });
+        cartItems.push({ name, cost: itemCost, detail: displayUnitStr });
+        itemNameInput.value = '';
+        ratePerKg.value = '';
+        purchaseQty.value = '';
+        if (flatPriceInput) flatPriceInput.value = '';
+        if (suggestionsBox) suggestionsBox.classList.add('hidden');
+        renderCartTable();
+      });
+    }
 
-    clearCartBtn.addEventListener('click', () => {
-      cartItems = [];
-      gstRateInput.value = "";
-      discountInput.value = "";
-      cashSplitInput.value = "";
-      renderCartTable();
-    });
+    if (clearCartBtn) {
+      clearCartBtn.addEventListener('click', () => {
+        cartItems = [];
+        gstRateInput.value = "";
+        discountInput.value = "";
+        cashSplitInput.value = "";
+        renderCartTable();
+      });
+    }
 
     function renderCartTable() {
+      if (!cartTableBody) return;
       if (cartItems.length === 0) {
         cartTableBody.innerHTML = '<tr id="emptyCartRow"><td colspan="3" class="p-6 text-center text-slate-400 italic">No items added to bill yet.</td></tr>';
       } else {
@@ -1257,41 +1292,42 @@
       const cashPaid = parseFloat(cashSplitInput.value) || 0;
       const remainingUpi = Math.max(0, grandTotal - cashPaid);
 
-      // UI Summary Displays
-      subtotalText.textContent = `₹ ${subtotal.toFixed(2)}`;
-      gstPctDisplay.textContent = gstPct.toString();
-      gstCalculatedText.textContent = `+₹ ${taxAmount.toFixed(2)}`;
-      discountCalculatedText.textContent = `-₹ ${discount.toFixed(2)}`;
-      grandTotalText.textContent = `₹ ${grandTotal.toFixed(2)}`;
-      billResult.textContent = `₹ ${remainingUpi.toFixed(2)}`;
+      if (subtotalText) subtotalText.textContent = `₹ ${subtotal.toFixed(2)}`;
+      if (gstPctDisplay) gstPctDisplay.textContent = gstPct.toString();
+      if (gstCalculatedText) gstCalculatedText.textContent = `+₹ ${taxAmount.toFixed(2)}`;
+      if (discountCalculatedText) discountCalculatedText.textContent = `-₹ ${discount.toFixed(2)}`;
+      if (grandTotalText) grandTotalText.textContent = `₹ ${grandTotal.toFixed(2)}`;
+      if (billResult) billResult.textContent = `₹ ${remainingUpi.toFixed(2)}`;
 
       return { subtotal, gstPct, taxAmount, discount, grandTotal, cashPaid, remainingUpi };
     }
 
-    gstRateInput.addEventListener('input', calculateCartTotals);
-    discountInput.addEventListener('input', calculateCartTotals);
-    cashSplitInput.addEventListener('input', calculateCartTotals);
+    if (gstRateInput) gstRateInput.addEventListener('input', calculateCartTotals);
+    if (discountInput) discountInput.addEventListener('input', calculateCartTotals);
+    if (cashSplitInput) cashSplitInput.addEventListener('input', calculateCartTotals);
 
-    applyCalcToAmountBtn.addEventListener('click', async () => {
-      const { grandTotal, remainingUpi, cashPaid } = calculateCartTotals();
-      if (grandTotal > 0) {
-        amountInput.value = remainingUpi.toFixed(2);
-        
-        logTransaction({
-          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          isoDate: new Date().toISOString().slice(0, 10),
-          customer: custName.value.trim() || 'Walk-in',
-          amount: grandTotal,
-          cashAmount: cashPaid,
-          upiAmount: remainingUpi
-        });
+    if (applyCalcToAmountBtn) {
+      applyCalcToAmountBtn.addEventListener('click', async () => {
+        const { grandTotal, remainingUpi, cashPaid } = calculateCartTotals();
+        if (grandTotal > 0) {
+          amountInput.value = remainingUpi.toFixed(2);
+          
+          logTransaction({
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            isoDate: new Date().toISOString().slice(0, 10),
+            customer: custName.value.trim() || 'Walk-in',
+            amount: grandTotal,
+            cashAmount: cashPaid,
+            upiAmount: remainingUpi
+          });
 
-        closeCalcModal();
-        await generateAndShowStandee();
-      }
-    });
+          closeCalcModal();
+          await generateAndShowStandee();
+        }
+      });
+    }
 
-    // --- Feature #3 Add-on: Daily Sales Ledger with Date Filtering & Payment Analytics ---
+    // --- Daily Sales Ledger & Local Storage ---
     function logTransaction(item) {
       salesLedger.unshift(item);
       localStorage.setItem('salesLedgerLogs', JSON.stringify(salesLedger));
@@ -1299,7 +1335,8 @@
     }
 
     function renderLedgerModal() {
-      const filterValue = ledgerDateFilter.value;
+      if (!ledgerTableBody) return;
+      const filterValue = ledgerDateFilter ? ledgerDateFilter.value : 'today';
       const todayStr = new Date().toISOString().slice(0, 10);
       
       const yesterdayDate = new Date();
@@ -1310,17 +1347,17 @@
         const itemDate = item.isoDate || todayStr;
         if (filterValue === 'today') return itemDate === todayStr;
         if (filterValue === 'yesterday') return itemDate === yesterdayStr;
-        return true; // 'all'
+        return true;
       });
 
       const totalRevenue = filteredLogs.reduce((sum, i) => sum + i.amount, 0);
       const totalCash = filteredLogs.reduce((sum, i) => sum + (i.cashAmount || 0), 0);
       const totalUpi = filteredLogs.reduce((sum, i) => sum + (i.upiAmount || i.amount), 0);
 
-      ledgerTotalSales.textContent = `₹ ${totalRevenue.toFixed(2)}`;
-      ledgerCount.textContent = filteredLogs.length;
-      ledgerCashTotal.textContent = `₹${totalCash.toFixed(2)}`;
-      ledgerUpiTotal.textContent = `₹${totalUpi.toFixed(2)}`;
+      if (ledgerTotalSales) ledgerTotalSales.textContent = `₹ ${totalRevenue.toFixed(2)}`;
+      if (ledgerCount) ledgerCount.textContent = filteredLogs.length.toString();
+      if (ledgerCashTotal) ledgerCashTotal.textContent = `₹${totalCash.toFixed(2)}`;
+      if (ledgerUpiTotal) ledgerUpiTotal.textContent = `₹${totalUpi.toFixed(2)}`;
 
       if (filteredLogs.length === 0) {
         ledgerTableBody.innerHTML = `<tr><td colspan="3" class="p-8 text-center text-slate-400 italic">No transactions recorded for this period.</td></tr>`;
@@ -1335,100 +1372,110 @@
       }
     }
 
-    ledgerDateFilter.addEventListener('change', renderLedgerModal);
+    if (ledgerDateFilter) ledgerDateFilter.addEventListener('change', renderLedgerModal);
 
-    openLedgerModalBtn.addEventListener('click', () => {
-      closeDrawer();
-      renderLedgerModal();
-      ledgerModalOverlay.classList.remove('hidden');
-    });
-
-    closeLedgerModalBtn.addEventListener('click', () => ledgerModalOverlay.classList.add('hidden'));
-
-    clearLedgerBtn.addEventListener('click', () => {
-      salesLedger = [];
-      localStorage.removeItem('salesLedgerLogs');
-      renderLedgerModal();
-      syncUserDataToCloud();
-    });
-
-    exportCsvBtn.addEventListener('click', () => {
-      if (salesLedger.length === 0) return;
-      let csvContent = "data:text/csv;charset=utf-8,Date,Time,Customer,Total Bill,Cash Paid,UPI Paid\n";
-      salesLedger.forEach(row => {
-        csvContent += `"${row.isoDate || ''}","${row.time}","${row.customer}","${row.amount}","${row.cashAmount || 0}","${row.upiAmount || row.amount}"\n`;
+    if (openLedgerModalBtn) {
+      openLedgerModalBtn.addEventListener('click', () => {
+        closeDrawer();
+        renderLedgerModal();
+        ledgerModalOverlay.classList.remove('hidden');
       });
-      const encodedUri = encodeURI(csvContent);
-      const link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", `UPI_Studio_Sales_Ledger_${new Date().toISOString().slice(0,10)}.csv`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    });
+    }
+
+    if (closeLedgerModalBtn) closeLedgerModalBtn.addEventListener('click', () => ledgerModalOverlay.classList.add('hidden'));
+
+    if (clearLedgerBtn) {
+      clearLedgerBtn.addEventListener('click', () => {
+        salesLedger = [];
+        localStorage.removeItem('salesLedgerLogs');
+        renderLedgerModal();
+        syncUserDataToCloud();
+      });
+    }
+
+    if (exportCsvBtn) {
+      exportCsvBtn.addEventListener('click', () => {
+        if (salesLedger.length === 0) return;
+        let csvContent = "data:text/csv;charset=utf-8,Date,Time,Customer,Total Bill,Cash Paid,UPI Paid\n";
+        salesLedger.forEach(row => {
+          csvContent += `"${row.isoDate || ''}","${row.time}","${row.customer}","${row.amount}","${row.cashAmount || 0}","${row.upiAmount || row.amount}"\n`;
+        });
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `UPI_Studio_Sales_Ledger_${new Date().toISOString().slice(0,10)}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      });
+    }
 
     // --- Professional WhatsApp Digital Invoice Generator ---
-    whatsappInvoiceBtn.addEventListener('click', () => {
-      const merchant = merchantNameInput.value.trim() || 'Merchant Store';
-      const phone = custPhone.value.trim().replace(/\D/g, '');
-      const customer = custName.value.trim() || 'Valued Customer';
-      const vpa = getVpa();
-      const dateStr = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
-      const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    if (whatsappInvoiceBtn) {
+      whatsappInvoiceBtn.addEventListener('click', () => {
+        const merchant = merchantNameInput.value.trim() || 'Merchant Store';
+        const phone = custPhone.value.trim().replace(/\D/g, '');
+        const customer = custName.value.trim() || 'Valued Customer';
+        const vpa = getVpa();
+        const dateStr = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+        const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-      const { subtotal, gstPct, taxAmount, discount, grandTotal, cashPaid, remainingUpi } = calculateCartTotals();
+        const { subtotal, gstPct, taxAmount, discount, grandTotal, cashPaid, remainingUpi } = calculateCartTotals();
 
-      let itemsListStr = "";
-      if (cartItems.length > 0) {
-        itemsListStr = cartItems.map((item, index) => 
-          `*${index + 1}. ${item.name}*\n   ${item.detail} = *₹${item.cost.toFixed(2)}*`
-        ).join('\n\n');
-      } else {
-        itemsListStr = `*1. Custom Item Purchase*\n   1 Unit = *₹${grandTotal.toFixed(2)}*`;
-      }
+        let itemsListStr = "";
+        if (cartItems.length > 0) {
+          itemsListStr = cartItems.map((item, index) => 
+            `*${index + 1}. ${item.name}*\n   ${item.detail} = *₹${item.cost.toFixed(2)}*`
+          ).join('\n\n');
+        } else {
+          itemsListStr = `*1. Custom Item Purchase*\n   1 Unit = *₹${grandTotal.toFixed(2)}*`;
+        }
 
-      let summaryStr = `───────────────────────────\n` +
-                       `*Subtotal:* ₹${subtotal.toFixed(2)}\n`;
-      
-      if (gstPct > 0) {
-        summaryStr += `*GST Tax (${gstPct}%):* +₹${taxAmount.toFixed(2)}\n`;
-      }
-      if (discount > 0) {
-        summaryStr += `*Discount:* -₹${discount.toFixed(2)}\n`;
-      }
-      summaryStr += `*Grand Total Bill:* ₹${grandTotal.toFixed(2)}\n` +
-                     `───────────────────────────\n`;
-
-      if (cashPaid > 0) {
-        summaryStr += `*Paid in Cash:* ₹${cashPaid.toFixed(2)}\n` +
-                       `*Balance Paid via UPI:* ₹${remainingUpi.toFixed(2)}\n` +
+        let summaryStr = `───────────────────────────\n` +
+                         `*Subtotal:* ₹${subtotal.toFixed(2)}\n`;
+        
+        if (gstPct > 0) {
+          summaryStr += `*GST Tax (${gstPct}%):* +₹${taxAmount.toFixed(2)}\n`;
+        }
+        if (discount > 0) {
+          summaryStr += `*Discount:* -₹${discount.toFixed(2)}\n`;
+        }
+        summaryStr += `*Grand Total Bill:* ₹${grandTotal.toFixed(2)}\n` +
                        `───────────────────────────\n`;
-      }
 
-      const upiPayLink = `upi://pay?pa=${vpa}&pn=${encodeURIComponent(merchant)}&am=${remainingUpi.toFixed(2)}&cu=INR`;
-      const msg = `📲 *${merchant.toUpperCase()}*\n` +
-                  `🧾 *OFFICIAL DIGITAL RECEIPT*\n` +
-                  `📅 Date: ${dateStr} | ⏰ ${timeStr}\n` +
-                  `👤 Customer: ${customer}\n` +
-                  `───────────────────────────\n\n` +
-                  `*PURCHASED ITEMS:*\n\n${itemsListStr}\n\n` +
-                  `${summaryStr}\n` +
-                  `💳 *Pay Balance via UPI QR:* \n${upiPayLink}\n\n` +
-                  `✨ *Thank you for shopping with us!*`;
+        if (cashPaid > 0) {
+          summaryStr += `*Paid in Cash:* ₹${cashPaid.toFixed(2)}\n` +
+                         `*Balance Paid via UPI:* ₹${remainingUpi.toFixed(2)}\n` +
+                         `───────────────────────────\n`;
+        }
 
-      const targetPhone = phone ? `91${phone}` : '';
-      const waUrl = `https://api.whatsapp.com/send?phone=${targetPhone}&text=${encodeURIComponent(msg)}`;
-      window.open(waUrl, '_blank');
-    });
+        const upiPayLink = `upi://pay?pa=${vpa}&pn=${encodeURIComponent(merchant)}&am=${remainingUpi.toFixed(2)}&cu=INR`;
+        const msg = `🏪 *${merchant.toUpperCase()}*\n` +
+                    `📜 *OFFICIAL DIGITAL RECEIPT*\n` +
+                    `📅 Date: ${dateStr} | 🕒 ${timeStr}\n` +
+                    `👤 Customer: ${customer}\n` +
+                    `───────────────────────────\n\n` +
+                    `*PURCHASED ITEMS:*\n\n${itemsListStr}\n\n` +
+                    `${summaryStr}\n` +
+                    `💳 *Pay Balance via UPI QR:* \n${upiPayLink}\n\n` +
+                    `✨ *Thank you for shopping with us!*`;
+
+        const targetPhone = phone ? `91${phone}` : '';
+        const waUrl = `https://api.whatsapp.com/send?phone=${targetPhone}&text=${encodeURIComponent(msg)}`;
+        window.open(waUrl, '_blank');
+      });
+    }
 
     // --- QR Pop-up Modal Handlers ---
     function openQrModal() { qrResultModal.classList.remove('hidden'); }
     function closeQrModal() { qrResultModal.classList.add('hidden'); }
 
-    closeQrModalBtn.addEventListener('click', closeQrModal);
-    qrResultModal.addEventListener('click', (e) => {
-      if (e.target === qrResultModal) closeQrModal();
-    });
+    if (closeQrModalBtn) closeQrModalBtn.addEventListener('click', closeQrModal);
+    if (qrResultModal) {
+      qrResultModal.addEventListener('click', (e) => {
+        if (e.target === qrResultModal) closeQrModal();
+      });
+    }
 
     // --- Helpers & Canvas Drawing ---
     function getDigits() { return upiInput.value.replace(/\D/g, '').slice(0, 9) || '000000000'; }
@@ -1437,7 +1484,7 @@
       return upiInput.value.trim() || 'yourvpa@upi';
     }
 
-    function updateVpaPreview() { vpaPreview.textContent = getVpa(); }
+    function updateVpaPreview() { if (vpaPreview) vpaPreview.textContent = getVpa(); }
 
     function drawRoundedRect(ctx, x, y, width, height, radius) {
       ctx.beginPath();
@@ -1599,19 +1646,23 @@
       });
     });
 
-    renderBtn.addEventListener('click', generateAndShowStandee);
+    if (renderBtn) renderBtn.addEventListener('click', generateAndShowStandee);
 
     // Download Handler
-    downloadBtn.addEventListener('click', function() {
-      const link = document.createElement('a');
-      const sanitizedName = merchantNameInput.value.trim().replace(/\s+/g, '_') || 'Merchant';
-      link.href = canvas.toDataURL("image/png");
-      link.download = `UPI-Studio-${sanitizedName}.png`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    });
+    if (downloadBtn) {
+      downloadBtn.addEventListener('click', function() {
+        const link = document.createElement('a');
+        const sanitizedName = merchantNameInput.value.trim().replace(/\s+/g, '_') || 'Merchant';
+        link.href = canvas.toDataURL("image/png");
+        link.download = `UPI-Studio-${sanitizedName}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      });
+    }
 
     // Direct Print Handler
-    printBtn.addEventListener('click', () => { window.print(); });
-  </script></body></html>
+    if (printBtn) printBtn.addEventListener('click', () => { window.print(); });
+  </script>
+</body>
+</html>
