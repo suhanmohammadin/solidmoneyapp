@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Solid Money App - Pro Merchant  Suite</title>
+  <title>Solid Money App - Pro Merchant Suite</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -70,7 +70,7 @@
       </div>
       
       <form id="pinForm" onsubmit="return false;" class="space-y-3">
-        <input type="password" id="pinInput" placeholder="Enter 8-digit PIN" maxlength="8"
+        <input type="password" id="pinInput" placeholder="Enter 8-digit PIN" maxlength="8" inputmode="numeric"
           class="w-full text-center tracking-widest text-lg font-mono px-4 py-3 border border-slate-300 rounded-2xl focus:ring-2 focus:ring-purple-600 outline-none transition bg-slate-50 font-bold" />
         <p id="pinErrorMsg" class="text-xs text-red-500 hidden font-bold">Incorrect PIN! Try again.</p>
         <button type="button" id="submitPinBtn"
@@ -78,6 +78,37 @@
           Unlock App
         </button>
       </form>
+    </div>
+  </div>
+
+  <!-- POPUP MODAL: Account Sign-In / Direct Sync -->
+  <div id="authModalOverlay" class="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl border border-slate-100 overflow-hidden transform transition-all flex flex-col p-6 space-y-4">
+      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 brand-bg text-white rounded-xl flex items-center justify-center font-bold text-sm">
+            <span>☁️</span>
+          </div>
+          <h3 class="font-extrabold text-slate-800 text-base">Account Sync</h3>
+        </div>
+        <button type="button" id="closeAuthModalBtn" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100 transition">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <div class="space-y-3">
+        <p class="text-xs text-slate-500">Enter your mobile number to link your account and sync your inventory list automatically.</p>
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Mobile Number</label>
+          <div class="flex gap-2">
+            <span class="px-3 py-2.5 bg-slate-100 border border-slate-300 rounded-xl text-xs font-bold text-slate-600 flex items-center">+91</span>
+            <input type="tel" id="userSyncPhone" inputmode="tel" placeholder="e.g. 9133359954" maxlength="10" class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-xs font-mono font-bold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
+          </div>
+        </div>
+        <button type="button" id="directSignInBtn" class="w-full brand-bg hover:opacity-90 text-white font-bold py-3 rounded-2xl text-xs shadow-md transition">
+          Sign In & Sync Inventory
+        </button>
+      </div>
     </div>
   </div>
 
@@ -99,6 +130,22 @@
         </div>
         <button id="closeDrawerBtn" class="text-white/80 hover:text-white p-1 rounded-lg hover:bg-white/10 transition">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <!-- Account Status Card in Side Drawer -->
+      <div class="p-4 bg-purple-50/50 border-b border-purple-100 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div id="userAvatar" class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold text-slate-600">
+            👤
+          </div>
+          <div>
+            <span id="accountPhoneLabel" class="block text-xs font-bold text-slate-800">Not Signed In</span>
+            <span id="accountSyncBadge" class="text-[10px] text-slate-500 font-medium">Local Storage Active</span>
+          </div>
+        </div>
+        <button type="button" id="openAuthModalBtn" class="text-xs font-bold brand-text hover:underline px-2.5 py-1 bg-white border border-purple-200 rounded-lg shadow-2xs">
+          Sign In
         </button>
       </div>
 
@@ -144,7 +191,7 @@
               <input type="text" id="masterItemName" placeholder="Item Name (e.g. Apples)" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-600 bg-white" />
             </div>
             <div class="col-span-4 sm:col-span-3">
-              <input type="number" id="masterItemRate" placeholder="Rate/KG (₹)" step="0.01" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-mono font-bold outline-none focus:ring-2 focus:ring-purple-600 bg-white" />
+              <input type="number" id="masterItemRate" inputmode="decimal" placeholder="Rate/KG (₹)" step="0.01" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-mono font-bold outline-none focus:ring-2 focus:ring-purple-600 bg-white" />
             </div>
             <div class="col-span-2">
               <button type="button" id="saveMasterItemBtn" class="w-full brand-bg hover:opacity-90 text-white font-bold py-2 rounded-xl text-xs transition">Save</button>
@@ -194,7 +241,7 @@
     </div>
 
     <!-- Fullscreen Body Container -->
-    <div class="grow bg-slate-100 p-3 sm:p-6 overflow-y-auto max-w-4xl mx-auto w-full space-y-4">
+    <div class="grow bg-slate-100 p-3 sm:p-6 overflow-y-auto max-w-4xl mx-auto w-full space-y-4 pb-24 sm:pb-6">
 
       <!-- Customer Details (Optional) -->
       <div class="grid grid-cols-2 gap-3 bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-xs">
@@ -204,7 +251,7 @@
         </div>
         <div>
           <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">WhatsApp Mobile</label>
-          <input type="tel" id="custPhone" placeholder="e.g. 9133359954" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-mono font-bold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
+          <input type="tel" id="custPhone" inputmode="tel" placeholder="e.g. 9133359954" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-mono font-bold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
         </div>
       </div>
 
@@ -214,7 +261,6 @@
           <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">
             Item Name <span class="text-slate-400 font-normal">(Type to search)</span>
           </label>
-          <!-- Feature #1 Add-on: Direct Flat Amount Toggle -->
           <label class="flex items-center gap-1.5 cursor-pointer text-xs font-bold text-slate-600 select-none">
             <span class="text-[10px] uppercase text-purple-700 font-extrabold">Flat Amount (₹)</span>
             <input type="checkbox" id="flatPriceToggle" class="sr-only peer">
@@ -225,29 +271,26 @@
         <div class="relative">
           <input type="text" id="itemNameInput" placeholder="e.g. Apples, Rice, Sugar" autocomplete="off" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
           
-          <!-- Autocomplete Suggestions List Box -->
           <div id="suggestionsBox" class="absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-xl z-20 max-h-48 overflow-y-auto hidden divide-y divide-slate-100 text-xs">
-            <!-- Suggestions render dynamically -->
+            <!-- Dynamic suggestions -->
           </div>
         </div>
 
         <div class="grid grid-cols-12 gap-2">
-          <!-- Standard Rate / Weight Row -->
           <div id="rateContainer" class="col-span-5">
             <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">1 KG / L Rate (₹)</label>
-            <input type="number" id="ratePerKg" placeholder="e.g. 120" step="0.01" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm font-mono outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
+            <input type="number" id="ratePerKg" inputmode="decimal" placeholder="e.g. 120" step="0.01" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm font-mono outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
           </div>
 
-          <!-- Feature #1 Add-on: Direct Flat Amount Container -->
           <div id="flatPriceContainer" class="col-span-10 hidden">
             <label class="text-[10px] font-bold uppercase tracking-wider text-purple-700 block mb-1">Direct Total Cost (₹)</label>
-            <input type="number" id="flatPriceInput" placeholder="e.g. 50" step="0.01" class="w-full px-3 py-2 border border-purple-300 rounded-xl text-sm font-mono font-bold text-purple-900 outline-none focus:ring-2 focus:ring-purple-600 bg-purple-50/30" />
+            <input type="number" id="flatPriceInput" inputmode="decimal" placeholder="e.g. 50" step="0.01" class="w-full px-3 py-2 border border-purple-300 rounded-xl text-sm font-mono font-bold text-purple-900 outline-none focus:ring-2 focus:ring-purple-600 bg-purple-50/30" />
           </div>
 
           <div id="qtyContainer" class="col-span-5">
             <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Qty / Weight</label>
             <div class="flex">
-              <input type="number" id="purchaseQty" placeholder="e.g. 500" step="0.01" class="w-full px-2 py-2 border border-r-0 border-slate-300 rounded-l-xl text-sm font-mono outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
+              <input type="number" id="purchaseQty" inputmode="decimal" placeholder="e.g. 500" step="0.01" class="w-full px-2 py-2 border border-r-0 border-slate-300 rounded-l-xl text-sm font-mono outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
               <select id="purchaseUnit" class="bg-slate-100 border border-slate-300 rounded-r-xl px-1.5 text-xs font-bold text-slate-700 outline-none">
                 <option value="g">G</option>
                 <option value="kg">KG</option>
@@ -291,23 +334,20 @@
       <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3">
         
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <!-- Custom GST Input -->
           <div class="flex justify-between items-center text-xs font-semibold text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
             <span class="flex items-center gap-1">Custom GST Tax (%):</span>
             <div class="flex items-center gap-1">
-              <input type="number" id="gstRateInput" min="0" max="100" step="0.1" placeholder="0" class="w-20 px-2 py-1 text-right border border-slate-300 rounded-lg font-mono text-xs outline-none bg-white font-bold">
+              <input type="number" id="gstRateInput" inputmode="decimal" min="0" max="100" step="0.1" placeholder="0" class="w-20 px-2 py-1 text-right border border-slate-300 rounded-lg font-mono text-xs outline-none bg-white font-bold">
               <span class="text-slate-500 font-bold">%</span>
             </div>
           </div>
 
-          <!-- Discount Input -->
           <div class="flex justify-between items-center text-xs font-semibold text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
             <span>Discount Amount (₹):</span>
-            <input type="number" id="discountInput" value="" min="0" step="1" placeholder="0" class="w-20 px-2 py-1 text-right border border-slate-300 rounded-lg font-mono text-xs outline-none bg-white font-bold">
+            <input type="number" id="discountInput" inputmode="decimal" value="" min="0" step="1" placeholder="0" class="w-20 px-2 py-1 text-right border border-slate-300 rounded-lg font-mono text-xs outline-none bg-white font-bold">
           </div>
         </div>
 
-        <!-- Total Bill Amount Summary Breakdown Card -->
         <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200/80 space-y-1.5 shadow-2xs text-xs">
           <div class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 border-b border-slate-200 pb-1 mb-1">
             Bill Amount Summary
@@ -330,12 +370,16 @@
           </div>
         </div>
 
-        <!-- Cash + UPI Split Payment Option -->
         <div class="flex justify-between items-center text-xs font-semibold text-slate-600 pt-1">
           <span class="text-amber-700 font-bold flex items-center gap-1">
             💵 Cash Paid (Split):
           </span>
-          <input type="number" id="cashSplitInput" value="" min="0" step="1" placeholder="0" class="w-24 px-2 py-1.5 text-right border border-amber-300 rounded-lg font-mono text-xs outline-none bg-amber-50/50 font-bold text-amber-800">
+          <input type="number" id="cashSplitInput" inputmode="decimal" value="" min="0" step="1" placeholder="0" class="w-24 px-2 py-1.5 text-right border border-amber-300 rounded-lg font-mono text-xs outline-none bg-amber-50/50 font-bold text-amber-800">
+        </div>
+
+        <div id="changeReturnRow" class="hidden flex justify-between items-center bg-emerald-50 p-2 rounded-xl border border-emerald-200 text-xs font-bold text-emerald-800">
+          <span>🔄 Change To Return:</span>
+          <span id="changeReturnText" class="font-mono text-emerald-900 font-black">₹0.00</span>
         </div>
 
         <div class="pt-2 border-t border-slate-200 flex justify-between items-center">
@@ -356,7 +400,7 @@
     </div>
   </div>
 
-  <!-- POPUP MODAL: Daily Sales Ledger History with Date Filter & Payment Mode Analytics -->
+  <!-- POPUP MODAL: Daily Sales Ledger History -->
   <div id="ledgerModalOverlay" class="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 sm:p-4">
     <div class="bg-white w-full max-w-xl rounded-3xl shadow-2xl border border-slate-100 overflow-hidden transform transition-all flex flex-col max-h-[90vh]">
       
@@ -372,7 +416,6 @@
 
       <div class="p-4 sm:p-6 space-y-4 overflow-y-auto grow">
 
-        <!-- Feature #3 Add-on: Date Range Filter Bar -->
         <div class="flex items-center justify-between bg-slate-50 p-2.5 rounded-2xl border border-slate-200">
           <span class="text-xs font-bold text-slate-600 uppercase tracking-wider">Filter Date:</span>
           <select id="ledgerDateFilter" class="px-3 py-1.5 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-purple-600">
@@ -393,7 +436,6 @@
           </div>
         </div>
 
-        <!-- Feature #3 Add-on: Cash vs. UPI Payment Split Analytics Card -->
         <div class="grid grid-cols-2 gap-2 bg-slate-50 p-2.5 rounded-2xl border border-slate-200 text-xs font-semibold">
           <div class="flex justify-between items-center bg-amber-50/70 p-2 rounded-xl border border-amber-200/80">
             <span class="text-amber-800">💵 Cash Paid:</span>
@@ -461,7 +503,6 @@
         </button>
       </div>
 
-      <!-- Professional WhatsApp Receipt Action -->
       <button id="whatsappInvoiceBtn" class="w-full bg-green-600 hover:bg-green-700 text-white text-xs font-bold py-3 px-3 rounded-xl shadow transition flex items-center justify-center gap-1.5">
         <span>💬</span> Invoice via WhatsApp
       </button>
@@ -504,7 +545,6 @@
   <!-- Main Generator Form Card -->
   <main class="max-w-2xl w-full bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-200/80 my-auto p-4 sm:p-8 space-y-5 sm:space-y-6">
 
-    <!-- Feature Quick Cards: Mobile Optimized Layout -->
     <div>
       <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-500 mb-2.5">Select Utility Feature</label>
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
@@ -543,7 +583,6 @@
     </div>
 
     <form id="qrForm" class="space-y-4" onsubmit="return false;">
-      <!-- Merchant / Payee Name with Fix Toggle -->
       <div>
         <div class="flex items-center justify-between mb-1.5">
           <label for="merchantName" class="block text-xs font-extrabold uppercase tracking-wider text-slate-600">
@@ -558,7 +597,6 @@
         <input type="text" id="merchantName" value="" placeholder="e.g. Suhan Traders" required class="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-purple-600 outline-none transition bg-slate-50/50 focus:bg-white font-semibold" />
       </div>
 
-      <!-- Terminal Digits / UPI ID with Fix Toggle -->
       <div>
         <div class="flex items-center justify-between mb-1.5">
           <label id="upiFieldLabel" for="upiInput" class="block text-xs font-extrabold uppercase tracking-wider text-slate-600">
@@ -581,7 +619,7 @@
         <label for="amount" class="block text-xs font-extrabold uppercase tracking-wider text-slate-600 mb-1">
           Fixed Amount (₹) <span class="text-slate-400 font-normal">(Optional)</span>
         </label>
-        <input type="number" id="amount" step="0.01" min="1" placeholder="Dynamic Input" class="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-purple-600 outline-none transition bg-slate-50/50 focus:bg-white font-mono font-bold brand-text" />
+        <input type="number" id="amount" inputmode="decimal" step="0.01" min="1" placeholder="Dynamic Input" class="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-purple-600 outline-none transition bg-slate-50/50 focus:bg-white font-mono font-bold brand-text" />
         
         <div class="flex flex-wrap items-center gap-2 mt-2.5">
           <span class="text-[10px] font-bold uppercase text-slate-400 w-full sm:w-auto">Quick Add:</span>
@@ -656,7 +694,6 @@
     let cartItems = [];
     let salesLedger = JSON.parse(localStorage.getItem('salesLedgerLogs') || '[]');
     
-    // Default Item Inventory Master List
     let inventoryMaster = JSON.parse(localStorage.getItem('inventoryMasterList') || JSON.stringify([
       { name: 'Apples', rate: 180 },
       { name: 'Rice', rate: 60 },
@@ -674,6 +711,64 @@
     };
     let activeThemeKey = 'theme-purple';
 
+    // Sync Auth Elements
+    const openAuthModalBtn = document.getElementById('openAuthModalBtn');
+    const closeAuthModalBtn = document.getElementById('closeAuthModalBtn');
+    const authModalOverlay = document.getElementById('authModalOverlay');
+    const userSyncPhone = document.getElementById('userSyncPhone');
+    const directSignInBtn = document.getElementById('directSignInBtn');
+    const accountPhoneLabel = document.getElementById('accountPhoneLabel');
+    const accountSyncBadge = document.getElementById('accountSyncBadge');
+
+    function updateAccountStatusUI() {
+      const loggedPhone = localStorage.getItem('syncedUserPhone');
+      if (loggedPhone) {
+        accountPhoneLabel.textContent = `+91 ${loggedPhone}`;
+        accountSyncBadge.textContent = "☁️ Cloud Sync Active";
+        accountSyncBadge.className = "text-[10px] text-emerald-600 font-bold";
+        openAuthModalBtn.textContent = "Sign Out";
+      } else {
+        accountPhoneLabel.textContent = "Not Signed In";
+        accountSyncBadge.textContent = "Local Storage Active";
+        accountSyncBadge.className = "text-[10px] text-slate-500 font-medium";
+        openAuthModalBtn.textContent = "Sign In";
+      }
+    }
+
+    openAuthModalBtn.addEventListener('click', () => {
+      const loggedPhone = localStorage.getItem('syncedUserPhone');
+      if (loggedPhone) {
+        localStorage.removeItem('syncedUserPhone');
+        updateAccountStatusUI();
+      } else {
+        authModalOverlay.classList.remove('hidden');
+      }
+    });
+
+    closeAuthModalBtn.addEventListener('click', () => authModalOverlay.classList.add('hidden'));
+
+    directSignInBtn.addEventListener('click', () => {
+      const phone = userSyncPhone.value.trim().replace(/\D/g, '');
+      if (phone.length === 10) {
+        localStorage.setItem('syncedUserPhone', phone);
+        updateAccountStatusUI();
+        authModalOverlay.classList.add('hidden');
+        userSyncPhone.value = '';
+      }
+    });
+
+    // Global Key Bindings
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeCalcModal();
+        masterInventoryModalOverlay.classList.add('hidden');
+        ledgerModalOverlay.classList.add('hidden');
+        authModalOverlay.classList.add('hidden');
+        closeQrModal();
+        closeDrawer();
+      }
+    });
+
     // UI Elements
     const merchantNameInput = document.getElementById('merchantName');
     const upiInput = document.getElementById('upiInput');
@@ -681,13 +776,11 @@
     const amountInput = document.getElementById('amount');
     const vpaPreview = document.getElementById('vpaPreview');
 
-    // Fix Toggles Elements
     const fixNameToggle = document.getElementById('fixNameToggle');
     const fixUpiToggle = document.getElementById('fixUpiToggle');
     const nameFixLabel = document.getElementById('nameFixLabel');
     const upiFixLabel = document.getElementById('upiFixLabel');
     
-    // Feature Quick Cards & Navigation
     const cardStandeeBtn = document.getElementById('cardStandeeBtn');
     const cardGenericBtn = document.getElementById('cardGenericBtn');
     const cardCalcBtn = document.getElementById('cardCalcBtn');
@@ -697,7 +790,6 @@
     const sideDrawer = document.getElementById('sideDrawer');
     const drawerOverlay = document.getElementById('drawerOverlay');
 
-    // Master Inventory Modal Elements
     const openMasterInventoryModalBtn = document.getElementById('openMasterInventoryModalBtn');
     const closeMasterInventoryModalBtn = document.getElementById('closeMasterInventoryModalBtn');
     const masterInventoryModalOverlay = document.getElementById('masterInventoryModalOverlay');
@@ -706,7 +798,6 @@
     const saveMasterItemBtn = document.getElementById('saveMasterItemBtn');
     const masterInventoryTableBody = document.getElementById('masterInventoryTableBody');
 
-    // Calculator Modal Elements
     const closeCalcModalBtn = document.getElementById('closeCalcModalBtn');
     const calcModalOverlay = document.getElementById('calcModalOverlay');
 
@@ -715,7 +806,6 @@
     const itemNameInput = document.getElementById('itemNameInput');
     const suggestionsBox = document.getElementById('suggestionsBox');
     
-    // Add-on #1 Elements: Flat Amount & Unit Multipliers
     const flatPriceToggle = document.getElementById('flatPriceToggle');
     const rateContainer = document.getElementById('rateContainer');
     const flatPriceContainer = document.getElementById('flatPriceContainer');
@@ -729,7 +819,6 @@
     const clearCartBtn = document.getElementById('clearCartBtn');
     const cartTableBody = document.getElementById('cartTableBody');
     
-    // POS Summary Elements
     const subtotalText = document.getElementById('subtotalText');
     const gstRateInput = document.getElementById('gstRateInput');
     const gstPctDisplay = document.getElementById('gstPctDisplay');
@@ -737,11 +826,12 @@
     const discountInput = document.getElementById('discountInput');
     const discountCalculatedText = document.getElementById('discountCalculatedText');
     const cashSplitInput = document.getElementById('cashSplitInput');
+    const changeReturnRow = document.getElementById('changeReturnRow');
+    const changeReturnText = document.getElementById('changeReturnText');
     const billResult = document.getElementById('billResult');
     const grandTotalText = document.getElementById('grandTotalText');
     const applyCalcToAmountBtn = document.getElementById('applyCalcToAmountBtn');
 
-    // Ledger Modal Elements
     const openLedgerModalBtn = document.getElementById('openLedgerModalBtn');
     const closeLedgerModalBtn = document.getElementById('closeLedgerModalBtn');
     const ledgerModalOverlay = document.getElementById('ledgerModalOverlay');
@@ -754,12 +844,10 @@
     const exportCsvBtn = document.getElementById('exportCsvBtn');
     const clearLedgerBtn = document.getElementById('clearLedgerBtn');
 
-    // QR Pop-up Modal Elements
     const qrResultModal = document.getElementById('qrResultModal');
     const closeQrModalBtn = document.getElementById('closeQrModalBtn');
     const whatsappInvoiceBtn = document.getElementById('whatsappInvoiceBtn');
 
-    // Canvas Elements
     const renderBtn = document.getElementById('renderBtn');
     const downloadBtn = document.getElementById('downloadBtn');
     const printBtn = document.getElementById('printBtn');
@@ -769,7 +857,6 @@
 
     const SCALE = 2;
 
-    // --- Flat Price Toggle Control ---
     flatPriceToggle.addEventListener('change', () => {
       if (flatPriceToggle.checked) {
         rateContainer.classList.add('hidden');
@@ -782,7 +869,6 @@
       }
     });
 
-    // --- Master Inventory Handlers ---
     function renderMasterInventory() {
       if (inventoryMaster.length === 0) {
         masterInventoryTableBody.innerHTML = `<tr><td colspan="3" class="p-3 text-center text-slate-400 italic">No inventory items configured yet.</td></tr>`;
@@ -827,7 +913,6 @@
       masterInventoryModalOverlay.classList.add('hidden');
     });
 
-    // --- Smart Auto-Suggest Search in POS Calculator ---
     itemNameInput.addEventListener('input', function() {
       const query = this.value.trim().toLowerCase();
       if (!query) {
@@ -856,14 +941,12 @@
       suggestionsBox.classList.add('hidden');
     };
 
-    // Close suggestion box if user clicks outside
     document.addEventListener('click', (e) => {
       if (!itemNameInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
         suggestionsBox.classList.add('hidden');
       }
     });
 
-    // --- Fix / Lock Toggle Handlers ---
     fixNameToggle.addEventListener('change', () => {
       if (fixNameToggle.checked) {
         merchantNameInput.readOnly = true;
@@ -911,7 +994,6 @@
       }
     }
 
-    // --- Drawer Navigation Controls ---
     function openDrawer() {
       drawerOverlay.classList.remove('hidden');
       setTimeout(() => {
@@ -930,7 +1012,6 @@
     closeDrawerBtn.addEventListener('click', closeDrawer);
     drawerOverlay.addEventListener('click', closeDrawer);
 
-    // --- Theme Switcher ---
     document.querySelectorAll('[data-theme]').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const theme = e.currentTarget.getAttribute('data-theme');
@@ -939,7 +1020,6 @@
       });
     });
 
-    // --- Mode Switcher ---
     cardStandeeBtn.addEventListener('click', () => setMode('standee'));
     cardGenericBtn.addEventListener('click', () => setMode('generic'));
 
@@ -970,7 +1050,6 @@
       updateVpaPreview();
     });
 
-    // --- Quick Amount Buttons ---
     document.querySelectorAll('.quick-amt-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const amt = parseFloat(btn.getAttribute('data-amt'));
@@ -981,12 +1060,13 @@
 
     document.getElementById('clearAmtBtn').addEventListener('click', () => { amountInput.value = ''; });
 
-    // --- POS Calculator Modal Trigger & Multi-Item Computation ---
     function openCalcModal() {
       closeDrawer();
+      document.body.classList.add('overflow-hidden');
       calcModalOverlay.classList.remove('hidden');
     }
     function closeCalcModal() {
+      document.body.classList.remove('overflow-hidden');
       calcModalOverlay.classList.add('hidden');
       suggestionsBox.classList.add('hidden');
     }
@@ -994,7 +1074,6 @@
     cardCalcBtn.addEventListener('click', openCalcModal);
     closeCalcModalBtn.addEventListener('click', closeCalcModal);
 
-    // Feature #1 Add-on: Calculation supporting Pcs unit & Flat Price mode
     addItemBtn.addEventListener('click', () => {
       const name = itemNameInput.value.trim() || 'Custom Item';
       let itemCost = 0;
@@ -1010,9 +1089,9 @@
         if (rate <= 0 || qty <= 0) return;
 
         if (unit === 'pcs') {
-          itemCost = rate * qty; // Direct Multiplier for Pieces
+          itemCost = rate * qty;
         } else if (unit === 'g' || unit === 'gram' || unit === 'ml') {
-          itemCost = (rate / 1000) * qty; // Divided by 1000 for grams/ml
+          itemCost = (rate / 1000) * qty;
         } else {
           itemCost = rate * qty;
         }
@@ -1071,9 +1150,18 @@
       const grandTotal = Math.max(0, subtotal + taxAmount - discount);
       
       const cashPaid = parseFloat(cashSplitInput.value) || 0;
-      const remainingUpi = Math.max(0, grandTotal - cashPaid);
+      let remainingUpi = grandTotal - cashPaid;
+      let changeReturn = 0;
 
-      // UI Summary Displays
+      if (remainingUpi < 0) {
+        changeReturn = Math.abs(remainingUpi);
+        remainingUpi = 0;
+        changeReturnRow.classList.remove('hidden');
+        changeReturnText.textContent = `₹ ${changeReturn.toFixed(2)}`;
+      } else {
+        changeReturnRow.classList.add('hidden');
+      }
+
       subtotalText.textContent = `₹ ${subtotal.toFixed(2)}`;
       gstPctDisplay.textContent = gstPct.toString();
       gstCalculatedText.textContent = `+₹ ${taxAmount.toFixed(2)}`;
@@ -1081,7 +1169,7 @@
       grandTotalText.textContent = `₹ ${grandTotal.toFixed(2)}`;
       billResult.textContent = `₹ ${remainingUpi.toFixed(2)}`;
 
-      return { subtotal, gstPct, taxAmount, discount, grandTotal, cashPaid, remainingUpi };
+      return { subtotal, gstPct, taxAmount, discount, grandTotal, cashPaid, remainingUpi, changeReturn };
     }
 
     gstRateInput.addEventListener('input', calculateCartTotals);
@@ -1107,7 +1195,6 @@
       }
     });
 
-    // --- Feature #3 Add-on: Daily Sales Ledger with Date Filtering & Payment Analytics ---
     function logTransaction(item) {
       salesLedger.unshift(item);
       localStorage.setItem('salesLedgerLogs', JSON.stringify(salesLedger));
@@ -1125,7 +1212,7 @@
         const itemDate = item.isoDate || todayStr;
         if (filterValue === 'today') return itemDate === todayStr;
         if (filterValue === 'yesterday') return itemDate === yesterdayStr;
-        return true; // 'all'
+        return true;
       });
 
       const totalRevenue = filteredLogs.reduce((sum, i) => sum + i.amount, 0);
@@ -1181,10 +1268,11 @@
       document.body.removeChild(link);
     });
 
-    // --- Professional WhatsApp Digital Invoice Generator ---
     whatsappInvoiceBtn.addEventListener('click', () => {
       const merchant = merchantNameInput.value.trim() || 'Merchant Store';
-      const phone = custPhone.value.trim().replace(/\D/g, '');
+      let phone = custPhone.value.trim().replace(/\D/g, '');
+      if (phone.length === 10) phone = '91' + phone;
+
       const customer = custName.value.trim() || 'Valued Customer';
       const vpa = getVpa();
       const dateStr = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
@@ -1230,12 +1318,10 @@
                   `💳 *Pay Balance via UPI QR:* \n${upiPayLink}\n\n` +
                   `✨ *Thank you for shopping with us!*`;
 
-      const targetPhone = phone ? `91${phone}` : '';
-      const waUrl = `https://api.whatsapp.com/send?phone=${targetPhone}&text=${encodeURIComponent(msg)}`;
+      const waUrl = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(msg)}`;
       window.open(waUrl, '_blank');
     });
 
-    // --- QR Pop-up Modal Handlers ---
     function openQrModal() { qrResultModal.classList.remove('hidden'); }
     function closeQrModal() { qrResultModal.classList.add('hidden'); }
 
@@ -1244,7 +1330,6 @@
       if (e.target === qrResultModal) closeQrModal();
     });
 
-    // --- Helpers & Canvas Drawing ---
     function getDigits() { return upiInput.value.replace(/\D/g, '').slice(0, 9) || '000000000'; }
     function getVpa() {
       if (currentMode === 'standee') return `Q${getDigits()}@ybl`;
@@ -1299,6 +1384,7 @@
 
       const qrSourceCanvas = await generateQrCode(upiUri);
 
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = "#ffffff";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -1401,18 +1487,17 @@
       openQrModal();
     }
 
-    // Window Init
     window.addEventListener('load', () => {
       document.fonts.ready.then(() => {
         loadFixedStates();
         updateVpaPreview();
+        updateAccountStatusUI();
         renderMasterInventory();
       });
     });
 
     renderBtn.addEventListener('click', generateAndShowStandee);
 
-    // Download Handler
     downloadBtn.addEventListener('click', function() {
       const link = document.createElement('a');
       const sanitizedName = merchantNameInput.value.trim().replace(/\s+/g, '_') || 'Merchant';
@@ -1423,7 +1508,6 @@
       document.body.removeChild(link);
     });
 
-    // Direct Print Handler
     printBtn.addEventListener('click', () => { window.print(); });
   </script>
 </body>
