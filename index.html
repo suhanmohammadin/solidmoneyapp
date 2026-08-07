@@ -504,7 +504,7 @@
 
       <!-- Preview container dynamically sizes the canvas to fit without cropping -->
       <div id="printableArea" class="bg-white p-2 rounded-2xl shadow-lg border border-slate-200/80 flex items-center justify-center w-full overflow-hidden shrink min-h-0">
-        <!-- Expanded canvas height to 1200px to ensure full payload rendering -->
+        <!-- Canvas width="800" height="1200" -->
         <canvas id="standeeCanvas" width="800" height="1200" class="w-auto h-auto max-h-[48vh] sm:max-h-[52vh] max-w-full aspect-[800/1200] rounded-xl border border-slate-100 shadow-sm object-contain"></canvas>
       </div>
 
@@ -1501,7 +1501,7 @@
       });
     }
 
-    // Dynamic Sizing Standee Generator - Scaled Coordinates for 800x1200 canvas
+    // Perfectly Compact Standee Generator Function - Fits Entire Canvas on Mobile
     async function generateAndShowStandee() {
       const merchant = merchantNameInput.value.trim() || 'Merchant Name';
       const vpa = getVpa();
@@ -1525,107 +1525,107 @@
         // App Badge Circle
         ctx.fillStyle = activeTheme.primary;
         ctx.beginPath();
-        ctx.arc(centerX, 60 * SCALE, 30 * SCALE, 0, 2 * Math.PI);
+        ctx.arc(centerX, 50 * SCALE, 24 * SCALE, 0, 2 * Math.PI);
         ctx.fill();
 
         ctx.fillStyle = "#ffffff";
-        ctx.font = `800 ${22 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
+        ctx.font = `800 ${18 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillText("SM", centerX, 60 * SCALE);
+        ctx.fillText("SM", centerX, 50 * SCALE);
 
         // App Title
         ctx.fillStyle = activeTheme.primary;
-        ctx.font = `800 ${26 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
+        ctx.font = `800 ${22 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
         ctx.textBaseline = "alphabetic";
-        ctx.fillText("Solid Money App", centerX, 124 * SCALE);
+        ctx.fillText("Solid Money App", centerX, 102 * SCALE);
 
         // Merchant Name Pill
-        ctx.font = `700 ${15 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
+        ctx.font = `700 ${13.5 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
         const textWidth = ctx.measureText(merchant).width;
-        const pillWidth = Math.max(200 * SCALE, Math.min(350 * SCALE, textWidth + (40 * SCALE)));
-        const pillHeight = 40 * SCALE;
+        const pillWidth = Math.max(180 * SCALE, Math.min(320 * SCALE, textWidth + (32 * SCALE)));
+        const pillHeight = 32 * SCALE;
         const pillX = centerX - (pillWidth / 2);
-        const pillY = 140 * SCALE;
+        const pillY = 116 * SCALE;
 
         ctx.fillStyle = activeTheme.pill;
-        drawRoundedRect(ctx, pillX, pillY, pillWidth, pillHeight, 20 * SCALE);
+        drawRoundedRect(ctx, pillX, pillY, pillWidth, pillHeight, 16 * SCALE);
 
         ctx.fillStyle = "#ffffff";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillText(merchant, centerX, pillY + (20 * SCALE));
+        ctx.fillText(merchant, centerX, pillY + (16 * SCALE));
 
-        // Proportional QR Code Drawing
-        const qrSize = 300 * SCALE;
+        // Scaled-down QR Code to fit full view
+        const qrSize = 210 * SCALE;
         const qrX = centerX - (qrSize / 2);
-        ctx.drawImage(qrSourceCanvas, qrX, 196 * SCALE, qrSize, qrSize);
+        ctx.drawImage(qrSourceCanvas, qrX, 162 * SCALE, qrSize, qrSize);
 
         // Pay Amount Display
         if (amount) {
           ctx.fillStyle = "#10b981";
-          ctx.font = `800 ${16 * SCALE}px 'JetBrains Mono', monospace`;
+          ctx.font = `800 ${14 * SCALE}px 'JetBrains Mono', monospace`;
           ctx.textAlign = "center";
           ctx.textBaseline = "alphabetic";
-          ctx.fillText(`PAY: ₹${amount}`, centerX, 516 * SCALE);
+          ctx.fillText(`PAY: ₹${amount}`, centerX, 396 * SCALE);
         }
 
         // BHIM UPI Footer Details
         ctx.fillStyle = "#1e293b";
-        ctx.font = `800 ${18 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
+        ctx.font = `800 ${15 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
         ctx.textAlign = "center";
         ctx.textBaseline = "alphabetic";
-        ctx.fillText("BHIM  |  UPI", centerX, 546 * SCALE);
+        ctx.fillText("BHIM  |  UPI", centerX, 422 * SCALE);
 
         ctx.fillStyle = "#64748b";
-        ctx.font = `600 ${9.5 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
-        ctx.fillText("BHARAT INTERFACE FOR MONEY     UNIFIED PAYMENTS INTERFACE", centerX, 564 * SCALE);
+        ctx.font = `600 ${8 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
+        ctx.fillText("BHARAT INTERFACE FOR MONEY     UNIFIED PAYMENTS INTERFACE", centerX, 436 * SCALE);
 
         const digits = getDigits();
         ctx.fillStyle = "#0f172a";
-        ctx.font = `700 ${12 * SCALE}px 'JetBrains Mono', monospace`;
-        ctx.fillText(`Terminal 1-Q${digits}`, centerX, 586 * SCALE);
+        ctx.font = `700 ${10.5 * SCALE}px 'JetBrains Mono', monospace`;
+        ctx.fillText(`Terminal 1-Q${digits}`, centerX, 452 * SCALE);
 
       } else {
         ctx.fillStyle = activeTheme.primary;
-        ctx.fillRect(0, 0, canvas.width, 100 * SCALE);
+        ctx.fillRect(0, 0, canvas.width, 80 * SCALE);
 
         ctx.fillStyle = "#ffffff";
-        ctx.font = `800 ${20 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
+        ctx.font = `800 ${16 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
         ctx.textAlign = "center";
         ctx.textBaseline = "alphabetic";
-        ctx.fillText("SCAN & PAY WITH ANY UPI APP", centerX, 48 * SCALE);
+        ctx.fillText("SCAN & PAY WITH ANY UPI APP", centerX, 38 * SCALE);
 
-        ctx.font = `600 ${12 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
+        ctx.font = `600 ${10 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
         ctx.fillStyle = "#ffffff";
         ctx.globalAlpha = 0.8;
-        ctx.fillText("GPay • PhonePe • Paytm • BHIM", centerX, 74 * SCALE);
+        ctx.fillText("GPay • PhonePe • Paytm • BHIM", centerX, 58 * SCALE);
         ctx.globalAlpha = 1.0;
 
         ctx.fillStyle = "#0f172a";
-        ctx.font = `800 ${22 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
+        ctx.font = `800 ${18 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
         ctx.textAlign = "center";
-        ctx.fillText(merchant, centerX, 140 * SCALE);
+        ctx.fillText(merchant, centerX, 112 * SCALE);
 
         ctx.fillStyle = activeTheme.primary;
-        ctx.font = `700 ${14 * SCALE}px 'JetBrains Mono', monospace`;
-        ctx.fillText(vpa, centerX, 164 * SCALE);
+        ctx.font = `700 ${12 * SCALE}px 'JetBrains Mono', monospace`;
+        ctx.fillText(vpa, centerX, 130 * SCALE);
 
-        const qrSize = 300 * SCALE;
+        const qrSize = 210 * SCALE;
         const qrX = centerX - (qrSize / 2);
-        ctx.drawImage(qrSourceCanvas, qrX, 186 * SCALE, qrSize, qrSize);
+        ctx.drawImage(qrSourceCanvas, qrX, 146 * SCALE, qrSize, qrSize);
 
         if (amount) {
           ctx.fillStyle = "#10b981";
-          ctx.font = `800 ${16 * SCALE}px 'JetBrains Mono', monospace`;
+          ctx.font = `800 ${14 * SCALE}px 'JetBrains Mono', monospace`;
           ctx.textAlign = "center";
-          ctx.fillText(`Amount: ₹${amount}`, centerX, 510 * SCALE);
+          ctx.fillText(`Amount: ₹${amount}`, centerX, 382 * SCALE);
         }
 
         ctx.fillStyle = "#1e293b";
-        ctx.font = `800 ${18 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
+        ctx.font = `800 ${15 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
         ctx.textAlign = "center";
-        ctx.fillText("BHIM  |  UPI", centerX, 540 * SCALE);
+        ctx.fillText("BHIM  |  UPI", centerX, 406 * SCALE);
       }
 
       openQrModal();
