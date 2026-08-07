@@ -477,29 +477,39 @@
     </div>
   </div>
 
-  <!-- POPUP MODAL: Daily Sales Ledger History -->
-  <div id="ledgerModalOverlay" class="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 sm:p-4">
-    <div class="bg-white w-full max-w-xl rounded-3xl shadow-2xl border border-slate-100 overflow-hidden transform transition-all flex flex-col max-h-[90vh]">
-      
-      <div class="brand-gradient p-4 sm:p-5 text-white flex items-center justify-between shrink-0">
-        <div class="flex items-center gap-2.5">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-          <h3 class="font-bold text-lg">Daily Sales & History</h3>
+  <!-- FULL-SCREEN MODAL: Daily Sales Ledger History -->
+  <div id="ledgerModalOverlay" class="fixed inset-0 bg-slate-900 z-50 hidden flex flex-col h-full w-full overflow-hidden">
+    
+    <div class="brand-gradient p-4 sm:p-5 text-white flex items-center justify-between shrink-0 shadow-lg">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-md">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
         </div>
-        <button type="button" id="closeLedgerModalBtn" class="text-white/80 hover:text-white p-1 rounded-lg hover:bg-white/10 transition">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-        </button>
+        <div>
+          <h3 class="font-extrabold text-base sm:text-lg leading-none">Daily Sales & History</h3>
+          <p class="text-[11px] text-white/70 mt-1">Transaction Ledger</p>
+        </div>
       </div>
+      <button type="button" id="closeLedgerModalBtn" class="text-white/80 hover:text-white p-2 rounded-xl bg-white/10 hover:bg-white/20 transition flex items-center gap-1 text-xs font-bold">
+        <span>Close</span>
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+    </div>
 
-      <div class="p-4 sm:p-6 space-y-4 overflow-y-auto grow">
+    <div class="grow bg-slate-100 p-3 sm:p-6 overflow-y-auto max-w-4xl mx-auto w-full space-y-4 pb-24 sm:pb-6">
 
-        <div class="flex items-center justify-between bg-slate-50 p-2.5 rounded-2xl border border-slate-200">
-          <span class="text-xs font-bold text-slate-600 uppercase tracking-wider">Filter Date:</span>
-          <select id="ledgerDateFilter" class="px-3 py-1.5 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-purple-600">
-            <option value="today">Today</option>
-            <option value="yesterday">Yesterday</option>
-            <option value="all">All Time</option>
-          </select>
+      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
+          <span class="text-xs font-bold text-slate-600 uppercase tracking-wider w-full sm:w-auto">Filter Date:</span>
+          <div class="flex items-center gap-2 w-full sm:w-auto">
+            <select id="ledgerDateFilter" class="px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-purple-600 grow sm:grow-0">
+              <option value="today">Today</option>
+              <option value="yesterday">Yesterday</option>
+              <option value="custom">Custom Date</option>
+              <option value="all">All Time</option>
+            </select>
+            <input type="date" id="customDateInput" class="hidden px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-purple-600 font-mono" />
+          </div>
         </div>
 
         <div class="grid grid-cols-2 gap-3">
@@ -524,7 +534,7 @@
           </div>
         </div>
 
-        <div class="border border-slate-200 rounded-2xl overflow-hidden min-h-[180px] max-h-[240px] overflow-y-auto">
+        <div class="border border-slate-200 rounded-2xl overflow-hidden min-h-[220px] max-h-[45vh] overflow-y-auto bg-white">
           <table class="w-full text-left text-xs">
             <thead class="bg-slate-100 text-slate-600 font-bold uppercase tracking-wider text-[10px] sticky top-0">
               <tr>
@@ -539,16 +549,16 @@
           </table>
         </div>
       </div>
-
-      <div class="p-4 bg-slate-50 border-t border-slate-100 shrink-0 flex gap-2">
-        <button type="button" id="exportCsvBtn" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 rounded-2xl shadow-md transition flex items-center justify-center gap-2 text-xs">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-          Export CSV Log
-        </button>
-        <button type="button" id="clearLedgerBtn" class="px-4 bg-red-50 hover:bg-red-100 text-red-600 font-bold py-3 rounded-2xl transition text-xs">Clear</button>
-      </div>
-
     </div>
+
+    <div class="p-4 bg-white border-t border-slate-200 shrink-0 max-w-4xl mx-auto w-full flex gap-2">
+      <button type="button" id="exportCsvBtn" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 rounded-2xl shadow-md transition flex items-center justify-center gap-2 text-xs">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+        Export CSV Log
+      </button>
+      <button type="button" id="clearLedgerBtn" class="px-5 bg-red-50 hover:bg-red-100 text-red-600 font-bold py-3 rounded-2xl transition text-xs">Clear All</button>
+    </div>
+
   </div>
 
   <!-- POPUP MODAL: Generated QR Preview Standee -->
@@ -1118,6 +1128,7 @@
     const closeLedgerModalBtn = document.getElementById('closeLedgerModalBtn');
     const ledgerModalOverlay = document.getElementById('ledgerModalOverlay');
     const ledgerDateFilter = document.getElementById('ledgerDateFilter');
+    const customDateInput = document.getElementById('customDateInput');
     const ledgerTotalSales = document.getElementById('ledgerTotalSales');
     const ledgerCount = document.getElementById('ledgerCount');
     const ledgerCashTotal = document.getElementById('ledgerCashTotal');
@@ -1155,34 +1166,49 @@
       } else {
         masterInventoryTableBody.innerHTML = inventoryMaster.map((item, idx) => `
           <tr>
-            <td class="p-2.5 font-bold text-slate-800">${item.name}</td>
-            <td class="p-2.5 text-right font-mono font-bold text-emerald-600">₹${(item.rate || 0).toFixed(2)}</td>
-            <td class="p-2.5 text-center font-mono font-bold ${(item.stock || 0) <= 5 ? 'text-red-500' : 'text-slate-800'}">
-              ${item.stock || 0} <span class="text-[10px] text-slate-500 font-normal uppercase">${item.unit || 'pcs'}</span>
+            <td class="p-2.5 font-bold text-slate-800">
+              <input type="text" id="editName_${idx}" value="${item.name}" class="w-full px-2 py-1 border border-slate-200 rounded-lg text-xs font-semibold bg-slate-50 focus:bg-white focus:ring-2 focus:ring-purple-600 outline-none" />
+            </td>
+            <td class="p-2.5 text-right font-mono font-bold">
+              <input type="number" id="editRate_${idx}" value="${item.rate || 0}" step="0.01" inputmode="decimal" class="w-20 px-2 py-1 text-right border border-slate-200 rounded-lg text-xs font-mono font-bold bg-slate-50 focus:bg-white focus:ring-2 focus:ring-purple-600 outline-none text-emerald-600" />
+            </td>
+            <td class="p-2.5 text-center font-mono font-bold">
+              <div class="flex items-center justify-center gap-1">
+                <input type="number" id="editStock_${idx}" value="${item.stock || 0}" step="0.01" inputmode="decimal" class="w-16 px-2 py-1 text-center border border-slate-200 rounded-lg text-xs font-mono font-bold bg-slate-50 focus:bg-white focus:ring-2 focus:ring-purple-600 outline-none ${(item.stock || 0) <= 5 ? 'text-red-500' : 'text-slate-800'}" />
+                <span class="text-[10px] text-slate-500 font-normal uppercase">${item.unit || 'pcs'}</span>
+              </div>
             </td>
             <td class="p-2.5 text-center space-x-1">
-              <button onclick="adjustStock(${idx}, 1)" class="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 font-extrabold rounded text-[11px]" title="Increase Stock">+</button>
-              <button onclick="adjustStock(${idx}, -1)" class="px-1.5 py-0.5 bg-amber-100 text-amber-700 font-extrabold rounded text-[11px]" title="Decrease Stock">-</button>
-              <button onclick="deleteMasterItem(${idx})" class="text-red-500 font-bold hover:underline px-1">×</button>
+              <button onclick="saveStockEdit(${idx})" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-lg text-[11px] shadow-2xs transition">Save</button>
+              <button onclick="deleteMasterItem(${idx})" class="px-2 py-1 bg-red-50 hover:bg-red-100 text-red-600 font-bold rounded-lg text-[11px] transition">×</button>
             </td>
           </tr>
         `).join('');
       }
     }
 
-    window.adjustStock = function(index, delta) {
-      const item = inventoryMaster[index];
-      const changeStr = prompt(`Edit stock for "${item.name}" (${item.unit || 'pcs'}). Enter amount to ${delta > 0 ? 'increase' : 'decrease'}:`, "1");
-      const val = parseFloat(changeStr);
-      if (!isNaN(val) && val > 0) {
-        if (delta > 0) {
-          item.stock = (item.stock || 0) + val;
-        } else {
-          item.stock = Math.max(0, (item.stock || 0) - val);
-        }
-        saveInventoryToStorage();
-        renderMasterInventory();
+    window.saveStockEdit = function(index) {
+      const nameInput = document.getElementById(`editName_${index}`);
+      const rateInput = document.getElementById(`editRate_${index}`);
+      const stockInput = document.getElementById(`editStock_${index}`);
+
+      if (!nameInput || !rateInput || !stockInput) return;
+
+      const newName = nameInput.value.trim();
+      const newRate = parseFloat(rateInput.value);
+      const newStock = parseFloat(stockInput.value);
+
+      if (!newName) {
+        alert("Item name cannot be empty.");
+        return;
       }
+
+      inventoryMaster[index].name = newName;
+      inventoryMaster[index].rate = isNaN(newRate) ? 0 : newRate;
+      inventoryMaster[index].stock = isNaN(newStock) ? 0 : newStock;
+
+      saveInventoryToStorage();
+      renderMasterInventory();
     };
 
     saveMasterItemBtn.addEventListener('click', () => {
@@ -1534,10 +1560,20 @@
       yesterdayDate.setDate(yesterdayDate.getDate() - 1);
       const yesterdayStr = yesterdayDate.toISOString().slice(0, 10);
 
+      if (filterValue === 'custom') {
+        customDateInput.classList.remove('hidden');
+      } else {
+        customDateInput.classList.add('hidden');
+      }
+
       const filteredLogs = salesLedger.filter(item => {
         const itemDate = item.isoDate || todayStr;
         if (filterValue === 'today') return itemDate === todayStr;
         if (filterValue === 'yesterday') return itemDate === yesterdayStr;
+        if (filterValue === 'custom') {
+          const selectedCustomDate = customDateInput.value;
+          return selectedCustomDate ? itemDate === selectedCustomDate : true;
+        }
         return true;
       });
 
@@ -1551,7 +1587,7 @@
       ledgerUpiTotal.textContent = `₹${totalUpi.toFixed(2)}`;
 
       if (filteredLogs.length === 0) {
-        ledgerTableBody.innerHTML = `<tr><td colspan="3" class="p-8 text-center text-slate-400 italic">No transactions recorded today yet.</td></tr>`;
+        ledgerTableBody.innerHTML = `<tr><td colspan="3" class="p-8 text-center text-slate-400 italic">No transactions recorded for this period.</td></tr>`;
       } else {
         ledgerTableBody.innerHTML = filteredLogs.map(item => `
           <tr>
@@ -1567,9 +1603,12 @@
     }
 
     ledgerDateFilter.addEventListener('change', renderLedgerModal);
+    customDateInput.addEventListener('change', renderLedgerModal);
 
     openLedgerModalBtn.addEventListener('click', () => {
       closeDrawer();
+      customDateInput.value = new Date().toISOString().slice(0, 10);
+      ledgerDateFilter.value = 'today';
       renderLedgerModal();
       toggleModal(ledgerModalOverlay, true);
     });
