@@ -75,7 +75,7 @@
     }
   </style>
 </head>
-<body class="theme-purple bg-slate-900/5 text-slate-800 min-h-screen flex flex-col items-center justify-between p-3 sm:p-6 antialiased selection:bg-purple-500 selection:text-white">
+<body class="theme-purple bg-slate-100 text-slate-800 min-h-screen flex flex-col items-center justify-between antialiased selection:bg-purple-500 selection:text-white pb-20">
 
   <!-- PIN Authentication Modal Overlay -->
   <div id="pinAuthModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 z-[100]">
@@ -504,7 +504,6 @@
 
       <!-- Preview container dynamically sizes the canvas to fit without cropping -->
       <div id="printableArea" class="bg-white p-2 rounded-2xl shadow-lg border border-slate-200/80 flex items-center justify-center w-full overflow-hidden shrink min-h-0">
-        <!-- Canvas width="800" height="1200" -->
         <canvas id="standeeCanvas" width="800" height="1200" class="w-auto h-auto max-h-[48vh] sm:max-h-[52vh] max-w-full aspect-[800/1200] rounded-xl border border-slate-100 shadow-sm object-contain"></canvas>
       </div>
 
@@ -526,79 +525,84 @@
     </div>
   </div>
 
-  <!-- Header Banner -->
-  <header class="text-center my-3 w-full max-w-2xl brand-gradient p-4 sm:p-6 rounded-3xl shadow-xl text-white relative overflow-hidden">
-    <div class="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
-      <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
-        <div class="flex items-center gap-3">
-          <button type="button" id="openDrawerBtn" class="p-2.5 rounded-2xl bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 transition text-white active:scale-95 focus:outline-none" aria-label="Open Menu">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-          </button>
-          
-          <button type="button" id="smLogoBtn" class="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-2xl flex items-center justify-center brand-text font-black text-lg sm:text-xl shadow-lg shrink-0 transition-transform transform active:scale-90 focus:outline-none">
-            <span>SM</span>
-          </button>
-
-          <div class="text-left">
-            <h1 class="text-xl sm:text-3xl font-black tracking-tight leading-tight">Solid Money App</h1>
-            <p class="text-white/80 text-[11px] sm:text-sm font-medium">Pro Merchant Suite</p>
+  <!-- PHONEPE-STYLE HEADER -->
+  <header class="w-full max-w-2xl brand-gradient text-white pt-4 pb-6 px-4 rounded-b-3xl shadow-xl relative overflow-hidden">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <button type="button" id="openDrawerBtn" class="p-1 rounded-full bg-white/20 backdrop-blur-md border border-white/30 transition text-white active:scale-95 focus:outline-none" aria-label="Open Menu">
+          <div class="w-9 h-9 rounded-full bg-white/30 flex items-center justify-center font-bold text-sm">
+            👤
           </div>
+        </button>
+        <div>
+          <h1 class="text-lg font-black tracking-tight leading-none">Solid Money App</h1>
+          <p class="text-white/80 text-[11px] font-medium mt-0.5">Pro Merchant Suite</p>
         </div>
       </div>
 
-      <div class="flex items-center justify-center gap-2 bg-black/20 backdrop-blur-md px-3 py-1.5 rounded-2xl border border-white/15 w-full sm:w-auto">
-        <span class="text-[11px] font-bold text-white/80">Theme:</span>
-        <div class="flex items-center gap-1.5">
-          <button type="button" data-theme="theme-purple" class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#5f259f] border-2 border-white transition transform hover:scale-110" title="PhonePe Purple"></button>
-          <button type="button" data-theme="theme-blue" class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#002e6e] border-2 border-white transition transform hover:scale-110" title="Paytm Blue"></button>
-          <button type="button" data-theme="theme-teal" class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#00796b] border-2 border-white transition transform hover:scale-110" title="GPay Teal"></button>
-          <button type="button" data-theme="theme-emerald" class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#047857] border-2 border-white transition transform hover:scale-110" title="Emerald Green"></button>
-          <button type="button" data-theme="theme-dark" class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#0f172a] border-2 border-white transition transform hover:scale-110" title="Dark Obsidian"></button>
+      <div class="flex items-center gap-3">
+        <button type="button" id="smLogoBtn" class="w-9 h-9 bg-white rounded-full flex items-center justify-center brand-text font-black text-sm shadow-md transition-transform transform active:scale-90 focus:outline-none">
+          <span>SM</span>
+        </button>
+
+        <div class="flex items-center justify-center gap-1 bg-black/20 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/15">
+          <div class="flex items-center gap-1">
+            <button type="button" data-theme="theme-purple" class="w-4 h-4 rounded-full bg-[#5f259f] border border-white transition transform hover:scale-110" title="PhonePe Purple"></button>
+            <button type="button" data-theme="theme-blue" class="w-4 h-4 rounded-full bg-[#002e6e] border border-white transition transform hover:scale-110" title="Paytm Blue"></button>
+            <button type="button" data-theme="theme-teal" class="w-4 h-4 rounded-full bg-[#00796b] border border-white transition transform hover:scale-110" title="GPay Teal"></button>
+            <button type="button" data-theme="theme-emerald" class="w-4 h-4 rounded-full bg-[#047857] border border-white transition transform hover:scale-110" title="Emerald Green"></button>
+            <button type="button" data-theme="theme-dark" class="w-4 h-4 rounded-full bg-[#0f172a] border border-white transition transform hover:scale-110" title="Dark Obsidian"></button>
+          </div>
         </div>
       </div>
     </div>
   </header>
 
-  <!-- Main Generator Form Card -->
-  <main class="max-w-2xl w-full bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-200/80 my-auto p-4 sm:p-8 space-y-5 sm:space-y-6">
+  <!-- MAIN INTERFACE CARD -->
+  <main class="max-w-2xl w-full bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-200/80 -mt-3 mb-auto p-4 sm:p-6 space-y-6">
 
-    <div>
-      <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-500 mb-2.5">Select Utility Feature</label>
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+    <!-- PHONEPE-STYLE HORIZONTAL MONEY TRANSFERS / UTILITY SECTION -->
+    <div class="space-y-3">
+      <div class="flex items-center justify-between">
+        <h2 class="text-sm font-extrabold text-slate-800 tracking-tight">Merchant Utilities</h2>
+        <span class="text-[10px] font-bold brand-text bg-purple-50 px-2 py-0.5 rounded-full border border-purple-100">Quick Actions</span>
+      </div>
+
+      <!-- 3 Horizontal Circular Icon Cards -->
+      <div class="grid grid-cols-3 gap-3">
         
-        <button type="button" id="cardStandeeBtn" class="p-3.5 rounded-2xl border-2 border-purple-600 bg-purple-50 brand-text font-bold text-xs transition flex sm:flex-col items-center justify-start sm:justify-center gap-3 shadow-sm w-full">
-          <div class="w-9 h-9 rounded-xl brand-bg text-white flex items-center justify-center shrink-0">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+        <!-- Option 1: Standee Mode -->
+        <button type="button" id="cardStandeeBtn" class="flex flex-col items-center text-center group focus:outline-none">
+          <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full brand-bg text-white flex items-center justify-center shadow-md transition transform group-active:scale-95 group-hover:scale-105 mb-2 relative">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+            <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full"></span>
           </div>
-          <div class="text-left sm:text-center">
-            <span class="block text-sm sm:text-xs font-extrabold">Standee Mode</span>
-            <span class="text-[10px] font-medium text-slate-500 sm:hidden">Generate QR Standee Payload</span>
-          </div>
+          <span class="text-xs font-bold text-slate-700 group-hover:brand-text leading-tight">Standee<br>Mode</span>
         </button>
 
-        <button type="button" id="cardGenericBtn" class="p-3.5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs transition flex sm:flex-col items-center justify-start sm:justify-center gap-3 w-full">
-          <div class="w-9 h-9 rounded-xl bg-slate-200 text-slate-700 flex items-center justify-center shrink-0">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+        <!-- Option 2: All In One QR -->
+        <button type="button" id="cardGenericBtn" class="flex flex-col items-center text-center group focus:outline-none">
+          <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shadow-md transition transform group-active:scale-95 group-hover:scale-105 mb-2">
+            <svg class="w-7 h-7 text-purple-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
           </div>
-          <div class="text-left sm:text-center">
-            <span class="block text-sm sm:text-xs font-extrabold">All In one QR</span>
-            <span class="text-[10px] font-medium text-slate-500 sm:hidden">Custom VPA Payment</span>
-          </div>
+          <span class="text-xs font-bold text-slate-700 group-hover:brand-text leading-tight">All In One<br>QR</span>
         </button>
 
-        <button type="button" id="cardCalcBtn" class="p-3.5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs transition flex sm:flex-col items-center justify-start sm:justify-center gap-3 w-full">
-          <div class="w-9 h-9 rounded-xl bg-slate-200 text-slate-700 flex items-center justify-center shrink-0">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+        <!-- Option 3: POS Bill Calcy -->
+        <button type="button" id="cardCalcBtn" class="flex flex-col items-center text-center group focus:outline-none">
+          <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shadow-md transition transform group-active:scale-95 group-hover:scale-105 mb-2 relative">
+            <svg class="w-7 h-7 text-purple-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+            <span class="absolute -top-1 -right-1 bg-amber-500 text-white text-[9px] font-black px-1.5 py-0.2 rounded-full uppercase tracking-tighter">POS</span>
           </div>
-          <div class="text-left sm:text-center">
-            <span class="block text-sm sm:text-xs font-extrabold">POS Bill Calcy</span>
-            <span class="text-[10px] font-medium text-slate-500 sm:hidden">Weight & Inventory Billing</span>
-          </div>
+          <span class="text-xs font-bold text-slate-700 group-hover:brand-text leading-tight">POS Bill<br>Calcy</span>
         </button>
 
       </div>
     </div>
 
+    <hr class="border-slate-100" />
+
+    <!-- GENERATOR FORM -->
     <form id="qrForm" class="space-y-4" onsubmit="return false;">
       <div>
         <div class="flex items-center justify-between mb-1.5">
@@ -659,6 +663,32 @@
     </form>
 
   </main>
+
+  <!-- PHONEPE-STYLE BOTTOM NAVIGATION BAR -->
+  <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-6 py-2 flex items-center justify-between z-40 max-w-2xl mx-auto rounded-t-2xl shadow-lg">
+    <button type="button" class="flex flex-col items-center brand-text font-bold text-[10px]">
+      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l1.293 1.293a1 1 0 001.414-1.414l-7-7z"/></svg>
+      <span>Home</span>
+    </button>
+    <button type="button" class="flex flex-col items-center text-slate-400 font-semibold text-[10px]">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+      <span>Search</span>
+    </button>
+    <!-- Center Floating QR Button -->
+    <div class="-mt-6">
+      <button type="button" onclick="document.getElementById('renderBtn').click()" class="w-12 h-12 brand-bg text-white rounded-full flex items-center justify-center shadow-xl border-4 border-white transition active:scale-95">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+      </button>
+    </div>
+    <button type="button" class="flex flex-col items-center text-slate-400 font-semibold text-[10px]">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+      <span>Alerts</span>
+    </button>
+    <button type="button" id="openLedgerBottomBtn" onclick="document.getElementById('openLedgerModalBtn').click()" class="flex flex-col items-center text-slate-400 font-semibold text-[10px]">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      <span>History</span>
+    </button>
+  </nav>
 
   <footer class="text-center my-4 text-xs font-semibold text-slate-400">
     &copy; All rights reserved by SMGC PVT LTD
@@ -1145,7 +1175,7 @@
     document.querySelectorAll('[data-theme]').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const theme = e.currentTarget.getAttribute('data-theme');
-        document.body.className = `${theme} bg-slate-900/5 text-slate-800 min-h-screen flex flex-col items-center justify-between p-3 sm:p-6 antialiased`;
+        document.body.className = `${theme} bg-slate-100 text-slate-800 min-h-screen flex flex-col items-center justify-between antialiased pb-20`;
         activeThemeKey = theme;
       });
     });
@@ -1158,14 +1188,10 @@
       if (!fixUpiToggle.checked) upiInput.value = "";
       
       if (mode === 'standee') {
-        cardStandeeBtn.className = "p-3.5 rounded-2xl border-2 border-purple-600 bg-purple-50 brand-text font-bold text-xs transition flex sm:flex-col items-center justify-start sm:justify-center gap-3 shadow-sm w-full";
-        cardGenericBtn.className = "p-3.5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs transition flex sm:flex-col items-center justify-start sm:justify-center gap-3 w-full";
         upiFieldLabel.innerHTML = 'Terminal Digits (9 Digits) <span class="text-red-500">*</span>';
         upiInput.placeholder = "e.g. 9133359954";
         upiInput.setAttribute('maxlength', '9');
       } else {
-        cardGenericBtn.className = "p-3.5 rounded-2xl border-2 border-purple-600 bg-purple-50 brand-text font-bold text-xs transition flex sm:flex-col items-center justify-start sm:justify-center gap-3 shadow-sm w-full";
-        cardStandeeBtn.className = "p-3.5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs transition flex sm:flex-col items-center justify-start sm:justify-center gap-3 w-full";
         upiFieldLabel.innerHTML = 'UPI ID / VPA <span class="text-red-500">*</span>';
         upiInput.placeholder = "e.g. 9133359954@AXL";
         upiInput.removeAttribute('maxlength');
@@ -1501,7 +1527,6 @@
       });
     }
 
-    // Perfectly Compact Standee Generator Function - Fits Entire Canvas on Mobile
     async function generateAndShowStandee() {
       const merchant = merchantNameInput.value.trim() || 'Merchant Name';
       const vpa = getVpa();
