@@ -174,7 +174,7 @@
       <nav class="p-4 space-y-2">
         <button type="button" id="openMasterInventoryModalBtn" class="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-2xl transition text-left">
           <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
-          Item / Inventory Configurator
+          Item & Stock Configurator
         </button>
         <button type="button" id="openLedgerModalBtn" class="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-2xl transition text-left">
           <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
@@ -195,7 +195,7 @@
       <div class="brand-gradient p-4 sm:p-5 text-white flex items-center justify-between shrink-0">
         <div class="flex items-center gap-2.5">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
-          <h3 class="font-bold text-lg">Item / Inventory Configurator</h3>
+          <h3 class="font-bold text-lg">Item & Stock Configurator</h3>
         </div>
         <button type="button" id="closeMasterInventoryModalBtn" class="text-white/80 hover:text-white p-1 rounded-lg hover:bg-white/10 transition">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -205,15 +205,27 @@
       <div class="p-4 sm:p-6 space-y-4 overflow-y-auto grow">
         <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
           <div class="flex items-center justify-between">
-            <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-700">Add New Inventory Item</h4>
+            <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-700">Add Stock Item</h4>
           </div>
 
           <div class="grid grid-cols-12 gap-2">
-            <div class="col-span-6 sm:col-span-7">
-              <input type="text" id="masterItemName" placeholder="Item Name (e.g. Apples)" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-600 bg-white" />
+            <div class="col-span-4">
+              <input type="text" id="masterItemName" placeholder="Item Name" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-600 bg-white" />
             </div>
-            <div class="col-span-4 sm:col-span-3">
-              <input type="number" id="masterItemRate" inputmode="decimal" placeholder="Rate/KG (₹)" step="0.01" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-mono font-bold outline-none focus:ring-2 focus:ring-purple-600 bg-white" />
+            <div class="col-span-3">
+              <input type="number" id="masterItemRate" inputmode="decimal" placeholder="Rate (₹)" step="0.01" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-mono font-bold outline-none focus:ring-2 focus:ring-purple-600 bg-white" />
+            </div>
+            <div class="col-span-3">
+              <div class="flex">
+                <input type="number" id="masterItemStock" inputmode="decimal" placeholder="Qty" step="0.01" class="w-full px-2 py-2 border border-r-0 border-slate-300 rounded-l-xl text-xs font-mono font-bold outline-none focus:ring-2 focus:ring-purple-600 bg-white" />
+                <select id="masterItemUnit" class="bg-slate-100 border border-slate-300 rounded-r-xl px-1 text-[11px] font-bold text-slate-700 outline-none">
+                  <option value="pcs">Pcs</option>
+                  <option value="kg">KG</option>
+                  <option value="g">G</option>
+                  <option value="l">L</option>
+                  <option value="ml">ml</option>
+                </select>
+              </div>
             </div>
             <div class="col-span-2">
               <button type="button" id="saveMasterItemBtn" class="w-full brand-bg hover:opacity-90 text-white font-bold py-2 rounded-xl text-xs transition">Save</button>
@@ -222,14 +234,15 @@
         </div>
 
         <div>
-          <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-500 mb-2">Saved Inventory Items</h4>
+          <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-500 mb-2">Stock Holder & Remaining Quantities</h4>
           <div class="border border-slate-200 rounded-2xl overflow-hidden bg-white max-h-60 overflow-y-auto">
             <table class="w-full text-left text-xs">
               <thead class="bg-slate-100 text-slate-600 font-bold uppercase tracking-wider text-[10px] sticky top-0">
                 <tr>
                   <th class="p-2.5">Item Name</th>
-                  <th class="p-2.5 text-right">Default Rate / Unit (₹)</th>
-                  <th class="p-2.5 text-center">Action</th>
+                  <th class="p-2.5 text-right">Rate (₹)</th>
+                  <th class="p-2.5 text-center">Remaining Stock</th>
+                  <th class="p-2.5 text-center">Action / Edit</th>
                 </tr>
               </thead>
               <tbody id="masterInventoryTableBody" class="divide-y divide-slate-100 font-medium">
@@ -240,6 +253,44 @@
         </div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- POPUP MODAL: Instant Transaction & Customer/Mobile Search -->
+  <div id="searchModalOverlay" class="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl border border-slate-100 overflow-hidden transform transition-all flex flex-col max-h-[90vh]">
+      
+      <div class="brand-gradient p-4 sm:p-5 text-white flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-2.5">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <h3 class="font-bold text-lg">Search by Customer or Mobile No</h3>
+        </div>
+        <button type="button" id="closeSearchModalBtn" class="text-white/80 hover:text-white p-1 rounded-lg hover:bg-white/10 transition">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <div class="p-4 sm:p-6 space-y-4 overflow-y-auto grow">
+        <div class="relative">
+          <input type="tel" id="liveSearchInput" placeholder="Enter customer name or mobile number (e.g. 91333...)" inputmode="tel" class="w-full px-4 py-3 pl-10 border border-slate-300 rounded-2xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white font-mono" />
+          <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        </div>
+
+        <div class="border border-slate-200 rounded-2xl overflow-hidden min-h-[220px] max-h-[300px] overflow-y-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-100 text-slate-600 font-bold uppercase tracking-wider text-[10px] sticky top-0">
+              <tr>
+                <th class="p-2.5">Date / Time</th>
+                <th class="p-2.5">Customer & Mobile</th>
+                <th class="p-2.5 text-right">Amount</th>
+              </tr>
+            </thead>
+            <tbody id="searchTableBody" class="divide-y divide-slate-100 font-medium">
+              <tr><td colspan="3" class="p-8 text-center text-slate-400 italic">Type above to search transactions...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -277,7 +328,7 @@
       <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3">
         <div class="flex items-center justify-between">
           <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">
-            Item Name <span class="text-slate-400 font-normal">(Type to search)</span>
+            Item Name <span class="text-slate-400 font-normal">(Type to search stock)</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer text-xs font-bold text-slate-600 select-none">
             <span class="text-[10px] uppercase text-purple-700 font-extrabold">Flat Amount (₹)</span>
@@ -287,7 +338,7 @@
         </div>
 
         <div class="relative">
-          <input type="text" id="itemNameInput" placeholder="e.g. Apples, Rice, Sugar" autocomplete="off" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
+          <input type="text" id="itemNameInput" placeholder="e.g. Apples, Rice" autocomplete="off" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
           
           <div id="suggestionsBox" class="absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-xl z-20 max-h-48 overflow-y-auto hidden divide-y divide-slate-100 text-xs">
             <!-- Dynamic suggestions -->
@@ -296,7 +347,7 @@
 
         <div class="grid grid-cols-12 gap-2">
           <div id="rateContainer" class="col-span-5">
-            <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">1 KG / L Rate (₹)</label>
+            <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Rate / Unit (₹)</label>
             <input type="number" id="ratePerKg" inputmode="decimal" placeholder="e.g. 120" step="0.01" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm font-mono outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
           </div>
 
@@ -308,13 +359,13 @@
           <div id="qtyContainer" class="col-span-5">
             <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Qty / Weight</label>
             <div class="flex">
-              <input type="number" id="purchaseQty" inputmode="decimal" placeholder="e.g. 500" step="0.01" class="w-full px-2 py-2 border border-r-0 border-slate-300 rounded-l-xl text-sm font-mono outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
+              <input type="number" id="purchaseQty" inputmode="decimal" placeholder="e.g. 1" step="0.01" class="w-full px-2 py-2 border border-r-0 border-slate-300 rounded-l-xl text-sm font-mono outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
               <select id="purchaseUnit" class="bg-slate-100 border border-slate-300 rounded-r-xl px-1.5 text-xs font-bold text-slate-700 outline-none">
-                <option value="g">G</option>
-                <option value="kg">KG</option>
                 <option value="pcs">Pcs</option>
-                <option value="ml">ml</option>
+                <option value="kg">KG</option>
+                <option value="g">G</option>
                 <option value="l">L</option>
+                <option value="ml">ml</option>
               </select>
             </div>
           </div>
@@ -410,7 +461,7 @@
     <div class="p-4 bg-white border-t border-slate-200 shrink-0 max-w-4xl mx-auto w-full">
       <button type="button" id="applyCalcToAmountBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-2xl shadow-lg transition duration-200 flex items-center justify-center gap-2 text-base">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-        Generate QR
+        Complete Sale & Generate QR
       </button>
     </div>
   </div>
@@ -467,7 +518,7 @@
             <thead class="bg-slate-100 text-slate-600 font-bold uppercase tracking-wider text-[10px] sticky top-0">
               <tr>
                 <th class="p-2.5">Date / Time</th>
-                <th class="p-2.5">Customer</th>
+                <th class="p-2.5">Customer & Mobile</th>
                 <th class="p-2.5 text-right">Amount</th>
               </tr>
             </thead>
@@ -502,7 +553,6 @@
         </button>
       </div>
 
-      <!-- Preview container dynamically sizes the canvas to fit without cropping -->
       <div id="printableArea" class="bg-white p-2 rounded-2xl shadow-lg border border-slate-200/80 flex items-center justify-center w-full overflow-hidden shrink min-h-0">
         <canvas id="standeeCanvas" width="800" height="1200" class="w-auto h-auto max-h-[48vh] sm:max-h-[52vh] max-w-full aspect-[800/1200] rounded-xl border border-slate-100 shadow-sm object-contain"></canvas>
       </div>
@@ -525,11 +575,10 @@
     </div>
   </div>
 
-  <!-- PHONEPE-STYLE HEADER WITH SM LOGO MENU BUTTON -->
+  <!-- HEADER WITH SM LOGO -->
   <header class="w-full max-w-2xl brand-gradient text-white pt-4 pb-6 px-4 rounded-b-3xl shadow-xl relative overflow-hidden">
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <!-- SM Logo Button: Opens top-left side menu drawer & triggers pulse glow -->
         <button type="button" id="openDrawerBtn" class="w-10 h-10 bg-white rounded-2xl flex items-center justify-center brand-text font-black text-lg shadow-md transition-transform transform active:scale-90 focus:outline-none" aria-label="Open Menu">
           <span>SM</span>
         </button>
@@ -557,17 +606,13 @@
   <!-- MAIN INTERFACE CARD -->
   <main class="max-w-2xl w-full bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-200/80 -mt-3 mb-auto p-4 sm:p-6 space-y-6">
 
-    <!-- PHONEPE-STYLE HORIZONTAL MONEY TRANSFERS / UTILITY SECTION -->
     <div class="space-y-3">
       <div class="flex items-center justify-between">
         <h2 class="text-sm font-extrabold text-slate-800 tracking-tight">Merchant Utilities</h2>
         <span class="text-[10px] font-bold brand-text bg-purple-50 px-2 py-0.5 rounded-full border border-purple-100">Quick Actions</span>
       </div>
 
-      <!-- 3 Horizontal Circular Icon Cards -->
       <div class="grid grid-cols-3 gap-3">
-        
-        <!-- Option 1: Standee Mode -->
         <button type="button" id="cardStandeeBtn" class="flex flex-col items-center text-center group focus:outline-none">
           <div id="iconStandee" class="w-14 h-14 sm:w-16 sm:h-16 rounded-full brand-bg text-white flex items-center justify-center shadow-md transition transform group-active:scale-95 group-hover:scale-105 mb-2 relative">
             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
@@ -576,7 +621,6 @@
           <span class="text-xs font-bold text-slate-700 group-hover:brand-text leading-tight">Standee<br>Mode</span>
         </button>
 
-        <!-- Option 2: All In One QR -->
         <button type="button" id="cardGenericBtn" class="flex flex-col items-center text-center group focus:outline-none">
           <div id="iconGeneric" class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shadow-md transition transform group-active:scale-95 group-hover:scale-105 mb-2 relative">
             <svg class="w-7 h-7 text-purple-700" id="genericSvg" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
@@ -585,7 +629,6 @@
           <span class="text-xs font-bold text-slate-700 group-hover:brand-text leading-tight">All In One<br>QR</span>
         </button>
 
-        <!-- Option 3: POS Bill Calcy -->
         <button type="button" id="cardCalcBtn" class="flex flex-col items-center text-center group focus:outline-none">
           <div id="iconCalc" class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shadow-md transition transform group-active:scale-95 group-hover:scale-105 mb-2 relative">
             <svg class="w-7 h-7 text-purple-700" id="calcSvg" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
@@ -593,13 +636,11 @@
           </div>
           <span class="text-xs font-bold text-slate-700 group-hover:brand-text leading-tight">POS Bill<br>Calcy</span>
         </button>
-
       </div>
     </div>
 
     <hr class="border-slate-100" />
 
-    <!-- GENERATOR FORM -->
     <form id="qrForm" class="space-y-4" onsubmit="return false;">
       <div>
         <div class="flex items-center justify-between mb-1.5">
@@ -661,26 +702,31 @@
 
   </main>
 
-  <!-- PHONEPE-STYLE BOTTOM NAVIGATION BAR -->
+  <!-- BOTTOM NAVIGATION BAR -->
   <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-6 py-2 flex items-center justify-between z-40 max-w-2xl mx-auto rounded-t-2xl shadow-lg">
     <button type="button" class="flex flex-col items-center brand-text font-bold text-[10px]">
       <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l1.293 1.293a1 1 0 001.414-1.414l-7-7z"/></svg>
       <span>Home</span>
     </button>
-    <button type="button" class="flex flex-col items-center text-slate-400 font-semibold text-[10px]">
+    
+    <!-- Search Button -->
+    <button type="button" id="openSearchModalBtn" class="flex flex-col items-center text-slate-400 hover:text-purple-600 font-semibold text-[10px] transition">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
       <span>Search</span>
     </button>
-    <!-- Center Floating QR Button -->
+
     <div class="-mt-6">
       <button type="button" onclick="document.getElementById('renderBtn').click()" class="w-12 h-12 brand-bg text-white rounded-full flex items-center justify-center shadow-xl border-4 border-white transition active:scale-95">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
       </button>
     </div>
-    <button type="button" class="flex flex-col items-center text-slate-400 font-semibold text-[10px]">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-      <span>Alerts</span>
+
+    <!-- Stock Button -->
+    <button type="button" id="openStockBottomBtn" onclick="document.getElementById('openMasterInventoryModalBtn').click()" class="flex flex-col items-center text-slate-400 hover:text-purple-600 font-semibold text-[10px] transition">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+      <span>Stock</span>
     </button>
+
     <button type="button" id="openLedgerBottomBtn" onclick="document.getElementById('openLedgerModalBtn').click()" class="flex flex-col items-center text-slate-400 font-semibold text-[10px]">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
       <span>History</span>
@@ -833,11 +879,11 @@
     function loadInventoryMaster() {
       const key = getInventoryStorageKey();
       const defaultItems = [
-        { name: 'Apples', rate: 180 },
-        { name: 'Rice', rate: 60 },
-        { name: 'Sugar', rate: 45 },
-        { name: 'Almonds', rate: 850 },
-        { name: 'Cooking Oil', rate: 140 }
+        { name: 'Apples', rate: 180, stock: 50, unit: 'kg' },
+        { name: 'Rice', rate: 60, stock: 200, unit: 'kg' },
+        { name: 'Sugar', rate: 45, stock: 100, unit: 'kg' },
+        { name: 'Almonds', rate: 850, stock: 25, unit: 'kg' },
+        { name: 'Cooking Oil', rate: 140, stock: 60, unit: 'l' }
       ];
       return JSON.parse(localStorage.getItem(key) || JSON.stringify(defaultItems));
     }
@@ -932,6 +978,7 @@
         closeCalcModal();
         toggleModal(masterInventoryModalOverlay, false);
         toggleModal(ledgerModalOverlay, false);
+        toggleModal(searchModalOverlay, false);
         toggleModal(authModalOverlay, false);
         closeQrModal();
         closeDrawer();
@@ -970,8 +1017,57 @@
     const masterInventoryModalOverlay = document.getElementById('masterInventoryModalOverlay');
     const masterItemName = document.getElementById('masterItemName');
     const masterItemRate = document.getElementById('masterItemRate');
+    const masterItemStock = document.getElementById('masterItemStock');
+    const masterItemUnit = document.getElementById('masterItemUnit');
     const saveMasterItemBtn = document.getElementById('saveMasterItemBtn');
     const masterInventoryTableBody = document.getElementById('masterInventoryTableBody');
+
+    const searchModalOverlay = document.getElementById('searchModalOverlay');
+    const openSearchModalBtn = document.getElementById('openSearchModalBtn');
+    const closeSearchModalBtn = document.getElementById('closeSearchModalBtn');
+    const liveSearchInput = document.getElementById('liveSearchInput');
+    const searchTableBody = document.getElementById('searchTableBody');
+
+    openSearchModalBtn.addEventListener('click', () => {
+      liveSearchInput.value = '';
+      renderSearchResults('');
+      toggleModal(searchModalOverlay, true);
+      setTimeout(() => liveSearchInput.focus(), 100);
+    });
+
+    closeSearchModalBtn.addEventListener('click', () => {
+      toggleModal(searchModalOverlay, false);
+    });
+
+    liveSearchInput.addEventListener('input', (e) => {
+      renderSearchResults(e.target.value.trim().toLowerCase());
+    });
+
+    function renderSearchResults(query) {
+      const filtered = salesLedger.filter(item => {
+        const cust = (item.customer || '').toLowerCase();
+        const phone = (item.phone || '').toLowerCase();
+        const amt = (item.amount || '').toString();
+        const date = (item.isoDate || '').toLowerCase();
+        const time = (item.time || '').toLowerCase();
+        return cust.includes(query) || phone.includes(query) || amt.includes(query) || date.includes(query) || time.includes(query);
+      });
+
+      if (filtered.length === 0) {
+        searchTableBody.innerHTML = `<tr><td colspan="3" class="p-8 text-center text-slate-400 italic">No matching transactions found.</td></tr>`;
+      } else {
+        searchTableBody.innerHTML = filtered.map(item => `
+          <tr>
+            <td class="p-2.5 font-mono text-slate-500">${item.isoDate || 'Today'} • ${item.time}</td>
+            <td class="p-2.5 font-bold text-slate-800">
+              ${item.customer}
+              ${item.phone ? `<span class="block text-[11px] font-mono text-slate-500 font-normal">+91 ${item.phone}</span>` : ''}
+            </td>
+            <td class="p-2.5 text-right font-mono font-extrabold brand-text">₹${item.amount.toFixed(2)}</td>
+          </tr>
+        `).join('');
+      }
+    }
 
     const closeCalcModalBtn = document.getElementById('closeCalcModalBtn');
     const calcModalOverlay = document.getElementById('calcModalOverlay');
@@ -1044,29 +1140,52 @@
 
     function renderMasterInventory() {
       if (inventoryMaster.length === 0) {
-        masterInventoryTableBody.innerHTML = `<tr><td colspan="3" class="p-3 text-center text-slate-400 italic">No inventory items configured yet.</td></tr>`;
+        masterInventoryTableBody.innerHTML = `<tr><td colspan="4" class="p-3 text-center text-slate-400 italic">No stock items configured yet.</td></tr>`;
       } else {
         masterInventoryTableBody.innerHTML = inventoryMaster.map((item, idx) => `
           <tr>
             <td class="p-2.5 font-bold text-slate-800">${item.name}</td>
-            <td class="p-2.5 text-right font-mono font-bold text-emerald-600">₹${item.rate.toFixed(2)}</td>
-            <td class="p-2.5 text-center">
-              <button onclick="deleteMasterItem(${idx})" class="text-red-500 font-bold hover:underline">×</button>
+            <td class="p-2.5 text-right font-mono font-bold text-emerald-600">₹${(item.rate || 0).toFixed(2)}</td>
+            <td class="p-2.5 text-center font-mono font-bold ${(item.stock || 0) <= 5 ? 'text-red-500' : 'text-slate-800'}">
+              ${item.stock || 0} <span class="text-[10px] text-slate-500 font-normal uppercase">${item.unit || 'pcs'}</span>
+            </td>
+            <td class="p-2.5 text-center space-x-1">
+              <button onclick="adjustStock(${idx}, 1)" class="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 font-extrabold rounded text-[11px]" title="Increase Stock">+</button>
+              <button onclick="adjustStock(${idx}, -1)" class="px-1.5 py-0.5 bg-amber-100 text-amber-700 font-extrabold rounded text-[11px]" title="Decrease Stock">-</button>
+              <button onclick="deleteMasterItem(${idx})" class="text-red-500 font-bold hover:underline px-1">×</button>
             </td>
           </tr>
         `).join('');
       }
     }
 
+    window.adjustStock = function(index, delta) {
+      const item = inventoryMaster[index];
+      const changeStr = prompt(`Edit stock for "${item.name}" (${item.unit || 'pcs'}). Enter amount to ${delta > 0 ? 'increase' : 'decrease'}:`, "1");
+      const val = parseFloat(changeStr);
+      if (!isNaN(val) && val > 0) {
+        if (delta > 0) {
+          item.stock = (item.stock || 0) + val;
+        } else {
+          item.stock = Math.max(0, (item.stock || 0) - val);
+        }
+        saveInventoryToStorage();
+        renderMasterInventory();
+      }
+    };
+
     saveMasterItemBtn.addEventListener('click', () => {
       const name = masterItemName.value.trim();
       const rate = parseFloat(masterItemRate.value) || 0;
-      if (!name || rate <= 0) return;
+      const stock = parseFloat(masterItemStock.value) || 0;
+      const unit = masterItemUnit.value;
+      if (!name) return;
 
-      inventoryMaster.push({ name, rate });
+      inventoryMaster.push({ name, rate, stock, unit });
       saveInventoryToStorage();
       masterItemName.value = '';
       masterItemRate.value = '';
+      masterItemStock.value = '';
       renderMasterInventory();
     });
 
@@ -1097,9 +1216,9 @@
 
       if (matches.length > 0) {
         suggestionsBox.innerHTML = matches.map(item => `
-          <div onclick="selectSuggestion('${item.name.replace(/'/g, "\\'")}', ${item.rate})" class="px-3 py-2 hover:bg-purple-50 cursor-pointer flex justify-between items-center transition">
-            <span class="font-bold text-slate-800">${item.name}</span>
-            <span class="font-mono text-emerald-600 font-bold">₹${item.rate}/unit</span>
+          <div onclick="selectSuggestion('${item.name.replace(/'/g, "\\'")}', ${item.rate || 0}, '${item.unit || 'pcs'}')" class="px-3 py-2 hover:bg-purple-50 cursor-pointer flex justify-between items-center transition">
+            <span class="font-bold text-slate-800">${item.name} <span class="text-[10px] text-slate-500 font-normal">(Stock: ${item.stock || 0} ${item.unit || 'pcs'})</span></span>
+            <span class="font-mono text-emerald-600 font-bold">₹${item.rate || 0}/unit</span>
           </div>
         `).join('');
         suggestionsBox.classList.remove('hidden');
@@ -1108,9 +1227,12 @@
       }
     });
 
-    window.selectSuggestion = function(name, rate) {
+    window.selectSuggestion = function(name, rate, unit) {
       itemNameInput.value = name;
       ratePerKg.value = rate;
+      if (unit) {
+        purchaseUnit.value = unit;
+      }
       suggestionsBox.classList.add('hidden');
     };
 
@@ -1199,7 +1321,6 @@
       currentMode = mode;
       if (!fixUpiToggle.checked) upiInput.value = "";
       
-      // Update icon utility card highlights dynamically, including plus icon and green dot shift
       if (mode === 'standee') {
         iconStandee.className = "w-14 h-14 sm:w-16 sm:h-16 rounded-full brand-bg text-white flex items-center justify-center shadow-md transition transform group-active:scale-95 group-hover:scale-105 mb-2 relative";
         badgeStandee.classList.remove('hidden');
@@ -1259,6 +1380,8 @@
       const name = itemNameInput.value.trim() || 'Custom Item';
       let itemCost = 0;
       let displayUnitStr = "";
+      let numericQty = 1;
+      let selectedUnit = purchaseUnit.value.toLowerCase();
 
       if (flatPriceToggle.checked) {
         itemCost = parseFloat(flatPriceInput.value) || 0;
@@ -1266,13 +1389,14 @@
       } else {
         const rate = parseFloat(ratePerKg.value) || 0;
         const qty = parseFloat(purchaseQty.value) || 0;
-        const unit = purchaseUnit.value.toLowerCase();
         if (rate <= 0 || qty <= 0) return;
+        numericQty = qty;
 
-        if (unit === 'pcs') {
+        if (selectedUnit === 'pcs') {
           itemCost = rate * qty;
-        } else if (unit === 'g' || unit === 'gram' || unit === 'ml') {
+        } else if (selectedUnit === 'g' || selectedUnit === 'ml') {
           itemCost = (rate / 1000) * qty;
+          numericQty = qty / 1000;
         } else {
           itemCost = rate * qty;
         }
@@ -1281,7 +1405,7 @@
 
       if (itemCost <= 0) return;
 
-      cartItems.push({ name, cost: itemCost, detail: displayUnitStr });
+      cartItems.push({ name, cost: itemCost, detail: displayUnitStr, qty: numericQty });
       itemNameInput.value = '';
       ratePerKg.value = '';
       purchaseQty.value = '';
@@ -1360,12 +1484,22 @@
     applyCalcToAmountBtn.addEventListener('click', async () => {
       const { grandTotal, remainingUpi, cashPaid } = calculateCartTotals();
       if (grandTotal > 0) {
+        cartItems.forEach(cartItem => {
+          const found = inventoryMaster.find(inv => inv.name.toLowerCase() === cartItem.name.toLowerCase());
+          if (found) {
+            found.stock = Math.max(0, (found.stock || 0) - (cartItem.qty || 1));
+          }
+        });
+        saveInventoryToStorage();
+        renderMasterInventory();
+
         amountInput.value = remainingUpi.toFixed(2);
         
         logTransaction({
           time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           isoDate: new Date().toISOString().slice(0, 10),
           customer: custName.value.trim() || 'Walk-in',
+          phone: custPhone.value.trim() || '',
           amount: grandTotal,
           cashAmount: cashPaid,
           upiAmount: remainingUpi
@@ -1411,7 +1545,10 @@
         ledgerTableBody.innerHTML = filteredLogs.map(item => `
           <tr>
             <td class="p-2.5 font-mono text-slate-500">${item.isoDate || 'Today'} • ${item.time}</td>
-            <td class="p-2.5 font-bold text-slate-800">${item.customer}</td>
+            <td class="p-2.5 font-bold text-slate-800">
+              ${item.customer}
+              ${item.phone ? `<span class="block text-[11px] font-mono text-slate-500 font-normal">+91 ${item.phone}</span>` : ''}
+            </td>
             <td class="p-2.5 text-right font-mono font-extrabold brand-text">₹${item.amount.toFixed(2)}</td>
           </tr>
         `).join('');
@@ -1436,9 +1573,9 @@
 
     exportCsvBtn.addEventListener('click', () => {
       if (salesLedger.length === 0) return;
-      let csvContent = "data:text/csv;charset=utf-8,Date,Time,Customer,Total Bill,Cash Paid,UPI Paid\n";
+      let csvContent = "data:text/csv;charset=utf-8,Date,Time,Customer,Mobile,Total Bill,Cash Paid,UPI Paid\n";
       salesLedger.forEach(row => {
-        csvContent += `"${row.isoDate || ''}","${row.time}","${row.customer}","${row.amount}","${row.cashAmount || 0}","${row.upiAmount || row.amount}"\n`;
+        csvContent += `"${row.isoDate || ''}","${row.time}","${row.customer}","${row.phone || ''}","${row.amount}","${row.cashAmount || 0}","${row.upiAmount || row.amount}"\n`;
       });
       const encodedUri = encodeURI(csvContent);
       const link = document.createElement("a");
@@ -1480,12 +1617,12 @@
         summaryStr += `*Discount:* -₹${discount.toFixed(2)}\n`;
       }
       summaryStr += `*Grand Total Bill:* ₹${grandTotal.toFixed(2)}\n` +
-                     `───────────────────────────\n`;
+                    `───────────────────────────\n`;
 
       if (cashPaid > 0) {
         summaryStr += `*Paid in Cash:* ₹${cashPaid.toFixed(2)}\n` +
-                       `*Balance Paid via UPI:* ₹${remainingUpi.toFixed(2)}\n` +
-                       `───────────────────────────\n`;
+                      `*Balance Paid via UPI:* ₹${remainingUpi.toFixed(2)}\n` +
+                      `───────────────────────────\n`;
       }
 
       const upiPayLink = `upi://pay?pa=${vpa}&pn=${encodeURIComponent(merchant)}&am=${remainingUpi.toFixed(2)}&cu=INR`;
@@ -1554,7 +1691,6 @@
       });
     }
 
-    // Perfectly Compact Standee Generator Function - Fits Entire Canvas on Mobile
     async function generateAndShowStandee() {
       const merchant = merchantNameInput.value.trim() || 'Merchant Name';
       const vpa = getVpa();
@@ -1575,7 +1711,6 @@
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       if (currentMode === 'standee') {
-        // App Badge Circle
         ctx.fillStyle = activeTheme.primary;
         ctx.beginPath();
         ctx.arc(centerX, 50 * SCALE, 24 * SCALE, 0, 2 * Math.PI);
@@ -1587,13 +1722,11 @@
         ctx.textBaseline = "middle";
         ctx.fillText("SM", centerX, 50 * SCALE);
 
-        // App Title
         ctx.fillStyle = activeTheme.primary;
         ctx.font = `800 ${22 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
         ctx.textBaseline = "alphabetic";
         ctx.fillText("Solid Money App", centerX, 102 * SCALE);
 
-        // Merchant Name Pill
         ctx.font = `700 ${13.5 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
         const textWidth = ctx.measureText(merchant).width;
         const pillWidth = Math.max(180 * SCALE, Math.min(320 * SCALE, textWidth + (32 * SCALE)));
@@ -1609,12 +1742,10 @@
         ctx.textBaseline = "middle";
         ctx.fillText(merchant, centerX, pillY + (16 * SCALE));
 
-        // Scaled-down QR Code to fit full view
         const qrSize = 210 * SCALE;
         const qrX = centerX - (qrSize / 2);
         ctx.drawImage(qrSourceCanvas, qrX, 162 * SCALE, qrSize, qrSize);
 
-        // Pay Amount Display
         if (amount) {
           ctx.fillStyle = "#10b981";
           ctx.font = `800 ${14 * SCALE}px 'JetBrains Mono', monospace`;
@@ -1623,7 +1754,6 @@
           ctx.fillText(`PAY: ₹${amount}`, centerX, 396 * SCALE);
         }
 
-        // BHIM UPI Footer Details
         ctx.fillStyle = "#1e293b";
         ctx.font = `800 ${15 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
         ctx.textAlign = "center";
