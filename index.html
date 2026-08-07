@@ -98,15 +98,15 @@
     </div>
   </div>
 
-  <!-- POPUP MODAL: Account Sign-In / Cross-Device Cloud Sync -->
+  <!-- POPUP MODAL: Gmail Account Cloud Sync -->
   <div id="authModalOverlay" class="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 sm:p-4">
     <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl border border-slate-100 overflow-hidden transform transition-all flex flex-col p-6 space-y-4">
       <div class="flex justify-between items-center border-b border-slate-100 pb-3">
         <div class="flex items-center gap-2">
           <div class="w-8 h-8 brand-bg text-white rounded-xl flex items-center justify-center font-bold text-sm">
-            <span>☁️</span>
+            <span>✉️</span>
           </div>
-          <h3 class="font-extrabold text-slate-800 text-base">Cross-Device Cloud Sync</h3>
+          <h3 class="font-extrabold text-slate-800 text-base">Gmail Account Cloud Sync</h3>
         </div>
         <button type="button" id="closeAuthModalBtn" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100 transition">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -114,15 +114,12 @@
       </div>
 
       <div class="space-y-3">
-        <p class="text-xs text-slate-500">Sign in with your mobile number to load and sync your inventory from any device or browser.</p>
+        <p class="text-xs text-slate-500">Enter your Gmail address to securely save and load your live inventory across any device or browser, even after clearing app data.</p>
         <div>
-          <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Mobile Number</label>
-          <div class="flex gap-2">
-            <span class="px-3 py-2.5 bg-slate-100 border border-slate-300 rounded-xl text-xs font-bold text-slate-600 flex items-center">+91</span>
-            <input type="tel" id="userSyncPhone" inputmode="tel" placeholder="e.g. 9133359954" maxlength="10" class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-xs font-mono font-bold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
-          </div>
+          <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Gmail Address</label>
+          <input type="email" id="userEmailInput" placeholder="e.g. yourname@gmail.com" class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
         </div>
-        <button type="button" id="directSignInBtn" class="w-full brand-bg hover:opacity-90 text-white font-bold py-3 rounded-2xl text-xs shadow-md transition flex items-center justify-center gap-2">
+        <button type="button" id="directGmailSignInBtn" class="w-full brand-bg hover:opacity-90 text-white font-bold py-3 rounded-2xl text-xs shadow-md transition flex items-center justify-center gap-2">
           <span id="signInBtnText">Sign In & Sync Cloud Data</span>
           <div id="signInSpinner" class="hidden w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
         </button>
@@ -153,16 +150,16 @@
 
       <!-- Account Status Card in Side Drawer -->
       <div class="p-4 bg-purple-50/50 border-b border-purple-100 flex items-center justify-between">
-        <div class="flex items-center gap-2.5">
-          <div id="userAvatar" class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold text-slate-600">
+        <div class="flex items-center gap-2.5 overflow-hidden">
+          <div id="userAvatar" class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold text-slate-600 shrink-0">
             👤
           </div>
-          <div>
-            <span id="accountPhoneLabel" class="block text-xs font-bold text-slate-800">Not Signed In</span>
+          <div class="truncate">
+            <span id="accountEmailLabel" class="block text-xs font-bold text-slate-800 truncate">Not Signed In</span>
             <span id="accountSyncBadge" class="text-[10px] text-slate-500 font-medium">Local Storage Active</span>
           </div>
         </div>
-        <button type="button" id="openAuthModalBtn" class="text-xs font-bold brand-text hover:underline px-2.5 py-1 bg-white border border-purple-200 rounded-lg shadow-2xs">
+        <button type="button" id="openAuthModalBtn" class="text-xs font-bold brand-text hover:underline px-2.5 py-1 bg-white border border-purple-200 rounded-lg shadow-2xs shrink-0">
           Sign In
         </button>
       </div>
@@ -180,7 +177,7 @@
     </div>
 
     <div class="p-4 border-t border-slate-100 text-xs text-slate-400 text-center font-medium">
-      SMGC PVT LTD • v4.2 Pro POS
+      SMGC PVT LTD • v4.4 Pro POS
     </div>
   </aside>
 
@@ -273,12 +270,12 @@
       <div class="space-y-3">
         <div>
           <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Rack Sr. No.</label>
-          <input type="text" id="masterRackSrNo" placeholder="e.g. S-105" class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-xs font-bold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white font-mono" />
+          <input type="text" id="masterRackSrNo" placeholder="e.g. R-105" class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-xs font-bold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white font-mono" />
         </div>
 
         <div>
           <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Item Name</label>
-          <input type="text" id="masterItemName" placeholder="e.g. Apples" class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
+          <input type="text" id="masterItemName" placeholder="e.g. Paracetamol Tablets" class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
         </div>
 
         <div class="grid grid-cols-2 gap-3">
@@ -291,11 +288,11 @@
             <div class="flex">
               <input type="number" id="masterItemStock" inputmode="decimal" placeholder="Qty" step="0.01" class="w-full px-2 py-2.5 border border-r-0 border-slate-300 rounded-l-xl text-xs font-mono font-bold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
               <select id="masterItemUnit" class="bg-slate-100 border border-slate-300 rounded-r-xl px-2 text-xs font-bold text-slate-700 outline-none cursor-pointer">
-                <option value="pcs">Pcs</option>
-                <option value="kg">Kg</option>
-                <option value="l">Litre</option>
-                <option value="ml">Ml</option>
-                <option value="grams">Grams</option>
+                <option value="pcs">pcs</option>
+                <option value="kg">kg</option>
+                <option value="l">l</option>
+                <option value="ml">ml</option>
+                <option value="grams">grams</option>
               </select>
             </div>
           </div>
@@ -397,7 +394,7 @@
         </div>
 
         <div class="relative">
-          <input type="text" id="itemNameInput" placeholder="e.g. Apples" autocomplete="off" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
+          <input type="text" id="itemNameInput" placeholder="e.g. Paracetamol, Rack R-101" autocomplete="off" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
           
           <div id="suggestionsBox" class="absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-xl z-20 max-h-48 overflow-y-auto hidden divide-y divide-slate-100 text-xs">
             <!-- Dynamic suggestions -->
@@ -881,18 +878,89 @@
     const CLOUD_SYNC_ENDPOINT = "https://api.jsonbin.io/v3/b";
     const CLOUD_MASTER_KEY = "$2a$10$7qDshY54H2u30.D70A37zeQGf5V3R.o5a17Vb6S6Kx7v0V3eP3O3e";
 
+    const authModalOverlay = document.getElementById('authModalOverlay');
+    const openAuthModalBtn = document.getElementById('openAuthModalBtn');
+    const closeAuthModalBtn = document.getElementById('closeAuthModalBtn');
+    const userEmailInput = document.getElementById('userEmailInput');
+    const directGmailSignInBtn = document.getElementById('directGmailSignInBtn');
+    const signInBtnText = document.getElementById('signInBtnText');
+    const signInSpinner = document.getElementById('signInSpinner');
+    const accountEmailLabel = document.getElementById('accountEmailLabel');
+    const accountSyncBadge = document.getElementById('accountSyncBadge');
+    const userAvatar = document.getElementById('userAvatar');
+
+    async function updateAccountStatusUI() {
+      const loggedEmail = localStorage.getItem('gmailUserAccount');
+      if (loggedEmail) {
+        accountEmailLabel.textContent = loggedEmail;
+        accountSyncBadge.textContent = "☁️ Cloud Sync Active";
+        accountSyncBadge.className = "text-[10px] text-emerald-600 font-bold";
+        openAuthModalBtn.textContent = "Sign Out";
+        userAvatar.textContent = loggedEmail.charAt(0).toUpperCase();
+      } else {
+        accountEmailLabel.textContent = "Not Signed In";
+        accountSyncBadge.textContent = "Local Storage Active";
+        accountSyncBadge.className = "text-[10px] text-slate-500 font-medium";
+        openAuthModalBtn.textContent = "Sign In";
+        userAvatar.textContent = "👤";
+      }
+      inventoryMaster = loadInventoryMaster();
+      renderMasterInventory();
+    }
+
+    openAuthModalBtn.addEventListener('click', () => {
+      const loggedEmail = localStorage.getItem('gmailUserAccount');
+      if (loggedEmail) {
+        localStorage.removeItem('gmailUserAccount');
+        updateAccountStatusUI();
+      } else {
+        toggleModal(authModalOverlay, true);
+      }
+    });
+
+    closeAuthModalBtn.addEventListener('click', () => toggleModal(authModalOverlay, false));
+
+    directGmailSignInBtn.addEventListener('click', async () => {
+      const email = userEmailInput.value.trim().toLowerCase();
+      if (email && email.includes('@')) {
+        signInBtnText.textContent = "Syncing Cloud Data...";
+        signInSpinner.classList.remove('hidden');
+        directGmailSignInBtn.disabled = true;
+
+        localStorage.setItem('gmailUserAccount', email);
+
+        const cloudInventory = await fetchInventoryFromCloud(email);
+        if (cloudInventory && Array.isArray(cloudInventory)) {
+          inventoryMaster = cloudInventory;
+          localStorage.setItem(`inventoryMaster_${email}`, JSON.stringify(inventoryMaster));
+        } else {
+          await syncInventoryToCloud();
+        }
+
+        signInBtnText.textContent = "Sign In & Sync Cloud Data";
+        signInSpinner.classList.add('hidden');
+        directGmailSignInBtn.disabled = false;
+
+        updateAccountStatusUI();
+        toggleModal(authModalOverlay, false);
+        userEmailInput.value = '';
+      } else {
+        alert("Please enter a valid Gmail address.");
+      }
+    });
+
     async function syncInventoryToCloud() {
-      const loggedPhone = localStorage.getItem('syncedUserPhone');
-      if (!loggedPhone) return;
+      const loggedEmail = localStorage.getItem('gmailUserAccount');
+      if (!loggedEmail) return;
 
       const payload = {
-        phone: loggedPhone,
+        email: loggedEmail,
         inventory: inventoryMaster,
         updatedAt: new Date().toISOString()
       };
 
       try {
-        let binId = localStorage.getItem(`binId_${loggedPhone}`);
+        let binId = localStorage.getItem(`binId_${loggedEmail}`);
         if (binId) {
           await fetch(`${CLOUD_SYNC_ENDPOINT}/${binId}`, {
             method: 'PUT',
@@ -908,13 +976,13 @@
             headers: {
               'Content-Type': 'application/json',
               'X-Master-Key': CLOUD_MASTER_KEY,
-              'X-Bin-Name': `inventory_${loggedPhone}`
+              'X-Bin-Name': `inventory_${loggedEmail.replace(/[^a-zA-Z0-9]/g, '_')}`
             },
             body: JSON.stringify(payload)
           });
           const result = await response.json();
           if (result.metadata && result.metadata.id) {
-            localStorage.setItem(`binId_${loggedPhone}`, result.metadata.id);
+            localStorage.setItem(`binId_${loggedEmail}`, result.metadata.id);
           }
         }
       } catch (err) {
@@ -922,8 +990,8 @@
       }
     }
 
-    async function fetchInventoryFromCloud(phone) {
-      let binId = localStorage.getItem(`binId_${phone}`);
+    async function fetchInventoryFromCloud(email) {
+      let binId = localStorage.getItem(`binId_${email}`);
       if (!binId) return null;
 
       try {
@@ -941,8 +1009,8 @@
     }
 
     function getInventoryStorageKey() {
-      const loggedPhone = localStorage.getItem('syncedUserPhone');
-      return loggedPhone ? `inventoryMaster_${loggedPhone}` : 'inventoryMasterList';
+      const loggedEmail = localStorage.getItem('gmailUserAccount');
+      return loggedEmail ? `inventoryMaster_${loggedEmail}` : 'inventoryMasterList';
     }
 
     function loadInventoryMaster() {
@@ -974,72 +1042,6 @@
       'theme-dark': { primary: '#0f172a', dark: '#020617', pill: '#6366f1' }
     };
     let activeThemeKey = 'theme-purple';
-
-    const openAuthModalBtn = document.getElementById('openAuthModalBtn');
-    const closeAuthModalBtn = document.getElementById('closeAuthModalBtn');
-    const authModalOverlay = document.getElementById('authModalOverlay');
-    const userSyncPhone = document.getElementById('userSyncPhone');
-    const directSignInBtn = document.getElementById('directSignInBtn');
-    const signInBtnText = document.getElementById('signInBtnText');
-    const signInSpinner = document.getElementById('signInSpinner');
-    const accountPhoneLabel = document.getElementById('accountPhoneLabel');
-    const accountSyncBadge = document.getElementById('accountSyncBadge');
-
-    async function updateAccountStatusUI() {
-      const loggedPhone = localStorage.getItem('syncedUserPhone');
-      if (loggedPhone) {
-        accountPhoneLabel.textContent = `+91 ${loggedPhone}`;
-        accountSyncBadge.textContent = "☁️ Cloud Sync Active";
-        accountSyncBadge.className = "text-[10px] text-emerald-600 font-bold";
-        openAuthModalBtn.textContent = "Sign Out";
-      } else {
-        accountPhoneLabel.textContent = "Not Signed In";
-        accountSyncBadge.textContent = "Local Storage Active";
-        accountSyncBadge.className = "text-[10px] text-slate-500 font-medium";
-        openAuthModalBtn.textContent = "Sign In";
-      }
-      inventoryMaster = loadInventoryMaster();
-      renderMasterInventory();
-    }
-
-    openAuthModalBtn.addEventListener('click', () => {
-      const loggedPhone = localStorage.getItem('syncedUserPhone');
-      if (loggedPhone) {
-        localStorage.removeItem('syncedUserPhone');
-        updateAccountStatusUI();
-      } else {
-        toggleModal(authModalOverlay, true);
-      }
-    });
-
-    closeAuthModalBtn.addEventListener('click', () => toggleModal(authModalOverlay, false));
-
-    directSignInBtn.addEventListener('click', async () => {
-      const phone = userSyncPhone.value.trim().replace(/\D/g, '');
-      if (phone.length === 10) {
-        signInBtnText.textContent = "Syncing Cloud Data...";
-        signInSpinner.classList.remove('hidden');
-        directSignInBtn.disabled = true;
-
-        localStorage.setItem('syncedUserPhone', phone);
-
-        const cloudInventory = await fetchInventoryFromCloud(phone);
-        if (cloudInventory && Array.isArray(cloudInventory)) {
-          inventoryMaster = cloudInventory;
-          localStorage.setItem(`inventoryMaster_${phone}`, JSON.stringify(inventoryMaster));
-        } else {
-          await syncInventoryToCloud();
-        }
-
-        signInBtnText.textContent = "Sign In & Sync Cloud Data";
-        signInSpinner.classList.add('hidden');
-        directSignInBtn.disabled = false;
-
-        updateAccountStatusUI();
-        toggleModal(authModalOverlay, false);
-        userSyncPhone.value = '';
-      }
-    });
 
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
