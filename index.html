@@ -123,7 +123,7 @@
           <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Mobile Number</label>
           <div class="flex gap-2">
             <span class="px-3 py-2.5 bg-slate-100 border border-slate-300 rounded-xl text-xs font-bold text-slate-600 flex items-center">+91</span>
-            <input type="tel" id="userSyncPhone" inputmode="tel" placeholder="e.g. 9676943799" maxlength="10" class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-xs font-mono font-bold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
+            <input type="tel" id="userSyncPhone" inputmode="tel" placeholder="e.g. 9133359954" maxlength="10" class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-xs font-mono font-bold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
           </div>
         </div>
         <button type="button" id="directSignInBtn" class="w-full brand-bg hover:opacity-90 text-white font-bold py-3 rounded-2xl text-xs shadow-md transition flex items-center justify-center gap-2">
@@ -251,7 +251,7 @@
           <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
         </div>
         <div>
-          <h3 class="font-extrabold text-base sm:text-lg leading-none">Weight & Billing POS Calculator</h3>
+          <h3 class="font-extrabold text-base sm:text-lg leading-none">Weight & Billing POS</h3>
           <p class="text-[11px] text-white/70 mt-1">Checkout Mode</p>
         </div>
       </div>
@@ -410,7 +410,7 @@
     <div class="p-4 bg-white border-t border-slate-200 shrink-0 max-w-4xl mx-auto w-full">
       <button type="button" id="applyCalcToAmountBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-2xl shadow-lg transition duration-200 flex items-center justify-center gap-2 text-base">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-        Set Amount & Generate Standee QR
+        Generate QR
       </button>
     </div>
   </div>
@@ -607,7 +607,7 @@
       <div>
         <div class="flex items-center justify-between mb-1.5">
           <label for="merchantName" class="block text-xs font-extrabold uppercase tracking-wider text-slate-600">
-            Merchant / Payee Name <span class="text-red-500">*</span>
+            Merchant / Name <span class="text-red-500">*</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer text-xs font-bold text-slate-600 select-none">
             <span id="nameFixLabel">Fix Details</span>
@@ -1188,7 +1188,7 @@
       if (!fixUpiToggle.checked) upiInput.value = "";
       
       if (mode === 'standee') {
-        upiFieldLabel.innerHTML = 'Terminal Digits (9 Digits) <span class="text-red-500">*</span>';
+        upiFieldLabel.innerHTML = 'Terminal (9 Digits) <span class="text-red-500">*</span>';
         upiInput.placeholder = "e.g. 9133359954";
         upiInput.setAttribute('maxlength', '9');
       } else {
