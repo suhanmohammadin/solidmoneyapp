@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solid Money App Menu</title>
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --accent-glow: #00ffcc;
+      --text-color: #f8fafc;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      min-height: 100vh;
+    }
+
+    /* Top Navigation Bar */
+    .navbar {
+      display: flex;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      background-color: var(--card-bg);
+      border-bottom: 1px solid #334155;
+    }
+
+    /* Hamburger Menu Button */
+    .menu-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      padding: 0.5rem;
+      z-index: 1001;
+    }
+
+    .menu-btn span {
+      width: 25px;
+      height: 3px;
+      background-color: var(--text-color);
+      border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+
+    /* Side Navigation Drawer */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -300px;
+      width: 280px;
+      height: 100%;
+      background-color: var(--card-bg);
+      box-shadow: 4px 0 15px rgba(0, 0, 0, 0.5);
+      transition: left 0.3s ease;
+      z-index: 1000;
+      padding: 2rem 1.5rem;
+      box-sizing: border-box;
+    }
+
+    .sidebar.open {
+      left: 0;
+    }
+
+    /* Logo & App Title Section */
+    .brand-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .sm-logo {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #00ffcc, #0077ff);
+      color: #0f172a;
+      font-weight: 800;
+      font-size: 1.2rem;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+    }
+
+    .sm-logo:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px rgba(0, 255, 204, 0.4);
+    }
+
+    .sm-logo:active {
+      transform: scale(0.95);
+    }
+
+    /* App Name & Glow Effect */
+    .app-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: #94a3b8;
+      transition: color 0.4s ease, text-shadow 0.4s ease;
+    }
+
+    /* Active Glow State triggered on logo click */
+    .app-title.glowing {
+      color: #ffffff;
+      text-shadow: 
+        0 0 5px var(--accent-glow),
+        0 0 10px var(--accent-glow),
+        0 0 20px var(--accent-glow),
+        0 0 40px var(--accent-glow);
+    }
+
+    /* Overlay backdrop */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease;
+      z-index: 999;
+    }
+
+    .overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <nav class="navbar">
+    <button class="menu-btn" id="menuToggle" aria-label="Toggle Menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </nav>
+
+  <!-- Sidebar Drawer -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand-container">
+      <div class="sm-logo" id="smLogo" title="Click to activate light glow">SM</div>
+      <span class="app-title" id="appTitle">Solid Money App</span>
+    </div>
+  </aside>
+
+  <!-- Overlay -->
+  <div class="overlay" id="overlay"></div>
+
+  <script>
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    const smLogo = document.getElementById('smLogo');
+    const appTitle = document.getElementById('appTitle');
+
+    // Toggle menu bar drawer
+    menuToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('open');
+      overlay.classList.toggle('active');
+    });
+
+    // Close menu when clicking outside
+    overlay.addEventListener('click', () => {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('active');
+    });
+
+    // Click SM logo to toggle glow light effect on "Solid Money App"
+    smLogo.addEventListener('click', () => {
+      appTitle.classList.toggle('glowing');
+    });
+  </script>
+</body>
+</html>
