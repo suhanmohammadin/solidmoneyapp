@@ -142,11 +142,11 @@
     <div>
       <div class="brand-gradient p-6 text-white flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center brand-text font-black text-lg shadow-inner">
+          <div id="smDrawerLogo" class="w-10 h-10 bg-white rounded-xl flex items-center justify-center brand-text font-black text-lg shadow-inner cursor-pointer" title="SM Logo">
             <span>SM</span>
           </div>
           <div>
-            <h2 class="font-extrabold text-lg leading-none">Solid Money App</h2>
+            <h2 id="appDrawerTitle" class="font-extrabold text-lg leading-none">Solid Money App</h2>
             <p class="text-xs text-white/70 mt-1">Pro Merchant Suite</p>
           </div>
         </div>
@@ -529,22 +529,18 @@
   <header class="w-full max-w-2xl brand-gradient text-white pt-4 pb-6 px-4 rounded-b-3xl shadow-xl relative overflow-hidden">
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <!-- Replaced Menu Hamburger Icon with SM Logo Button -->
+        <!-- SM Logo Button: Opens top-left side menu drawer & triggers pulse glow -->
         <button type="button" id="openDrawerBtn" class="w-10 h-10 bg-white rounded-2xl flex items-center justify-center brand-text font-black text-lg shadow-md transition-transform transform active:scale-90 focus:outline-none" aria-label="Open Menu">
           <span>SM</span>
         </button>
 
         <div>
-          <h1 class="text-lg font-black tracking-tight leading-none">Solid Money App</h1>
+          <h1 id="mainAppTitle" class="text-lg font-black tracking-tight leading-none">Solid Money App</h1>
           <p class="text-white/80 text-[11px] font-medium mt-0.5">Pro Merchant Suite</p>
         </div>
       </div>
 
       <div class="flex items-center gap-3">
-        <button type="button" id="smLogoBtn" class="w-9 h-9 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white font-bold text-xs border border-white/30 transition-transform transform active:scale-90 focus:outline-none">
-          <span>⚙️</span>
-        </button>
-
         <div class="flex items-center justify-center gap-1 bg-black/20 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/15">
           <div class="flex items-center gap-1">
             <button type="button" data-theme="theme-purple" class="w-4 h-4 rounded-full bg-[#5f259f] border border-white transition transform hover:scale-110" title="PhonePe Purple"></button>
@@ -573,25 +569,26 @@
         
         <!-- Option 1: Standee Mode -->
         <button type="button" id="cardStandeeBtn" class="flex flex-col items-center text-center group focus:outline-none">
-          <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full brand-bg text-white flex items-center justify-center shadow-md transition transform group-active:scale-95 group-hover:scale-105 mb-2 relative">
+          <div id="iconStandee" class="w-14 h-14 sm:w-16 sm:h-16 rounded-full brand-bg text-white flex items-center justify-center shadow-md transition transform group-active:scale-95 group-hover:scale-105 mb-2 relative">
             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-            <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full"></span>
+            <span id="badgeStandee" class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full"></span>
           </div>
           <span class="text-xs font-bold text-slate-700 group-hover:brand-text leading-tight">Standee<br>Mode</span>
         </button>
 
         <!-- Option 2: All In One QR -->
         <button type="button" id="cardGenericBtn" class="flex flex-col items-center text-center group focus:outline-none">
-          <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shadow-md transition transform group-active:scale-95 group-hover:scale-105 mb-2">
-            <svg class="w-7 h-7 text-purple-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+          <div id="iconGeneric" class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shadow-md transition transform group-active:scale-95 group-hover:scale-105 mb-2 relative">
+            <svg class="w-7 h-7 text-purple-700" id="genericSvg" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            <span id="badgeGeneric" class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full hidden"></span>
           </div>
           <span class="text-xs font-bold text-slate-700 group-hover:brand-text leading-tight">All In One<br>QR</span>
         </button>
 
         <!-- Option 3: POS Bill Calcy -->
         <button type="button" id="cardCalcBtn" class="flex flex-col items-center text-center group focus:outline-none">
-          <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shadow-md transition transform group-active:scale-95 group-hover:scale-105 mb-2 relative">
-            <svg class="w-7 h-7 text-purple-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+          <div id="iconCalc" class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shadow-md transition transform group-active:scale-95 group-hover:scale-105 mb-2 relative">
+            <svg class="w-7 h-7 text-purple-700" id="calcSvg" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
             <span class="absolute -top-1 -right-1 bg-amber-500 text-white text-[9px] font-black px-1.5 py-0.2 rounded-full uppercase tracking-tighter">POS</span>
           </div>
           <span class="text-xs font-bold text-slate-700 group-hover:brand-text leading-tight">POS Bill<br>Calcy</span>
@@ -696,15 +693,25 @@
 
   <script>
     function triggerIosPulse(element) {
+      if (!element) return;
       element.classList.remove('ios-lookup-active');
       void element.offsetWidth;
       element.classList.add('ios-lookup-active');
     }
 
-    const smLogoBtn = document.getElementById('smLogoBtn');
-    smLogoBtn.addEventListener('click', () => {
-      triggerIosPulse(smLogoBtn);
+    const openDrawerBtn = document.getElementById('openDrawerBtn');
+    const smDrawerLogo = document.getElementById('smDrawerLogo');
+
+    openDrawerBtn.addEventListener('click', () => {
+      triggerIosPulse(openDrawerBtn);
+      openDrawer();
     });
+
+    if (smDrawerLogo) {
+      smDrawerLogo.addEventListener('click', () => {
+        triggerIosPulse(smDrawerLogo);
+      });
+    }
 
     const pinAuthModal = document.getElementById('pinAuthModal');
     const pinInput = document.getElementById('pinInput');
@@ -946,7 +953,14 @@
     const cardGenericBtn = document.getElementById('cardGenericBtn');
     const cardCalcBtn = document.getElementById('cardCalcBtn');
 
-    const openDrawerBtn = document.getElementById('openDrawerBtn');
+    const iconStandee = document.getElementById('iconStandee');
+    const badgeStandee = document.getElementById('badgeStandee');
+    const iconGeneric = document.getElementById('iconGeneric');
+    const genericSvg = document.getElementById('genericSvg');
+    const badgeGeneric = document.getElementById('badgeGeneric');
+    const iconCalc = document.getElementById('iconCalc');
+    const calcSvg = document.getElementById('calcSvg');
+
     const closeDrawerBtn = document.getElementById('closeDrawerBtn');
     const sideDrawer = document.getElementById('sideDrawer');
     const drawerOverlay = document.getElementById('drawerOverlay');
@@ -1154,7 +1168,6 @@
     }
 
     function openDrawer() {
-      triggerIosPulse(openDrawerBtn);
       drawerOverlay.classList.remove('hidden');
       setTimeout(() => {
         drawerOverlay.classList.remove('opacity-0');
@@ -1168,7 +1181,6 @@
       setTimeout(() => { drawerOverlay.classList.add('hidden'); }, 300);
     }
 
-    openDrawerBtn.addEventListener('click', openDrawer);
     closeDrawerBtn.addEventListener('click', closeDrawer);
     drawerOverlay.addEventListener('click', closeDrawer);
 
@@ -1187,11 +1199,26 @@
       currentMode = mode;
       if (!fixUpiToggle.checked) upiInput.value = "";
       
+      // Update icon utility card highlights dynamically, including plus icon and green dot shift
       if (mode === 'standee') {
+        iconStandee.className = "w-14 h-14 sm:w-16 sm:h-16 rounded-full brand-bg text-white flex items-center justify-center shadow-md transition transform group-active:scale-95 group-hover:scale-105 mb-2 relative";
+        badgeStandee.classList.remove('hidden');
+
+        iconGeneric.className = "w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shadow-md transition transform group-active:scale-95 group-hover:scale-105 mb-2 relative";
+        genericSvg.className = "w-7 h-7 text-purple-700";
+        badgeGeneric.classList.add('hidden');
+
         upiFieldLabel.innerHTML = 'Terminal (9 Digits) <span class="text-red-500">*</span>';
         upiInput.placeholder = "e.g. 9133359954";
         upiInput.setAttribute('maxlength', '9');
       } else {
+        iconStandee.className = "w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shadow-md transition transform group-active:scale-95 group-hover:scale-105 mb-2 relative";
+        badgeStandee.classList.add('hidden');
+
+        iconGeneric.className = "w-14 h-14 sm:w-16 sm:h-16 rounded-full brand-bg text-white flex items-center justify-center shadow-md transition transform group-active:scale-95 group-hover:scale-105 mb-2 relative";
+        genericSvg.className = "w-7 h-7 text-white";
+        badgeGeneric.classList.remove('hidden');
+
         upiFieldLabel.innerHTML = 'UPI ID / VPA <span class="text-red-500">*</span>';
         upiInput.placeholder = "e.g. 9133359954@AXL";
         upiInput.removeAttribute('maxlength');
