@@ -47,7 +47,7 @@
       background-color: var(--primary);
     }
 
-    /* iOS Pulse Ring Effect */
+    /* iOS Visual Lookup Glow Effect */
     @keyframes iosPulseRing {
       0% {
         transform: scale(0.95);
@@ -490,11 +490,11 @@
   </div>
 
   <!-- POPUP MODAL: Generated QR Preview Standee -->
-  <div id="qrResultModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl border border-slate-100 overflow-hidden transform transition-all flex flex-col items-center p-6 space-y-4 max-h-[95vh]">
+  <div id="qrResultModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white w-full max-w-sm sm:max-w-md rounded-3xl shadow-2xl border border-slate-100 overflow-hidden transform transition-all flex flex-col items-center p-4 sm:p-6 space-y-3 sm:space-y-4 max-h-[92vh]">
       
-      <div class="flex justify-between items-center w-full border-b border-slate-100 pb-3">
-        <h3 class="font-extrabold text-lg brand-text flex items-center gap-2">
+      <div class="flex justify-between items-center w-full border-b border-slate-100 pb-2.5">
+        <h3 class="font-extrabold text-base sm:text-lg brand-text flex items-center gap-2">
           <span>✨</span> Generated Standee
         </h3>
         <button type="button" id="closeQrModalBtn" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100 transition">
@@ -502,12 +502,12 @@
         </button>
       </div>
 
-      <!-- Responsive Canvas Preview Container Fix -->
-      <div id="printableArea" class="bg-white p-2 rounded-2xl shadow-lg border border-slate-200/80 flex items-center justify-center w-full overflow-hidden">
-        <canvas id="standeeCanvas" width="800" height="1080" class="w-full h-auto max-w-[280px] sm:max-w-[320px] aspect-[800/1080] rounded-xl border border-slate-100 shadow-sm object-contain"></canvas>
+      <!-- Preview container dynamically sizes the canvas to fit without cropping -->
+      <div id="printableArea" class="bg-white p-2 rounded-2xl shadow-lg border border-slate-200/80 flex items-center justify-center w-full overflow-hidden shrink min-h-0">
+        <canvas id="standeeCanvas" width="800" height="1080" class="w-auto h-auto max-h-[48vh] sm:max-h-[52vh] max-w-full rounded-xl border border-slate-100 shadow-sm object-contain"></canvas>
       </div>
 
-      <div class="grid grid-cols-2 gap-2.5 w-full">
+      <div class="grid grid-cols-2 gap-2.5 w-full shrink-0">
         <button id="downloadBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-3 px-3 rounded-xl shadow-lg transition duration-200 flex items-center justify-center gap-1.5 active:scale-[0.99]">
           <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"/></svg>
           Download PNG
@@ -518,7 +518,7 @@
         </button>
       </div>
 
-      <button id="whatsappInvoiceBtn" class="w-full bg-green-600 hover:bg-green-700 text-white text-xs font-bold py-3 px-3 rounded-xl shadow transition flex items-center justify-center gap-1.5">
+      <button id="whatsappInvoiceBtn" class="w-full bg-green-600 hover:bg-green-700 text-white text-xs font-bold py-3 px-3 rounded-xl shadow transition flex items-center justify-center gap-1.5 shrink-0">
         <span>💬</span> Invoice via WhatsApp
       </button>
 
@@ -664,7 +664,6 @@
   </footer>
 
   <script>
-    // --- Apple Pulse Helper ---
     function triggerIosPulse(element) {
       element.classList.remove('ios-lookup-active');
       void element.offsetWidth;
@@ -676,7 +675,6 @@
       triggerIosPulse(smLogoBtn);
     });
 
-    // --- PIN Authentication Logic ---
     const pinAuthModal = document.getElementById('pinAuthModal');
     const pinInput = document.getElementById('pinInput');
     const submitPinBtn = document.getElementById('submitPinBtn');
@@ -825,7 +823,6 @@
     };
     let activeThemeKey = 'theme-purple';
 
-    // Sync Auth Elements
     const openAuthModalBtn = document.getElementById('openAuthModalBtn');
     const closeAuthModalBtn = document.getElementById('closeAuthModalBtn');
     const authModalOverlay = document.getElementById('authModalOverlay');
@@ -892,7 +889,6 @@
       }
     });
 
-    // Global ESC Key Listener
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         closeCalcModal();
@@ -904,7 +900,6 @@
       }
     });
 
-    // UI Elements
     const merchantNameInput = document.getElementById('merchantName');
     const upiInput = document.getElementById('upiInput');
     const upiFieldLabel = document.getElementById('upiFieldLabel');
@@ -1505,7 +1500,7 @@
       });
     }
 
-    // --- Dynamic Center Standee Drawing Function Fix ---
+    // Dynamic Sizing Standee Generator with Balanced Padding to prevent overflow
     async function generateAndShowStandee() {
       const merchant = merchantNameInput.value.trim() || 'Merchant Name';
       const vpa = getVpa();
@@ -1526,104 +1521,110 @@
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       if (currentMode === 'standee') {
+        // App Badge Circle
         ctx.fillStyle = activeTheme.primary;
         ctx.beginPath();
-        ctx.arc(centerX, 54 * SCALE, 28 * SCALE, 0, 2 * Math.PI);
+        ctx.arc(centerX, 48 * SCALE, 24 * SCALE, 0, 2 * Math.PI);
         ctx.fill();
-
-        ctx.fillStyle = "#ffffff";
-        ctx.font = `800 ${20 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText("SM", centerX, 54 * SCALE);
-
-        ctx.fillStyle = activeTheme.primary;
-        ctx.font = `800 ${24 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
-        ctx.textBaseline = "alphabetic";
-        ctx.fillText("Solid Money App", centerX, 110 * SCALE);
-
-        ctx.font = `700 ${14 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
-        const textWidth = ctx.measureText(merchant).width;
-        const pillWidth = Math.max(200 * SCALE, Math.min(350 * SCALE, textWidth + (36 * SCALE)));
-        const pillHeight = 36 * SCALE;
-        const pillX = centerX - (pillWidth / 2);
-        const pillY = 124 * SCALE;
-
-        ctx.fillStyle = activeTheme.pill;
-        drawRoundedRect(ctx, pillX, pillY, pillWidth, pillHeight, 18 * SCALE);
-
-        ctx.fillStyle = "#ffffff";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText(merchant, centerX, pillY + (18 * SCALE));
-
-        const qrSize = 280 * SCALE;
-        const qrX = centerX - (qrSize / 2);
-        ctx.drawImage(qrSourceCanvas, qrX, 176 * SCALE, qrSize, qrSize);
-
-        if (amount) {
-          ctx.fillStyle = "#10b981";
-          ctx.font = `800 ${14 * SCALE}px 'JetBrains Mono', monospace`;
-          ctx.textAlign = "center";
-          ctx.textBaseline = "alphabetic";
-          ctx.fillText(`PAY: ₹${amount}`, centerX, 470 * SCALE);
-        }
-
-        ctx.fillStyle = "#1e293b";
-        ctx.font = `800 ${16 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
-        ctx.textAlign = "center";
-        ctx.textBaseline = "alphabetic";
-        ctx.fillText("BHIM  |  UPI", centerX, 494 * SCALE);
-
-        ctx.fillStyle = "#64748b";
-        ctx.font = `600 ${8.5 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
-        ctx.fillText("BHARAT INTERFACE FOR MONEY     UNIFIED PAYMENTS INTERFACE", centerX, 508 * SCALE);
-
-        const digits = getDigits();
-        ctx.fillStyle = "#0f172a";
-        ctx.font = `700 ${11 * SCALE}px 'JetBrains Mono', monospace`;
-        ctx.fillText(`Terminal 1-Q${digits}`, centerX, 528 * SCALE);
-
-      } else {
-        ctx.fillStyle = activeTheme.primary;
-        ctx.fillRect(0, 0, canvas.width, 90 * SCALE);
 
         ctx.fillStyle = "#ffffff";
         ctx.font = `800 ${18 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
         ctx.textAlign = "center";
-        ctx.textBaseline = "alphabetic";
-        ctx.fillText("SCAN & PAY WITH ANY UPI APP", centerX, 42 * SCALE);
+        ctx.textBaseline = "middle";
+        ctx.fillText("SM", centerX, 48 * SCALE);
 
-        ctx.font = `600 ${11 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
+        // App Title
+        ctx.fillStyle = activeTheme.primary;
+        ctx.font = `800 ${22 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
+        ctx.textBaseline = "alphabetic";
+        ctx.fillText("Solid Money App", centerX, 98 * SCALE);
+
+        // Merchant Name Pill
+        ctx.font = `700 ${13 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
+        const textWidth = ctx.measureText(merchant).width;
+        const pillWidth = Math.max(180 * SCALE, Math.min(320 * SCALE, textWidth + (32 * SCALE)));
+        const pillHeight = 32 * SCALE;
+        const pillX = centerX - (pillWidth / 2);
+        const pillY = 112 * SCALE;
+
+        ctx.fillStyle = activeTheme.pill;
+        drawRoundedRect(ctx, pillX, pillY, pillWidth, pillHeight, 16 * SCALE);
+
+        ctx.fillStyle = "#ffffff";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(merchant, centerX, pillY + (16 * SCALE));
+
+        // Proportional QR Code Drawing
+        const qrSize = 250 * SCALE;
+        const qrX = centerX - (qrSize / 2);
+        ctx.drawImage(qrSourceCanvas, qrX, 156 * SCALE, qrSize, qrSize);
+
+        // Pay Amount Display
+        if (amount) {
+          ctx.fillStyle = "#10b981";
+          ctx.font = `800 ${13 * SCALE}px 'JetBrains Mono', monospace`;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "alphabetic";
+          ctx.fillText(`PAY: ₹${amount}`, centerX, 422 * SCALE);
+        }
+
+        // BHIM UPI Footer Details
+        ctx.fillStyle = "#1e293b";
+        ctx.font = `800 ${15 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "alphabetic";
+        ctx.fillText("BHIM  |  UPI", centerX, 446 * SCALE);
+
+        ctx.fillStyle = "#64748b";
+        ctx.font = `600 ${8 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
+        ctx.fillText("BHARAT INTERFACE FOR MONEY     UNIFIED PAYMENTS INTERFACE", centerX, 460 * SCALE);
+
+        const digits = getDigits();
+        ctx.fillStyle = "#0f172a";
+        ctx.font = `700 ${10.5 * SCALE}px 'JetBrains Mono', monospace`;
+        ctx.fillText(`Terminal 1-Q${digits}`, centerX, 478 * SCALE);
+
+      } else {
+        ctx.fillStyle = activeTheme.primary;
+        ctx.fillRect(0, 0, canvas.width, 80 * SCALE);
+
+        ctx.fillStyle = "#ffffff";
+        ctx.font = `800 ${16 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "alphabetic";
+        ctx.fillText("SCAN & PAY WITH ANY UPI APP", centerX, 38 * SCALE);
+
+        ctx.font = `600 ${10 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
         ctx.fillStyle = "#ffffff";
         ctx.globalAlpha = 0.8;
-        ctx.fillText("GPay • PhonePe • Paytm • BHIM", centerX, 64 * SCALE);
+        ctx.fillText("GPay • PhonePe • Paytm • BHIM", centerX, 58 * SCALE);
         ctx.globalAlpha = 1.0;
 
         ctx.fillStyle = "#0f172a";
-        ctx.font = `800 ${20 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
+        ctx.font = `800 ${18 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
         ctx.textAlign = "center";
-        ctx.fillText(merchant, centerX, 130 * SCALE);
+        ctx.fillText(merchant, centerX, 116 * SCALE);
 
         ctx.fillStyle = activeTheme.primary;
-        ctx.font = `700 ${13 * SCALE}px 'JetBrains Mono', monospace`;
-        ctx.fillText(vpa, centerX, 150 * SCALE);
+        ctx.font = `700 ${12 * SCALE}px 'JetBrains Mono', monospace`;
+        ctx.fillText(vpa, centerX, 134 * SCALE);
 
-        const qrSize = 280 * SCALE;
+        const qrSize = 250 * SCALE;
         const qrX = centerX - (qrSize / 2);
-        ctx.drawImage(qrSourceCanvas, qrX, 172 * SCALE, qrSize, qrSize);
+        ctx.drawImage(qrSourceCanvas, qrX, 150 * SCALE, qrSize, qrSize);
 
         if (amount) {
           ctx.fillStyle = "#10b981";
-          ctx.font = `800 ${14 * SCALE}px 'JetBrains Mono', monospace`;
+          ctx.font = `800 ${13 * SCALE}px 'JetBrains Mono', monospace`;
           ctx.textAlign = "center";
-          ctx.fillText(`Amount: ₹${amount}`, centerX, 465 * SCALE);
+          ctx.fillText(`Amount: ₹${amount}`, centerX, 420 * SCALE);
         }
 
         ctx.fillStyle = "#1e293b";
-        ctx.font = `800 ${16 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
+        ctx.font = `800 ${15 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
         ctx.textAlign = "center";
-        ctx.fillText("BHIM  |  UPI", centerX, 488 * SCALE);
+        ctx.fillText("BHIM  |  UPI", centerX, 444 * SCALE);
       }
 
       openQrModal();
