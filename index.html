@@ -525,15 +525,15 @@
     </div>
   </div>
 
-  <!-- PHONEPE-STYLE HEADER -->
+  <!-- PHONEPE-STYLE HEADER WITH SM LOGO MENU BUTTON -->
   <header class="w-full max-w-2xl brand-gradient text-white pt-4 pb-6 px-4 rounded-b-3xl shadow-xl relative overflow-hidden">
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <button type="button" id="openDrawerBtn" class="p-1 rounded-full bg-white/20 backdrop-blur-md border border-white/30 transition text-white active:scale-95 focus:outline-none" aria-label="Open Menu">
-          <div class="w-9 h-9 rounded-full bg-white/30 flex items-center justify-center font-bold text-sm">
-            👤
-          </div>
+        <!-- Replaced Menu Hamburger Icon with SM Logo Button -->
+        <button type="button" id="openDrawerBtn" class="w-10 h-10 bg-white rounded-2xl flex items-center justify-center brand-text font-black text-lg shadow-md transition-transform transform active:scale-90 focus:outline-none" aria-label="Open Menu">
+          <span>SM</span>
         </button>
+
         <div>
           <h1 class="text-lg font-black tracking-tight leading-none">Solid Money App</h1>
           <p class="text-white/80 text-[11px] font-medium mt-0.5">Pro Merchant Suite</p>
@@ -541,8 +541,8 @@
       </div>
 
       <div class="flex items-center gap-3">
-        <button type="button" id="smLogoBtn" class="w-9 h-9 bg-white rounded-full flex items-center justify-center brand-text font-black text-sm shadow-md transition-transform transform active:scale-90 focus:outline-none">
-          <span>SM</span>
+        <button type="button" id="smLogoBtn" class="w-9 h-9 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white font-bold text-xs border border-white/30 transition-transform transform active:scale-90 focus:outline-none">
+          <span>⚙️</span>
         </button>
 
         <div class="flex items-center justify-center gap-1 bg-black/20 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/15">
@@ -1379,7 +1379,7 @@
       ledgerUpiTotal.textContent = `₹${totalUpi.toFixed(2)}`;
 
       if (filteredLogs.length === 0) {
-        ledgerTableBody.innerHTML = `<tr><td colspan="3" class="p-8 text-center text-slate-400 italic">No transactions recorded for this period.</td></tr>`;
+        ledgerTableBody.innerHTML = `<tr><td colspan="3" class="p-8 text-center text-slate-400 italic">No transactions recorded today yet.</td></tr>`;
       } else {
         ledgerTableBody.innerHTML = filteredLogs.map(item => `
           <tr>
@@ -1527,6 +1527,7 @@
       });
     }
 
+    // Perfectly Compact Standee Generator Function - Fits Entire Canvas on Mobile
     async function generateAndShowStandee() {
       const merchant = merchantNameInput.value.trim() || 'Merchant Name';
       const vpa = getVpa();
