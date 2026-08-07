@@ -47,6 +47,27 @@
       background-color: var(--primary);
     }
 
+    /* iOS Visual Lookup Glow Effect */
+    @keyframes iosPulseRing {
+      0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.9), 0 0 0 0 rgba(235, 124, 40, 0.8);
+      }
+      50% {
+        transform: scale(1.12);
+        box-shadow: 0 0 0 12px rgba(255, 255, 255, 0), 0 0 20px 8px rgba(235, 124, 40, 0.6);
+      }
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0), 0 0 0 0 rgba(235, 124, 40, 0);
+      }
+    }
+
+    .ios-lookup-active {
+      animation: iosPulseRing 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+      border: 2px solid #ffffff;
+    }
+
     @media print {
       body * { visibility: hidden; }
       #printableArea, #printableArea * { visibility: visible; }
@@ -81,7 +102,7 @@
     </div>
   </div>
 
-  <!-- POPUP MODAL: Account Sign-In / Direct Sync -->
+  <!-- POPUP MODAL: Account Sign-In / Cross-Device Cloud Sync -->
   <div id="authModalOverlay" class="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 sm:p-4">
     <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl border border-slate-100 overflow-hidden transform transition-all flex flex-col p-6 space-y-4">
       <div class="flex justify-between items-center border-b border-slate-100 pb-3">
@@ -89,7 +110,7 @@
           <div class="w-8 h-8 brand-bg text-white rounded-xl flex items-center justify-center font-bold text-sm">
             <span>☁️</span>
           </div>
-          <h3 class="font-extrabold text-slate-800 text-base">Account Sync</h3>
+          <h3 class="font-extrabold text-slate-800 text-base">Cross-Device Cloud Sync</h3>
         </div>
         <button type="button" id="closeAuthModalBtn" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100 transition">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -97,7 +118,7 @@
       </div>
 
       <div class="space-y-3">
-        <p class="text-xs text-slate-500">Enter your mobile number to link your account and sync your inventory list automatically.</p>
+        <p class="text-xs text-slate-500">Sign in with your mobile number to load and sync your inventory from any device or browser.</p>
         <div>
           <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Mobile Number</label>
           <div class="flex gap-2">
@@ -105,8 +126,9 @@
             <input type="tel" id="userSyncPhone" inputmode="tel" placeholder="e.g. 9133359954" maxlength="10" class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-xs font-mono font-bold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
           </div>
         </div>
-        <button type="button" id="directSignInBtn" class="w-full brand-bg hover:opacity-90 text-white font-bold py-3 rounded-2xl text-xs shadow-md transition">
-          Sign In & Sync Inventory
+        <button type="button" id="directSignInBtn" class="w-full brand-bg hover:opacity-90 text-white font-bold py-3 rounded-2xl text-xs shadow-md transition flex items-center justify-center gap-2">
+          <span id="signInBtnText">Sign In & Sync Cloud Data</span>
+          <div id="signInSpinner" class="hidden w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
         </button>
       </div>
     </div>
@@ -223,7 +245,6 @@
 
   <!-- FULL-SCREEN MODAL: Multi-Item POS Calculator -->
   <div id="calcModalOverlay" class="fixed inset-0 bg-slate-900 z-50 hidden flex flex-col h-full w-full overflow-hidden">
-    <!-- Fullscreen POS Header -->
     <div class="brand-gradient p-4 sm:p-5 text-white flex items-center justify-between shrink-0 shadow-lg">
       <div class="flex items-center gap-3">
         <div class="w-9 h-9 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-md">
@@ -240,10 +261,8 @@
       </button>
     </div>
 
-    <!-- Fullscreen Body Container -->
     <div class="grow bg-slate-100 p-3 sm:p-6 overflow-y-auto max-w-4xl mx-auto w-full space-y-4 pb-24 sm:pb-6">
 
-      <!-- Customer Details (Optional) -->
       <div class="grid grid-cols-2 gap-3 bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-xs">
         <div>
           <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Customer Name</label>
@@ -255,7 +274,6 @@
         </div>
       </div>
 
-      <!-- Item Entry Inputs with Auto-Suggest Search & Direct Flat Entry -->
       <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3">
         <div class="flex items-center justify-between">
           <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">
@@ -330,9 +348,7 @@
         </table>
       </div>
 
-      <!-- Tax, Discount, Cash Split & Summary Section -->
       <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3">
-        
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div class="flex justify-between items-center text-xs font-semibold text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
             <span class="flex items-center gap-1">Custom GST Tax (%):</span>
@@ -391,7 +407,6 @@
       </div>
     </div>
 
-    <!-- Fullscreen Footer CTA -->
     <div class="p-4 bg-white border-t border-slate-200 shrink-0 max-w-4xl mx-auto w-full">
       <button type="button" id="applyCalcToAmountBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-2xl shadow-lg transition duration-200 flex items-center justify-center gap-2 text-base">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
@@ -491,7 +506,6 @@
         <canvas id="standeeCanvas" width="800" height="1080" class="w-60 h-[324px] sm:w-72 sm:h-[388px] rounded-xl border border-slate-100 shadow-sm"></canvas>
       </div>
 
-      <!-- Actions Grid -->
       <div class="grid grid-cols-2 gap-2.5 w-full">
         <button id="downloadBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-3 px-3 rounded-xl shadow-lg transition duration-200 flex items-center justify-center gap-1.5 active:scale-[0.99]">
           <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"/></svg>
@@ -518,9 +532,17 @@
           <button type="button" id="openDrawerBtn" class="p-2.5 rounded-2xl bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 transition text-white active:scale-95" aria-label="Open Menu">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
           </button>
-          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-2xl flex items-center justify-center brand-text font-black text-lg sm:text-xl shadow-lg shrink-0">
-            <span>SM</span>
+          
+          <!-- Interactive SM Logo with Apple iOS Object Pulse Effect -->
+          <div class="relative group">
+            <button type="button" id="smLogoBtn" title="Tap for  Effect" class="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-2xl flex items-center justify-center brand-text font-black text-lg sm:text-xl shadow-lg shrink-0 transition-transform transform active:scale-90 focus:outline-none">
+              <span>SM</span>
+            </button>
+            <div id="iosToastTag" class="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-black/80 backdrop-blur-md text-white text-[9px] font-bold px-2 py-0.5 rounded-full opacity-0 transition-opacity duration-300 pointer-events-none whitespace-nowrap shadow-lg border border-white/20 z-30">
+              
+            </div>
           </div>
+
           <div class="text-left">
             <h1 class="text-xl sm:text-3xl font-black tracking-tight leading-tight">Solid Money App</h1>
             <p class="text-white/80 text-[11px] sm:text-sm font-medium">Pro Merchant Suite</p>
@@ -528,7 +550,6 @@
         </div>
       </div>
 
-      <!-- Responsive Theme Switcher -->
       <div class="flex items-center justify-center gap-2 bg-black/20 backdrop-blur-md px-3 py-1.5 rounded-2xl border border-white/15 w-full sm:w-auto">
         <span class="text-[11px] font-bold text-white/80">Theme:</span>
         <div class="flex items-center gap-1.5">
@@ -648,6 +669,22 @@
   </footer>
 
   <script>
+    // --- Apple iOS Object Pulse Effect on SM Logo ---
+    const smLogoBtn = document.getElementById('smLogoBtn');
+    const iosToastTag = document.getElementById('iosToastTag');
+
+    smLogoBtn.addEventListener('click', () => {
+      smLogoBtn.classList.remove('ios-lookup-active');
+      // Trigger reflow to restart animation
+      void smLogoBtn.offsetWidth;
+      smLogoBtn.classList.add('ios-lookup-active');
+
+      iosToastTag.classList.remove('opacity-0');
+      setTimeout(() => {
+        iosToastTag.classList.add('opacity-0');
+      }, 1200);
+    });
+
     // --- PIN Authentication Logic ---
     const pinAuthModal = document.getElementById('pinAuthModal');
     const pinInput = document.getElementById('pinInput');
@@ -689,18 +726,104 @@
 
     checkAuth();
 
-    // --- Main Application Logic ---
+    function toggleModal(modalElem, show) {
+      if (show) {
+        document.body.classList.add('overflow-hidden');
+        modalElem.classList.remove('hidden');
+      } else {
+        document.body.classList.remove('overflow-hidden');
+        modalElem.classList.add('hidden');
+      }
+    }
+
+    const CLOUD_SYNC_ENDPOINT = "https://api.jsonbin.io/v3/b";
+    const CLOUD_MASTER_KEY = "$2a$10$7qDshY54H2u30.D70A37zeQGf5V3R.o5a17Vb6S6Kx7v0V3eP3O3e";
+
+    async function syncInventoryToCloud() {
+      const loggedPhone = localStorage.getItem('syncedUserPhone');
+      if (!loggedPhone) return;
+
+      const payload = {
+        phone: loggedPhone,
+        inventory: inventoryMaster,
+        updatedAt: new Date().toISOString()
+      };
+
+      try {
+        let binId = localStorage.getItem(`binId_${loggedPhone}`);
+        if (binId) {
+          await fetch(`${CLOUD_SYNC_ENDPOINT}/${binId}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Master-Key': CLOUD_MASTER_KEY
+            },
+            body: JSON.stringify(payload)
+          });
+        } else {
+          const response = await fetch(CLOUD_SYNC_ENDPOINT, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Master-Key': CLOUD_MASTER_KEY,
+              'X-Bin-Name': `inventory_${loggedPhone}`
+            },
+            body: JSON.stringify(payload)
+          });
+          const result = await response.json();
+          if (result.metadata && result.metadata.id) {
+            localStorage.setItem(`binId_${loggedPhone}`, result.metadata.id);
+          }
+        }
+      } catch (err) {
+        console.warn("Cloud Sync pending connectivity:", err);
+      }
+    }
+
+    async function fetchInventoryFromCloud(phone) {
+      let binId = localStorage.getItem(`binId_${phone}`);
+      if (!binId) return null;
+
+      try {
+        const response = await fetch(`${CLOUD_SYNC_ENDPOINT}/${binId}/latest`, {
+          headers: { 'X-Master-Key': CLOUD_MASTER_KEY }
+        });
+        if (response.ok) {
+          const data = await response.json();
+          return data.record ? data.record.inventory : null;
+        }
+      } catch (err) {
+        console.warn("Cloud Fetch Error:", err);
+      }
+      return null;
+    }
+
+    function getInventoryStorageKey() {
+      const loggedPhone = localStorage.getItem('syncedUserPhone');
+      return loggedPhone ? `inventoryMaster_${loggedPhone}` : 'inventoryMasterList';
+    }
+
+    function loadInventoryMaster() {
+      const key = getInventoryStorageKey();
+      const defaultItems = [
+        { name: 'Apples', rate: 180 },
+        { name: 'Rice', rate: 60 },
+        { name: 'Sugar', rate: 45 },
+        { name: 'Almonds', rate: 850 },
+        { name: 'Cooking Oil', rate: 140 }
+      ];
+      return JSON.parse(localStorage.getItem(key) || JSON.stringify(defaultItems));
+    }
+
+    function saveInventoryToStorage() {
+      localStorage.setItem(getInventoryStorageKey(), JSON.stringify(inventoryMaster));
+      syncInventoryToCloud();
+    }
+
     let currentMode = 'standee';
     let cartItems = [];
     let salesLedger = JSON.parse(localStorage.getItem('salesLedgerLogs') || '[]');
-    
-    let inventoryMaster = JSON.parse(localStorage.getItem('inventoryMasterList') || JSON.stringify([
-      { name: 'Apples', rate: 180 },
-      { name: 'Rice', rate: 60 },
-      { name: 'Sugar', rate: 45 },
-      { name: 'Almonds', rate: 850 },
-      { name: 'Cooking Oil', rate: 140 }
-    ]));
+    let inventoryMaster = loadInventoryMaster();
 
     const themeMap = {
       'theme-purple': { primary: '#5f259f', dark: '#391163', pill: '#eb7c28' },
@@ -717,10 +840,12 @@
     const authModalOverlay = document.getElementById('authModalOverlay');
     const userSyncPhone = document.getElementById('userSyncPhone');
     const directSignInBtn = document.getElementById('directSignInBtn');
+    const signInBtnText = document.getElementById('signInBtnText');
+    const signInSpinner = document.getElementById('signInSpinner');
     const accountPhoneLabel = document.getElementById('accountPhoneLabel');
     const accountSyncBadge = document.getElementById('accountSyncBadge');
 
-    function updateAccountStatusUI() {
+    async function updateAccountStatusUI() {
       const loggedPhone = localStorage.getItem('syncedUserPhone');
       if (loggedPhone) {
         accountPhoneLabel.textContent = `+91 ${loggedPhone}`;
@@ -733,6 +858,8 @@
         accountSyncBadge.className = "text-[10px] text-slate-500 font-medium";
         openAuthModalBtn.textContent = "Sign In";
       }
+      inventoryMaster = loadInventoryMaster();
+      renderMasterInventory();
     }
 
     openAuthModalBtn.addEventListener('click', () => {
@@ -741,29 +868,46 @@
         localStorage.removeItem('syncedUserPhone');
         updateAccountStatusUI();
       } else {
-        authModalOverlay.classList.remove('hidden');
+        toggleModal(authModalOverlay, true);
       }
     });
 
-    closeAuthModalBtn.addEventListener('click', () => authModalOverlay.classList.add('hidden'));
+    closeAuthModalBtn.addEventListener('click', () => toggleModal(authModalOverlay, false));
 
-    directSignInBtn.addEventListener('click', () => {
+    directSignInBtn.addEventListener('click', async () => {
       const phone = userSyncPhone.value.trim().replace(/\D/g, '');
       if (phone.length === 10) {
+        signInBtnText.textContent = "Syncing Cloud Data...";
+        signInSpinner.classList.remove('hidden');
+        directSignInBtn.disabled = true;
+
         localStorage.setItem('syncedUserPhone', phone);
+
+        const cloudInventory = await fetchInventoryFromCloud(phone);
+        if (cloudInventory && Array.isArray(cloudInventory)) {
+          inventoryMaster = cloudInventory;
+          localStorage.setItem(`inventoryMaster_${phone}`, JSON.stringify(inventoryMaster));
+        } else {
+          await syncInventoryToCloud();
+        }
+
+        signInBtnText.textContent = "Sign In & Sync Cloud Data";
+        signInSpinner.classList.add('hidden');
+        directSignInBtn.disabled = false;
+
         updateAccountStatusUI();
-        authModalOverlay.classList.add('hidden');
+        toggleModal(authModalOverlay, false);
         userSyncPhone.value = '';
       }
     });
 
-    // Global Key Bindings
+    // Global ESC Key Listener
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         closeCalcModal();
-        masterInventoryModalOverlay.classList.add('hidden');
-        ledgerModalOverlay.classList.add('hidden');
-        authModalOverlay.classList.add('hidden');
+        toggleModal(masterInventoryModalOverlay, false);
+        toggleModal(ledgerModalOverlay, false);
+        toggleModal(authModalOverlay, false);
         closeQrModal();
         closeDrawer();
       }
@@ -855,8 +999,6 @@
     const canvas = document.getElementById('standeeCanvas');
     const ctx = canvas.getContext('2d');
 
-    const SCALE = 2;
-
     flatPriceToggle.addEventListener('change', () => {
       if (flatPriceToggle.checked) {
         rateContainer.classList.add('hidden');
@@ -891,7 +1033,7 @@
       if (!name || rate <= 0) return;
 
       inventoryMaster.push({ name, rate });
-      localStorage.setItem('inventoryMasterList', JSON.stringify(inventoryMaster));
+      saveInventoryToStorage();
       masterItemName.value = '';
       masterItemRate.value = '';
       renderMasterInventory();
@@ -899,18 +1041,18 @@
 
     window.deleteMasterItem = function(index) {
       inventoryMaster.splice(index, 1);
-      localStorage.setItem('inventoryMasterList', JSON.stringify(inventoryMaster));
+      saveInventoryToStorage();
       renderMasterInventory();
     };
 
     openMasterInventoryModalBtn.addEventListener('click', () => {
       closeDrawer();
       renderMasterInventory();
-      masterInventoryModalOverlay.classList.remove('hidden');
+      toggleModal(masterInventoryModalOverlay, true);
     });
 
     closeMasterInventoryModalBtn.addEventListener('click', () => {
-      masterInventoryModalOverlay.classList.add('hidden');
+      toggleModal(masterInventoryModalOverlay, false);
     });
 
     itemNameInput.addEventListener('input', function() {
@@ -1062,12 +1204,10 @@
 
     function openCalcModal() {
       closeDrawer();
-      document.body.classList.add('overflow-hidden');
-      calcModalOverlay.classList.remove('hidden');
+      toggleModal(calcModalOverlay, true);
     }
     function closeCalcModal() {
-      document.body.classList.remove('overflow-hidden');
-      calcModalOverlay.classList.add('hidden');
+      toggleModal(calcModalOverlay, false);
       suggestionsBox.classList.add('hidden');
     }
 
@@ -1242,10 +1382,10 @@
     openLedgerModalBtn.addEventListener('click', () => {
       closeDrawer();
       renderLedgerModal();
-      ledgerModalOverlay.classList.remove('hidden');
+      toggleModal(ledgerModalOverlay, true);
     });
 
-    closeLedgerModalBtn.addEventListener('click', () => ledgerModalOverlay.classList.add('hidden'));
+    closeLedgerModalBtn.addEventListener('click', () => toggleModal(ledgerModalOverlay, false));
 
     clearLedgerBtn.addEventListener('click', () => {
       salesLedger = [];
@@ -1322,8 +1462,8 @@
       window.open(waUrl, '_blank');
     });
 
-    function openQrModal() { qrResultModal.classList.remove('hidden'); }
-    function closeQrModal() { qrResultModal.classList.add('hidden'); }
+    function openQrModal() { toggleModal(qrResultModal, true); }
+    function closeQrModal() { toggleModal(qrResultModal, false); }
 
     closeQrModalBtn.addEventListener('click', closeQrModal);
     qrResultModal.addEventListener('click', (e) => {
@@ -1378,6 +1518,8 @@
       const vpa = getVpa();
       const amount = amountInput.value.trim();
       const activeTheme = themeMap[activeThemeKey] || themeMap['theme-purple'];
+
+      const SCALE = Math.max(2, window.devicePixelRatio || 2);
 
       let upiUri = `upi://pay?pa=${vpa}&pn=${encodeURIComponent(merchant)}&mc=0000&mode=02&purpose=00&cu=INR`;
       if (amount) upiUri += `&am=${encodeURIComponent(amount)}`;
@@ -1492,7 +1634,6 @@
         loadFixedStates();
         updateVpaPreview();
         updateAccountStatusUI();
-        renderMasterInventory();
       });
     });
 
