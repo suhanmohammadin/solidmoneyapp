@@ -47,7 +47,7 @@
       background-color: var(--primary);
     }
 
-    /* iOS Visual Lookup Glow Effect */
+    /* iOS Pulse Ring Effect */
     @keyframes iosPulseRing {
       0% {
         transform: scale(0.95);
@@ -123,7 +123,7 @@
           <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Mobile Number</label>
           <div class="flex gap-2">
             <span class="px-3 py-2.5 bg-slate-100 border border-slate-300 rounded-xl text-xs font-bold text-slate-600 flex items-center">+91</span>
-            <input type="tel" id="userSyncPhone" inputmode="tel" placeholder="e.g. 9133359954" maxlength="10" class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-xs font-mono font-bold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
+            <input type="tel" id="userSyncPhone" inputmode="tel" placeholder="e.g. 9676943799" maxlength="10" class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-xs font-mono font-bold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
           </div>
         </div>
         <button type="button" id="directSignInBtn" class="w-full brand-bg hover:opacity-90 text-white font-bold py-3 rounded-2xl text-xs shadow-md transition flex items-center justify-center gap-2">
@@ -502,8 +502,9 @@
         </button>
       </div>
 
-      <div id="printableArea" class="bg-white p-2.5 rounded-2xl shadow-lg border border-slate-200/80 flex items-center justify-center overflow-auto max-h-[55vh]">
-        <canvas id="standeeCanvas" width="800" height="1080" class="w-60 h-[324px] sm:w-72 sm:h-[388px] rounded-xl border border-slate-100 shadow-sm"></canvas>
+      <!-- Responsive Canvas Preview Container Fix -->
+      <div id="printableArea" class="bg-white p-2 rounded-2xl shadow-lg border border-slate-200/80 flex items-center justify-center w-full overflow-hidden">
+        <canvas id="standeeCanvas" width="800" height="1080" class="w-full h-auto max-w-[280px] sm:max-w-[320px] aspect-[800/1080] rounded-xl border border-slate-100 shadow-sm object-contain"></canvas>
       </div>
 
       <div class="grid grid-cols-2 gap-2.5 w-full">
@@ -529,19 +530,13 @@
     <div class="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
       <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
         <div class="flex items-center gap-3">
-          <button type="button" id="openDrawerBtn" class="p-2.5 rounded-2xl bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 transition text-white active:scale-95" aria-label="Open Menu">
+          <button type="button" id="openDrawerBtn" class="p-2.5 rounded-2xl bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 transition text-white active:scale-95 focus:outline-none" aria-label="Open Menu">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
           </button>
           
-          <!-- Interactive SM Logo with Apple iOS Object Pulse Effect -->
-          <div class="relative group">
-            <button type="button" id="smLogoBtn" title="Tap for  Effect" class="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-2xl flex items-center justify-center brand-text font-black text-lg sm:text-xl shadow-lg shrink-0 transition-transform transform active:scale-90 focus:outline-none">
-              <span>SM</span>
-            </button>
-            <div id="iosToastTag" class="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-black/80 backdrop-blur-md text-white text-[9px] font-bold px-2 py-0.5 rounded-full opacity-0 transition-opacity duration-300 pointer-events-none whitespace-nowrap shadow-lg border border-white/20 z-30">
-              
-            </div>
-          </div>
+          <button type="button" id="smLogoBtn" class="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-2xl flex items-center justify-center brand-text font-black text-lg sm:text-xl shadow-lg shrink-0 transition-transform transform active:scale-90 focus:outline-none">
+            <span>SM</span>
+          </button>
 
           <div class="text-left">
             <h1 class="text-xl sm:text-3xl font-black tracking-tight leading-tight">Solid Money App</h1>
@@ -669,20 +664,16 @@
   </footer>
 
   <script>
-    // --- Apple iOS Object Pulse Effect on SM Logo ---
+    // --- Apple Pulse Helper ---
+    function triggerIosPulse(element) {
+      element.classList.remove('ios-lookup-active');
+      void element.offsetWidth;
+      element.classList.add('ios-lookup-active');
+    }
+
     const smLogoBtn = document.getElementById('smLogoBtn');
-    const iosToastTag = document.getElementById('iosToastTag');
-
     smLogoBtn.addEventListener('click', () => {
-      smLogoBtn.classList.remove('ios-lookup-active');
-      // Trigger reflow to restart animation
-      void smLogoBtn.offsetWidth;
-      smLogoBtn.classList.add('ios-lookup-active');
-
-      iosToastTag.classList.remove('opacity-0');
-      setTimeout(() => {
-        iosToastTag.classList.add('opacity-0');
-      }, 1200);
+      triggerIosPulse(smLogoBtn);
     });
 
     // --- PIN Authentication Logic ---
@@ -1137,6 +1128,7 @@
     }
 
     function openDrawer() {
+      triggerIosPulse(openDrawerBtn);
       drawerOverlay.classList.remove('hidden');
       setTimeout(() => {
         drawerOverlay.classList.remove('opacity-0');
@@ -1513,6 +1505,7 @@
       });
     }
 
+    // --- Dynamic Center Standee Drawing Function Fix ---
     async function generateAndShowStandee() {
       const merchant = merchantNameInput.value.trim() || 'Merchant Name';
       const vpa = getVpa();
@@ -1526,6 +1519,8 @@
 
       const qrSourceCanvas = await generateQrCode(upiUri);
 
+      const centerX = canvas.width / 2;
+
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = "#ffffff";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -1533,26 +1528,26 @@
       if (currentMode === 'standee') {
         ctx.fillStyle = activeTheme.primary;
         ctx.beginPath();
-        ctx.arc(200 * SCALE, 48 * SCALE, 26 * SCALE, 0, 2 * Math.PI);
+        ctx.arc(centerX, 54 * SCALE, 28 * SCALE, 0, 2 * Math.PI);
         ctx.fill();
 
         ctx.fillStyle = "#ffffff";
         ctx.font = `800 ${20 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillText("SM", 200 * SCALE, 48 * SCALE);
+        ctx.fillText("SM", centerX, 54 * SCALE);
 
         ctx.fillStyle = activeTheme.primary;
-        ctx.font = `800 ${26 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
+        ctx.font = `800 ${24 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
         ctx.textBaseline = "alphabetic";
-        ctx.fillText("Solid Money App", 200 * SCALE, 100 * SCALE);
+        ctx.fillText("Solid Money App", centerX, 110 * SCALE);
 
         ctx.font = `700 ${14 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
         const textWidth = ctx.measureText(merchant).width;
-        const pillWidth = Math.max(180 * SCALE, Math.min(340 * SCALE, textWidth + (36 * SCALE)));
+        const pillWidth = Math.max(200 * SCALE, Math.min(350 * SCALE, textWidth + (36 * SCALE)));
         const pillHeight = 36 * SCALE;
-        const pillX = (canvas.width - pillWidth) / 2;
-        const pillY = 114 * SCALE;
+        const pillX = centerX - (pillWidth / 2);
+        const pillY = 124 * SCALE;
 
         ctx.fillStyle = activeTheme.pill;
         drawRoundedRect(ctx, pillX, pillY, pillWidth, pillHeight, 18 * SCALE);
@@ -1560,70 +1555,75 @@
         ctx.fillStyle = "#ffffff";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillText(merchant, 200 * SCALE, pillY + (18 * SCALE));
+        ctx.fillText(merchant, centerX, pillY + (18 * SCALE));
 
-        ctx.drawImage(qrSourceCanvas, 60 * SCALE, 168 * SCALE, 280 * SCALE, 280 * SCALE);
+        const qrSize = 280 * SCALE;
+        const qrX = centerX - (qrSize / 2);
+        ctx.drawImage(qrSourceCanvas, qrX, 176 * SCALE, qrSize, qrSize);
 
         if (amount) {
           ctx.fillStyle = "#10b981";
           ctx.font = `800 ${14 * SCALE}px 'JetBrains Mono', monospace`;
           ctx.textAlign = "center";
-          ctx.fillText(`PAY: ₹${amount}`, 200 * SCALE, 458 * SCALE);
+          ctx.textBaseline = "alphabetic";
+          ctx.fillText(`PAY: ₹${amount}`, centerX, 470 * SCALE);
         }
 
         ctx.fillStyle = "#1e293b";
         ctx.font = `800 ${16 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
         ctx.textAlign = "center";
         ctx.textBaseline = "alphabetic";
-        ctx.fillText("BHIM  |  UPI", 200 * SCALE, 482 * SCALE);
+        ctx.fillText("BHIM  |  UPI", centerX, 494 * SCALE);
 
         ctx.fillStyle = "#64748b";
         ctx.font = `600 ${8.5 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
-        ctx.fillText("BHARAT INTERFACE FOR MONEY     UNIFIED PAYMENTS INTERFACE", 200 * SCALE, 496 * SCALE);
+        ctx.fillText("BHARAT INTERFACE FOR MONEY     UNIFIED PAYMENTS INTERFACE", centerX, 508 * SCALE);
 
         const digits = getDigits();
         ctx.fillStyle = "#0f172a";
         ctx.font = `700 ${11 * SCALE}px 'JetBrains Mono', monospace`;
-        ctx.fillText(`Terminal 1-Q${digits}`, 200 * SCALE, 518 * SCALE);
+        ctx.fillText(`Terminal 1-Q${digits}`, centerX, 528 * SCALE);
 
       } else {
         ctx.fillStyle = activeTheme.primary;
         ctx.fillRect(0, 0, canvas.width, 90 * SCALE);
 
         ctx.fillStyle = "#ffffff";
-        ctx.font = `800 ${20 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
+        ctx.font = `800 ${18 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
         ctx.textAlign = "center";
         ctx.textBaseline = "alphabetic";
-        ctx.fillText("SCAN & PAY WITH ANY UPI APP", 200 * SCALE, 42 * SCALE);
+        ctx.fillText("SCAN & PAY WITH ANY UPI APP", centerX, 42 * SCALE);
 
         ctx.font = `600 ${11 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
         ctx.fillStyle = "#ffffff";
         ctx.globalAlpha = 0.8;
-        ctx.fillText("GPay • PhonePe • Paytm • BHIM", 200 * SCALE, 64 * SCALE);
+        ctx.fillText("GPay • PhonePe • Paytm • BHIM", centerX, 64 * SCALE);
         ctx.globalAlpha = 1.0;
 
         ctx.fillStyle = "#0f172a";
         ctx.font = `800 ${20 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
         ctx.textAlign = "center";
-        ctx.fillText(merchant, 200 * SCALE, 130 * SCALE);
+        ctx.fillText(merchant, centerX, 130 * SCALE);
 
         ctx.fillStyle = activeTheme.primary;
         ctx.font = `700 ${13 * SCALE}px 'JetBrains Mono', monospace`;
-        ctx.fillText(vpa, 200 * SCALE, 150 * SCALE);
+        ctx.fillText(vpa, centerX, 150 * SCALE);
 
-        ctx.drawImage(qrSourceCanvas, 60 * SCALE, 172 * SCALE, 280 * SCALE, 280 * SCALE);
+        const qrSize = 280 * SCALE;
+        const qrX = centerX - (qrSize / 2);
+        ctx.drawImage(qrSourceCanvas, qrX, 172 * SCALE, qrSize, qrSize);
 
         if (amount) {
           ctx.fillStyle = "#10b981";
           ctx.font = `800 ${14 * SCALE}px 'JetBrains Mono', monospace`;
           ctx.textAlign = "center";
-          ctx.fillText(`Amount: ₹${amount}`, 200 * SCALE, 465 * SCALE);
+          ctx.fillText(`Amount: ₹${amount}`, centerX, 465 * SCALE);
         }
 
         ctx.fillStyle = "#1e293b";
         ctx.font = `800 ${16 * SCALE}px 'Plus Jakarta Sans', sans-serif`;
         ctx.textAlign = "center";
-        ctx.fillText("BHIM  |  UPI", 200 * SCALE, 488 * SCALE);
+        ctx.fillText("BHIM  |  UPI", centerX, 488 * SCALE);
       }
 
       openQrModal();
