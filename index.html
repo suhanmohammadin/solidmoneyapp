@@ -106,7 +106,7 @@
           <div class="w-8 h-8 brand-bg text-white rounded-xl flex items-center justify-center font-bold text-sm">
             <span>✉️</span>
           </div>
-          <h3 class="font-extrabold text-slate-800 text-base">Gmail Account Cloud Sync</h3>
+          <h3 class="font-extrabold text-slate-800 text-base">Gmail Cloud Sync</h3>
         </div>
         <button type="button" id="closeAuthModalBtn" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100 transition">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -114,13 +114,13 @@
       </div>
 
       <div class="space-y-3">
-        <p class="text-xs text-slate-500">Enter your Gmail address to securely save and load your live inventory across any device or browser, even after clearing app data.</p>
+        <p class="text-xs text-slate-500">Enter your Gmail address to securely load and sync your live inventory from the cloud across any device or browser.</p>
         <div>
           <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Gmail Address</label>
           <input type="email" id="userEmailInput" placeholder="e.g. yourname@gmail.com" class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
         </div>
         <button type="button" id="directGmailSignInBtn" class="w-full brand-bg hover:opacity-90 text-white font-bold py-3 rounded-2xl text-xs shadow-md transition flex items-center justify-center gap-2">
-          <span id="signInBtnText">Sign In & Sync Cloud Data</span>
+          <span id="signInBtnText">Sign In & Load Cloud Data</span>
           <div id="signInSpinner" class="hidden w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
         </button>
       </div>
@@ -177,7 +177,7 @@
     </div>
 
     <div class="p-4 border-t border-slate-100 text-xs text-slate-400 text-center font-medium">
-      SMGC PVT LTD • v4.4 Pro POS
+      SMGC PVT LTD • v4.6 Pro POS
     </div>
   </aside>
 
@@ -641,12 +641,14 @@
     </div>
   </div>
 
-  <!-- HEADER WITH SM LOGO -->
+  <!-- HEADER WITH 3-LINE MENU BAR -->
   <header class="w-full max-w-2xl brand-gradient text-white pt-4 pb-6 px-4 rounded-b-3xl shadow-xl relative overflow-hidden">
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <button type="button" id="openDrawerBtn" class="w-10 h-10 bg-white rounded-2xl flex items-center justify-center brand-text font-black text-lg shadow-md transition-transform transform active:scale-90 focus:outline-none" aria-label="Open Menu">
-          <span>SM</span>
+        <button type="button" id="openDrawerBtn" class="w-10 h-10 bg-white rounded-2xl flex items-center justify-center brand-text shadow-md transition-transform transform active:scale-90 focus:outline-none" aria-label="Open Menu">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
         </button>
 
         <div>
@@ -923,7 +925,7 @@
     directGmailSignInBtn.addEventListener('click', async () => {
       const email = userEmailInput.value.trim().toLowerCase();
       if (email && email.includes('@')) {
-        signInBtnText.textContent = "Syncing Cloud Data...";
+        signInBtnText.textContent = "Loading Cloud Data...";
         signInSpinner.classList.remove('hidden');
         directGmailSignInBtn.disabled = true;
 
@@ -937,7 +939,7 @@
           await syncInventoryToCloud();
         }
 
-        signInBtnText.textContent = "Sign In & Sync Cloud Data";
+        signInBtnText.textContent = "Sign In & Load Cloud Data";
         signInSpinner.classList.add('hidden');
         directGmailSignInBtn.disabled = false;
 
@@ -1995,10 +1997,20 @@
       openQrModal();
     }
 
-    window.addEventListener('load', () => {
-      document.fonts.ready.then(() => {
+    window.addEventListener('load', async () => {
+      document.fonts.ready.then(async () => {
         loadFixedStates();
         updateVpaPreview();
+        
+        // Auto-fetch from cloud if logged in
+        const savedEmail = localStorage.getItem('gmailUserAccount');
+        if (savedEmail) {
+          const cloudInventory = await fetchInventoryFromCloud(savedEmail);
+          if (cloudInventory && Array.isArray(cloudInventory)) {
+            inventoryMaster = cloudInventory;
+            localStorage.setItem(`inventoryMaster_${savedEmail}`, JSON.stringify(inventoryMaster));
+          }
+        }
         updateAccountStatusUI();
       });
     });
