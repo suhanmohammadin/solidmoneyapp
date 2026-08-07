@@ -188,95 +188,105 @@
     </div>
   </aside>
 
-  <!-- POPUP MODAL: Item Master / Inventory Configurator -->
-  <div id="masterInventoryModalOverlay" class="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 sm:p-4">
-    <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl border border-slate-100 overflow-hidden transform transition-all flex flex-col max-h-[90vh]">
-      
-      <div class="brand-gradient p-4 sm:p-5 text-white flex items-center justify-between shrink-0">
-        <div class="flex items-center gap-2.5">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
-          <h3 class="font-bold text-lg">Item & Stock Configurator</h3>
+  <!-- FULL-SCREEN MODAL: Item Master / Inventory Configurator -->
+  <div id="masterInventoryModalOverlay" class="fixed inset-0 bg-slate-900 z-50 hidden flex flex-col h-full w-full overflow-hidden">
+    
+    <div class="brand-gradient p-4 sm:p-5 text-white flex items-center justify-between shrink-0 shadow-lg">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-md">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
         </div>
-        <button type="button" id="closeMasterInventoryModalBtn" class="text-white/80 hover:text-white p-1 rounded-lg hover:bg-white/10 transition">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-        </button>
-      </div>
-
-      <div class="p-4 sm:p-6 space-y-4 overflow-y-auto grow">
-        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
-          <div class="flex items-center justify-between">
-            <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-700">Add Stock Item</h4>
-          </div>
-
-          <div class="grid grid-cols-12 gap-2">
-            <div class="col-span-4">
-              <input type="text" id="masterItemName" placeholder="Item Name" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-600 bg-white" />
-            </div>
-            <div class="col-span-3">
-              <input type="number" id="masterItemRate" inputmode="decimal" placeholder="Rate (₹)" step="0.01" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-mono font-bold outline-none focus:ring-2 focus:ring-purple-600 bg-white" />
-            </div>
-            <div class="col-span-3">
-              <div class="flex">
-                <input type="number" id="masterItemStock" inputmode="decimal" placeholder="Qty" step="0.01" class="w-full px-2 py-2 border border-r-0 border-slate-300 rounded-l-xl text-xs font-mono font-bold outline-none focus:ring-2 focus:ring-purple-600 bg-white" />
-                <select id="masterItemUnit" class="bg-slate-100 border border-slate-300 rounded-r-xl px-1 text-[11px] font-bold text-slate-700 outline-none">
-                  <option value="pcs">Pcs</option>
-                  <option value="kg">KG</option>
-                  <option value="g">G</option>
-                  <option value="l">L</option>
-                  <option value="ml">ml</option>
-                </select>
-              </div>
-            </div>
-            <div class="col-span-2">
-              <button type="button" id="saveMasterItemBtn" class="w-full brand-bg hover:opacity-90 text-white font-bold py-2 rounded-xl text-xs transition">Save</button>
-            </div>
-          </div>
-        </div>
-
         <div>
-          <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-500 mb-2">Stock Holder & Remaining Quantities</h4>
-          <div class="border border-slate-200 rounded-2xl overflow-hidden bg-white max-h-60 overflow-y-auto">
-            <table class="w-full text-left text-xs">
-              <thead class="bg-slate-100 text-slate-600 font-bold uppercase tracking-wider text-[10px] sticky top-0">
-                <tr>
-                  <th class="p-2.5">Item Name</th>
-                  <th class="p-2.5 text-right">Rate (₹)</th>
-                  <th class="p-2.5 text-center">Remaining Stock</th>
-                  <th class="p-2.5 text-center">Action / Edit</th>
-                </tr>
-              </thead>
-              <tbody id="masterInventoryTableBody" class="divide-y divide-slate-100 font-medium">
-                <!-- Configured items list -->
-              </tbody>
-            </table>
+          <h3 class="font-extrabold text-base sm:text-lg leading-none">Item & Stock Configurator</h3>
+          <p class="text-[11px] text-white/70 mt-1">Inventory Management</p>
+        </div>
+      </div>
+      <button type="button" id="closeMasterInventoryModalBtn" class="text-white/80 hover:text-white p-2 rounded-xl bg-white/10 hover:bg-white/20 transition flex items-center gap-1 text-xs font-bold">
+        <span>Close</span>
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+    </div>
+
+    <div class="grow bg-slate-100 p-3 sm:p-6 overflow-y-auto max-w-4xl mx-auto w-full space-y-4 pb-24 sm:pb-6">
+      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3">
+        <div class="flex items-center justify-between">
+          <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-700">Add Stock Item</h4>
+        </div>
+
+        <div class="grid grid-cols-12 gap-2">
+          <div class="col-span-4">
+            <input type="text" id="masterItemName" placeholder="Item Name" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-600 bg-white" />
+          </div>
+          <div class="col-span-3">
+            <input type="number" id="masterItemRate" inputmode="decimal" placeholder="Rate (₹)" step="0.01" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-mono font-bold outline-none focus:ring-2 focus:ring-purple-600 bg-white" />
+          </div>
+          <div class="col-span-3">
+            <div class="flex">
+              <input type="number" id="masterItemStock" inputmode="decimal" placeholder="Qty" step="0.01" class="w-full px-2 py-2 border border-r-0 border-slate-300 rounded-l-xl text-xs font-mono font-bold outline-none focus:ring-2 focus:ring-purple-600 bg-white" />
+              <select id="masterItemUnit" class="bg-slate-100 border border-slate-300 rounded-r-xl px-1 text-[11px] font-bold text-slate-700 outline-none">
+                <option value="pcs">Pcs</option>
+                <option value="kg">KG</option>
+                <option value="g">G</option>
+                <option value="l">L</option>
+                <option value="ml">ml</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-span-2">
+            <button type="button" id="saveMasterItemBtn" class="w-full brand-bg hover:opacity-90 text-white font-bold py-2 rounded-xl text-xs transition h-full">Save</button>
           </div>
         </div>
       </div>
 
+      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3">
+        <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-500 mb-2">Stock Holder & Remaining Quantities</h4>
+        <div class="border border-slate-200 rounded-2xl overflow-hidden bg-white max-h-[50vh] overflow-y-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-100 text-slate-600 font-bold uppercase tracking-wider text-[10px] sticky top-0">
+              <tr>
+                <th class="p-2.5">Item Name</th>
+                <th class="p-2.5 text-right">Rate (₹)</th>
+                <th class="p-2.5 text-center">Remaining Stock</th>
+                <th class="p-2.5 text-center">Action / Edit</th>
+              </tr>
+            </thead>
+            <tbody id="masterInventoryTableBody" class="divide-y divide-slate-100 font-medium">
+              <!-- Configured items list -->
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
+
   </div>
 
-  <!-- POPUP MODAL: Instant Transaction & Customer/Mobile Search -->
-  <div id="searchModalOverlay" class="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 sm:p-4">
-    <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl border border-slate-100 overflow-hidden transform transition-all flex flex-col max-h-[90vh]">
-      
-      <div class="brand-gradient p-4 sm:p-5 text-white flex items-center justify-between shrink-0">
-        <div class="flex items-center gap-2.5">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-          <h3 class="font-bold text-lg">Search by Customer or Mobile No</h3>
+  <!-- FULL-SCREEN MODAL: Instant Transaction & Customer/Mobile Search -->
+  <div id="searchModalOverlay" class="fixed inset-0 bg-slate-900 z-50 hidden flex flex-col h-full w-full overflow-hidden">
+    
+    <div class="brand-gradient p-4 sm:p-5 text-white flex items-center justify-between shrink-0 shadow-lg">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-md">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
         </div>
-        <button type="button" id="closeSearchModalBtn" class="text-white/80 hover:text-white p-1 rounded-lg hover:bg-white/10 transition">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-        </button>
+        <div>
+          <h3 class="font-extrabold text-base sm:text-lg leading-none">Search Transactions</h3>
+          <p class="text-[11px] text-white/70 mt-1">Customer or Mobile No</p>
+        </div>
       </div>
+      <button type="button" id="closeSearchModalBtn" class="text-white/80 hover:text-white p-2 rounded-xl bg-white/10 hover:bg-white/20 transition flex items-center gap-1 text-xs font-bold">
+        <span>Close</span>
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+    </div>
 
-      <div class="p-4 sm:p-6 space-y-4 overflow-y-auto grow">
+    <div class="grow bg-slate-100 p-3 sm:p-6 overflow-y-auto max-w-4xl mx-auto w-full space-y-4 pb-24 sm:pb-6">
+      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3">
         <div class="relative">
           <input type="tel" id="liveSearchInput" placeholder="Enter customer name or mobile number (e.g. 91333...)" inputmode="tel" class="w-full px-4 py-3 pl-10 border border-slate-300 rounded-2xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white font-mono" />
           <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
         </div>
 
-        <div class="border border-slate-200 rounded-2xl overflow-hidden min-h-[220px] max-h-[300px] overflow-y-auto">
+        <div class="border border-slate-200 rounded-2xl overflow-hidden min-h-[220px] max-h-[55vh] overflow-y-auto bg-white">
           <table class="w-full text-left text-xs">
             <thead class="bg-slate-100 text-slate-600 font-bold uppercase tracking-wider text-[10px] sticky top-0">
               <tr>
@@ -292,6 +302,7 @@
         </div>
       </div>
     </div>
+
   </div>
 
   <!-- FULL-SCREEN MODAL: Multi-Item POS Calculator -->
@@ -371,7 +382,7 @@
           </div>
 
           <div class="col-span-2 flex items-end">
-            <button type="button" id="addItemBtn" class="w-full brand-bg text-white font-bold py-2 rounded-xl text-xs hover:opacity-90 transition shadow-sm">Add</button>
+            <button type="button" id="addItemBtn" class="w-full brand-bg text-white font-bold py-2 rounded-xl text-xs hover:opacity-90 transition shadow-sm h-[38px]">Add</button>
           </div>
         </div>
       </div>
