@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+<!DOCTYPE html><html lang="en"><head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Solid Money App - Pro Merchant Suite</title>
@@ -73,9 +71,7 @@
       #printableArea, #printableArea * { visibility: visible; }
       #printableArea { position: absolute; left: 0; top: 0; width: 100%; display: flex; justify-content: center; }
     }
-  </style>
-</head>
-<body class="theme-purple bg-slate-100 text-slate-800 min-h-screen flex flex-col items-center justify-between antialiased selection:bg-purple-500 selection:text-white pb-20">
+  </style></head><body class="theme-purple bg-slate-100 text-slate-800 min-h-screen flex flex-col items-center justify-between antialiased selection:bg-purple-500 selection:text-white pb-20">
 
   <!-- PIN Authentication Modal Overlay -->
   <div id="pinAuthModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 z-[100]">
@@ -208,41 +204,25 @@
     </div>
 
     <div class="grow bg-slate-100 p-3 sm:p-6 overflow-y-auto max-w-4xl mx-auto w-full space-y-4 pb-24 sm:pb-6">
-      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3">
-        <div class="flex items-center justify-between">
-          <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-700">Add Stock Item</h4>
+      
+      <!-- STOCK SECTION WITH POPUP MODAL BUTTON -->
+      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
+        <div>
+          <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-700 flex items-center gap-2">
+            <span>📦</span> Stock Management
+          </h4>
+          <p class="text-[11px] text-slate-500 mt-0.5">Manage and add stock items with custom rack details, pricing & quantity.</p>
         </div>
-
-        <div class="grid grid-cols-12 gap-2">
-          <div class="col-span-4">
-            <input type="text" id="masterItemName" placeholder="Item Name" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-600 bg-white" />
-          </div>
-          <div class="col-span-3">
-            <input type="number" id="masterItemRate" inputmode="decimal" placeholder="Rate (₹)" step="0.01" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-mono font-bold outline-none focus:ring-2 focus:ring-purple-600 bg-white" />
-          </div>
-          <div class="col-span-3">
-            <div class="flex">
-              <input type="number" id="masterItemStock" inputmode="decimal" placeholder="Qty" step="0.01" class="w-full px-2 py-2 border border-r-0 border-slate-300 rounded-l-xl text-xs font-mono font-bold outline-none focus:ring-2 focus:ring-purple-600 bg-white" />
-              <select id="masterItemUnit" class="bg-slate-100 border border-slate-300 rounded-r-xl px-1 text-[11px] font-bold text-slate-700 outline-none">
-                <option value="pcs">Pcs</option>
-                <option value="kg">KG</option>
-                <option value="g">G</option>
-                <option value="l">L</option>
-                <option value="ml">ml</option>
-              </select>
-            </div>
-          </div>
-          <div class="col-span-2">
-            <button type="button" id="saveMasterItemBtn" class="w-full brand-bg hover:opacity-90 text-white font-bold py-2 rounded-xl text-xs transition h-full">Save</button>
-          </div>
-        </div>
+        <button type="button" id="openAddStockModalBtn" class="brand-bg hover:opacity-90 text-white font-extrabold px-4 py-2.5 rounded-xl text-xs transition shadow-md flex items-center gap-1.5 shrink-0">
+          <span>+ Add Stock Item</span>
+        </button>
       </div>
 
       <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
           <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-500">Stock Holder & Remaining Quantities</h4>
           <div class="relative w-full sm:w-64">
-            <input type="text" id="stockSearchInput" placeholder="Search added items..." class="w-full px-3 py-1.5 pl-8 border border-slate-300 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
+            <input type="text" id="stockSearchInput" placeholder="Search by rack or item name..." class="w-full px-3 py-1.5 pl-8 border border-slate-300 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
             <svg class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
           </div>
         </div>
@@ -253,6 +233,7 @@
           <table class="w-full text-left text-xs hidden sm:table">
             <thead class="bg-slate-100 text-slate-600 font-bold uppercase tracking-wider text-[10px] sticky top-0">
               <tr>
+                <th class="p-2.5">Rack Sr. No.</th>
                 <th class="p-2.5">Item Name</th>
                 <th class="p-2.5 text-right">Rate (₹)</th>
                 <th class="p-2.5 text-center">Remaining Stock</th>
@@ -272,6 +253,59 @@
       </div>
     </div>
 
+  </div>
+
+  <!-- POPUP MODAL: Add New Stock Item Options -->
+  <div id="addStockModalOverlay" class="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-[60] hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl border border-slate-100 overflow-hidden transform transition-all flex flex-col p-6 space-y-4">
+      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 brand-bg text-white rounded-xl flex items-center justify-center font-bold text-sm">
+            <span>📦</span>
+          </div>
+          <h3 class="font-extrabold text-slate-800 text-base">Add New Stock Item</h3>
+        </div>
+        <button type="button" id="closeAddStockModalBtn" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100 transition">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Rack Sr. No.</label>
+          <input type="text" id="masterRackSrNo" placeholder="e.g. R-105" class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-xs font-bold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white font-mono" />
+        </div>
+
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Item Name</label>
+          <input type="text" id="masterItemName" placeholder="e.g. Paracetamol Tablets" class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Rate / Unit (₹)</label>
+            <input type="number" id="masterItemRate" inputmode="decimal" placeholder="e.g. 50" step="0.01" class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-xs font-mono font-bold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white text-emerald-600" />
+          </div>
+          <div>
+            <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Quantity & Unit</label>
+            <div class="flex">
+              <input type="number" id="masterItemStock" inputmode="decimal" placeholder="Qty" step="0.01" class="w-full px-2 py-2.5 border border-r-0 border-slate-300 rounded-l-xl text-xs font-mono font-bold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
+              <select id="masterItemUnit" class="bg-slate-100 border border-slate-300 rounded-r-xl px-2 text-xs font-bold text-slate-700 outline-none cursor-pointer">
+                <option value="pcs">pcs</option>
+                <option value="kg">kg</option>
+                <option value="l">l</option>
+                <option value="ml">ml</option>
+                <option value="grams">grams</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <button type="button" id="saveMasterItemBtn" class="w-full brand-bg hover:opacity-90 text-white font-extrabold py-3 rounded-2xl text-xs shadow-md transition flex items-center justify-center gap-1.5 mt-2">
+          <span>Save & Add Stock Item</span>
+        </button>
+      </div>
+    </div>
   </div>
 
   <!-- FULL-SCREEN MODAL: Instant Transaction & Customer/Mobile Search -->
@@ -353,7 +387,7 @@
       <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3">
         <div class="flex items-center justify-between">
           <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">
-            Item Name <span class="text-slate-400 font-normal">(Type to search stock)</span>
+            Item Name <span class="text-slate-400 font-normal">(Type to search stock or rack)</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer text-xs font-bold text-slate-600 select-none">
             <span class="text-[10px] uppercase text-purple-700 font-extrabold">Flat Amount (₹)</span>
@@ -363,7 +397,7 @@
         </div>
 
         <div class="relative">
-          <input type="text" id="itemNameInput" placeholder="e.g. Apples, Rice" autocomplete="off" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
+          <input type="text" id="itemNameInput" placeholder="e.g. Paracetamol, Rack R-101" autocomplete="off" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
           
           <div id="suggestionsBox" class="absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-xl z-20 max-h-48 overflow-y-auto hidden divide-y divide-slate-100 text-xs">
             <!-- Dynamic suggestions -->
@@ -386,11 +420,11 @@
             <div class="flex">
               <input type="number" id="purchaseQty" inputmode="decimal" placeholder="e.g. 1" step="0.01" class="w-full px-2 py-2 border border-r-0 border-slate-300 rounded-l-xl text-sm font-mono outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
               <select id="purchaseUnit" class="bg-slate-100 border border-slate-300 rounded-r-xl px-1.5 text-xs font-bold text-slate-700 outline-none">
-                <option value="pcs">Pcs</option>
-                <option value="kg">KG</option>
-                <option value="g">G</option>
-                <option value="l">L</option>
+                <option value="pcs">pcs</option>
+                <option value="kg">kg</option>
+                <option value="l">l</option>
                 <option value="ml">ml</option>
+                <option value="grams">grams</option>
               </select>
             </div>
           </div>
@@ -543,7 +577,7 @@
             <span id="ledgerCashTotal" class="font-mono font-bold text-amber-900">₹0.00</span>
           </div>
           <div class="flex justify-between items-center bg-emerald-50/70 p-2 rounded-xl border border-emerald-200/80">
-            <span class="text-emerald-800">💳 UPI Paid:</span>
+            <span class="text-emerald-800">📱 UPI Paid:</span>
             <span id="ledgerUpiTotal" class="font-mono font-bold text-emerald-900">₹0.00</span>
           </div>
         </div>
@@ -914,11 +948,10 @@
     function loadInventoryMaster() {
       const key = getInventoryStorageKey();
       const defaultItems = [
-        { name: 'Apples', rate: 180, stock: 50, unit: 'kg' },
-        { name: 'Rice', rate: 60, stock: 200, unit: 'kg' },
-        { name: 'Sugar', rate: 45, stock: 100, unit: 'kg' },
-        { name: 'Almonds', rate: 850, stock: 25, unit: 'kg' },
-        { name: 'Cooking Oil', rate: 140, stock: 60, unit: 'l' }
+        { rackSrNo: 'R-101', name: 'Paracetamol 500mg', rate: 20, stock: 150, unit: 'pcs' },
+        { rackSrNo: 'R-102', name: 'Apples', rate: 180, stock: 50, unit: 'kg' },
+        { rackSrNo: 'R-103', name: 'Rice', rate: 60, stock: 200, unit: 'kg' },
+        { rackSrNo: 'R-104', name: 'Sugar', rate: 45, stock: 100, unit: 'kg' }
       ];
       return JSON.parse(localStorage.getItem(key) || JSON.stringify(defaultItems));
     }
@@ -1012,6 +1045,7 @@
       if (e.key === 'Escape') {
         closeCalcModal();
         toggleModal(masterInventoryModalOverlay, false);
+        toggleModal(addStockModalOverlay, false);
         toggleModal(ledgerModalOverlay, false);
         toggleModal(searchModalOverlay, false);
         toggleModal(authModalOverlay, false);
@@ -1050,6 +1084,12 @@
     const openMasterInventoryModalBtn = document.getElementById('openMasterInventoryModalBtn');
     const closeMasterInventoryModalBtn = document.getElementById('closeMasterInventoryModalBtn');
     const masterInventoryModalOverlay = document.getElementById('masterInventoryModalOverlay');
+    
+    const openAddStockModalBtn = document.getElementById('openAddStockModalBtn');
+    const closeAddStockModalBtn = document.getElementById('closeAddStockModalBtn');
+    const addStockModalOverlay = document.getElementById('addStockModalOverlay');
+
+    const masterRackSrNo = document.getElementById('masterRackSrNo');
     const masterItemName = document.getElementById('masterItemName');
     const masterItemRate = document.getElementById('masterItemRate');
     const masterItemStock = document.getElementById('masterItemStock');
@@ -1058,6 +1098,20 @@
     const masterInventoryTableBody = document.getElementById('masterInventoryTableBody');
     const masterInventoryMobileList = document.getElementById('masterInventoryMobileList');
     const stockSearchInput = document.getElementById('stockSearchInput');
+
+    openAddStockModalBtn.addEventListener('click', () => {
+      masterRackSrNo.value = '';
+      masterItemName.value = '';
+      masterItemRate.value = '';
+      masterItemStock.value = '';
+      masterItemUnit.value = 'pcs';
+      toggleModal(addStockModalOverlay, true);
+      setTimeout(() => masterRackSrNo.focus(), 100);
+    });
+
+    closeAddStockModalBtn.addEventListener('click', () => {
+      toggleModal(addStockModalOverlay, false);
+    });
 
     const searchModalOverlay = document.getElementById('searchModalOverlay');
     const openSearchModalBtn = document.getElementById('openSearchModalBtn');
@@ -1182,17 +1236,22 @@
 
     function renderMasterInventory() {
       const searchTerm = (stockSearchInput.value || '').toLowerCase().trim();
-      const filteredItems = inventoryMaster.filter(item => item.name.toLowerCase().includes(searchTerm));
+      const filteredItems = inventoryMaster.filter(item => 
+        item.name.toLowerCase().includes(searchTerm) || 
+        (item.rackSrNo || '').toLowerCase().includes(searchTerm)
+      );
 
       if (filteredItems.length === 0) {
-        masterInventoryTableBody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400 italic">No matching stock items found.</td></tr>`;
+        masterInventoryTableBody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400 italic">No matching stock items found.</td></tr>`;
         masterInventoryMobileList.innerHTML = `<div class="p-6 text-center text-slate-400 italic text-xs">No matching stock items found.</div>`;
       } else {
-        // Desktop Table Rows
         masterInventoryTableBody.innerHTML = filteredItems.map((item) => {
           const originalIdx = inventoryMaster.indexOf(item);
           return `
             <tr>
+              <td class="p-2.5 font-mono font-bold text-purple-700">
+                <input type="text" id="editRack_${originalIdx}" value="${item.rackSrNo || 'R-001'}" class="w-24 px-2 py-1 border border-slate-200 rounded-lg text-xs font-mono font-bold bg-slate-50 focus:bg-white focus:ring-2 focus:ring-purple-600 outline-none" />
+              </td>
               <td class="p-2.5 font-bold text-slate-800">
                 <input type="text" id="editName_${originalIdx}" value="${item.name}" class="w-full px-2 py-1 border border-slate-200 rounded-lg text-xs font-semibold bg-slate-50 focus:bg-white focus:ring-2 focus:ring-purple-600 outline-none" />
               </td>
@@ -1213,14 +1272,16 @@
           `;
         }).join('');
 
-        // Mobile Responsive Stacked Cards Format
         masterInventoryMobileList.innerHTML = filteredItems.map((item) => {
           const originalIdx = inventoryMaster.indexOf(item);
           return `
             <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3 space-y-2.5 shadow-2xs">
               <div class="flex items-center justify-between">
-                <input type="text" id="editName_m_${originalIdx}" value="${item.name}" class="px-2.5 py-1.5 border border-slate-300 rounded-xl text-xs font-bold text-slate-800 bg-white focus:ring-2 focus:ring-purple-600 outline-none w-2/3" />
+                <input type="text" id="editRack_m_${originalIdx}" value="${item.rackSrNo || 'R-001'}" class="px-2 py-1 border border-slate-300 rounded-xl text-xs font-mono font-bold text-purple-700 bg-white focus:ring-2 focus:ring-purple-600 outline-none w-28" />
                 <button onclick="deleteMasterItem(${originalIdx})" class="text-xs bg-red-100 text-red-600 font-bold px-2.5 py-1.5 rounded-xl">Delete</button>
+              </div>
+              <div>
+                <input type="text" id="editName_m_${originalIdx}" value="${item.name}" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-xl text-xs font-bold text-slate-800 bg-white focus:ring-2 focus:ring-purple-600 outline-none" />
               </div>
               <div class="grid grid-cols-2 gap-2 text-xs">
                 <div>
@@ -1228,7 +1289,7 @@
                   <input type="number" id="editRate_m_${originalIdx}" value="${item.rate || 0}" step="0.01" inputmode="decimal" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-xl text-xs font-mono font-bold bg-white focus:ring-2 focus:ring-purple-600 outline-none text-emerald-600" />
                 </div>
                 <div>
-                  <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-0.5">Remaining Stock (${item.unit || 'pcs'})</label>
+                  <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-0.5">Stock (${item.unit || 'pcs'})</label>
                   <input type="number" id="editStock_m_${originalIdx}" value="${item.stock || 0}" step="0.01" inputmode="decimal" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-xl text-xs font-mono font-bold bg-white focus:ring-2 focus:ring-purple-600 outline-none ${(item.stock || 0) <= 5 ? 'text-red-500' : 'text-slate-800'}" />
                 </div>
               </div>
@@ -1240,67 +1301,52 @@
     }
 
     window.saveStockEdit = function(index) {
+      const rackInput = document.getElementById(`editRack_${index}`);
       const nameInput = document.getElementById(`editName_${index}`);
       const rateInput = document.getElementById(`editRate_${index}`);
       const stockInput = document.getElementById(`editStock_${index}`);
 
-      if (!nameInput || !rateInput || !stockInput) return;
+      if (!rackInput || !nameInput || !rateInput || !stockInput) return;
 
-      const newName = nameInput.value.trim();
-      const newRate = parseFloat(rateInput.value);
-      const newStock = parseFloat(stockInput.value);
-
-      if (!newName) {
-        alert("Item name cannot be empty.");
-        return;
-      }
-
-      inventoryMaster[index].name = newName;
-      inventoryMaster[index].rate = isNaN(newRate) ? 0 : newRate;
-      inventoryMaster[index].stock = isNaN(newStock) ? 0 : newStock;
+      inventoryMaster[index].rackSrNo = rackInput.value.trim() || 'R-001';
+      inventoryMaster[index].name = nameInput.value.trim();
+      inventoryMaster[index].rate = parseFloat(rateInput.value) || 0;
+      inventoryMaster[index].stock = parseFloat(stockInput.value) || 0;
 
       saveInventoryToStorage();
       renderMasterInventory();
     };
 
     window.saveStockEditMobile = function(index) {
+      const rackInput = document.getElementById(`editRack_m_${index}`);
       const nameInput = document.getElementById(`editName_m_${index}`);
       const rateInput = document.getElementById(`editRate_m_${index}`);
       const stockInput = document.getElementById(`editStock_m_${index}`);
 
-      if (!nameInput || !rateInput || !stockInput) return;
+      if (!rackInput || !nameInput || !rateInput || !stockInput) return;
 
-      const newName = nameInput.value.trim();
-      const newRate = parseFloat(rateInput.value);
-      const newStock = parseFloat(stockInput.value);
-
-      if (!newName) {
-        alert("Item name cannot be empty.");
-        return;
-      }
-
-      inventoryMaster[index].name = newName;
-      inventoryMaster[index].rate = isNaN(newRate) ? 0 : newRate;
-      inventoryMaster[index].stock = isNaN(newStock) ? 0 : newStock;
+      inventoryMaster[index].rackSrNo = rackInput.value.trim() || 'R-001';
+      inventoryMaster[index].name = nameInput.value.trim();
+      inventoryMaster[index].rate = parseFloat(rateInput.value) || 0;
+      inventoryMaster[index].stock = parseFloat(stockInput.value) || 0;
 
       saveInventoryToStorage();
       renderMasterInventory();
     };
 
     saveMasterItemBtn.addEventListener('click', () => {
+      const rackSrNo = masterRackSrNo.value.trim() || 'R-001';
       const name = masterItemName.value.trim();
       const rate = parseFloat(masterItemRate.value) || 0;
       const stock = parseFloat(masterItemStock.value) || 0;
       const unit = masterItemUnit.value;
       if (!name) return;
 
-      inventoryMaster.push({ name, rate, stock, unit });
+      inventoryMaster.push({ rackSrNo, name, rate, stock, unit });
       saveInventoryToStorage();
-      masterItemName.value = '';
-      masterItemRate.value = '';
-      masterItemStock.value = '';
       stockSearchInput.value = '';
       renderMasterInventory();
+      toggleModal(addStockModalOverlay, false);
     });
 
     window.deleteMasterItem = function(index) {
@@ -1327,12 +1373,15 @@
         return;
       }
 
-      const matches = inventoryMaster.filter(item => item.name.toLowerCase().includes(query));
+      const matches = inventoryMaster.filter(item => 
+        item.name.toLowerCase().includes(query) || 
+        (item.rackSrNo || '').toLowerCase().includes(query)
+      );
 
       if (matches.length > 0) {
         suggestionsBox.innerHTML = matches.map(item => `
-          <div onclick="selectSuggestion('${item.name.replace(/'/g, "\\'")}', ${item.rate || 0}, '${item.unit || 'pcs'}')" class="px-3 py-2 hover:bg-purple-50 cursor-pointer flex justify-between items-center transition">
-            <span class="font-bold text-slate-800">${item.name} <span class="text-[10px] text-slate-500 font-normal">(Stock: ${item.stock || 0} ${item.unit || 'pcs'})</span></span>
+          <div onclick="selectSuggestion('${item.name.replace(/'/g, "\\'")}', ${item.rate || 0}, '${item.unit || 'pcs'}', '${item.rackSrNo || 'R-001'}')" class="px-3 py-2 hover:bg-purple-50 cursor-pointer flex justify-between items-center transition">
+            <span class="font-bold text-slate-800">[${item.rackSrNo || 'R-001'}] ${item.name} <span class="text-[10px] text-slate-500 font-normal">(Stock: ${item.stock || 0} ${item.unit || 'pcs'})</span></span>
             <span class="font-mono text-emerald-600 font-bold">₹${item.rate || 0}/unit</span>
           </div>
         `).join('');
@@ -1342,8 +1391,8 @@
       }
     });
 
-    window.selectSuggestion = function(name, rate, unit) {
-      itemNameInput.value = name;
+    window.selectSuggestion = function(name, rate, unit, rack) {
+      itemNameInput.value = `[${rack}] ${name}`;
       ratePerKg.value = rate;
       if (unit) {
         purchaseUnit.value = unit;
@@ -1509,7 +1558,7 @@
 
         if (selectedUnit === 'pcs') {
           itemCost = rate * qty;
-        } else if (selectedUnit === 'g' || selectedUnit === 'ml') {
+        } else if (selectedUnit === 'grams' || selectedUnit === 'ml') {
           itemCost = (rate / 1000) * qty;
           numericQty = qty / 1000;
         } else {
@@ -1602,7 +1651,7 @@
       const { grandTotal, remainingUpi, cashPaid } = calculateCartTotals();
       if (grandTotal > 0) {
         cartItems.forEach(cartItem => {
-          const found = inventoryMaster.find(inv => inv.name.toLowerCase() === cartItem.name.toLowerCase());
+          const found = inventoryMaster.find(inv => cartItem.name.toLowerCase().includes(inv.name.toLowerCase()));
           if (found) {
             found.stock = Math.max(0, (found.stock || 0) - (cartItem.qty || 1));
           }
@@ -1756,14 +1805,14 @@
       }
 
       const upiPayLink = `upi://pay?pa=${vpa}&pn=${encodeURIComponent(merchant)}&am=${remainingUpi.toFixed(2)}&cu=INR`;
-      const msg = `🏪 *${merchant.toUpperCase()}*\n` +
-                  `📜 *OFFICIAL DIGITAL RECEIPT*\n` +
-                  `📅 Date: ${dateStr} | 🕒 ${timeStr}\n` +
+      const msg = `💬 *${merchant.toUpperCase()}*\n` +
+                  `🧾 *OFFICIAL DIGITAL RECEIPT*\n` +
+                  `📅 Date: ${dateStr} | ⏰ ${timeStr}\n` +
                   `👤 Customer: ${customer}\n` +
                   `───────────────────────────\n\n` +
                   `*PURCHASED ITEMS:*\n\n${itemsListStr}\n\n` +
                   `${summaryStr}\n` +
-                  `💳 *Pay Balance via UPI QR:* \n${upiPayLink}\n\n` +
+                  `🔗 *Pay Balance via UPI QR:* \n${upiPayLink}\n\n` +
                   `✨ *Thank you for shopping with us!*`;
 
       const waUrl = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(msg)}`;
@@ -1965,6 +2014,4 @@
     });
 
     printBtn.addEventListener('click', () => { window.print(); });
-  </script>
-</body>
-</html>
+  </script></body></html>
