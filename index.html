@@ -1790,7 +1790,7 @@
 
     closeLedgerModalBtn.addEventListener('click', () => toggleModal(ledgerModalOverlay, false));
 
-    // --- HOLD TO RECOVER / CLICK TO CLEAR LOGIC (Fixed with preventDefault) ---
+    // --- HOLD TO RECOVER / CLICK TO CLEAR LOGIC (Popups/Alerts completely removed) ---
     let clearBtnTimer = null;
 
     clearLedgerBtn.addEventListener('mousedown', (e) => {
@@ -1801,9 +1801,6 @@
           localStorage.setItem('salesLedgerLogs', JSON.stringify(salesLedger));
           renderLedgerModal();
           if (currentUserUid) saveLedgerToCloud();
-          alert("History recovered successfully!");
-        } else {
-          alert("No backup history found to recover.");
         }
         clearBtnTimer = null;
       }, 1500);
@@ -1835,9 +1832,6 @@
           localStorage.setItem('salesLedgerLogs', JSON.stringify(salesLedger));
           renderLedgerModal();
           if (currentUserUid) saveLedgerToCloud();
-          alert("History recovered successfully!");
-        } else {
-          alert("No backup history found to recover.");
         }
         clearBtnTimer = null;
       }, 1500);
