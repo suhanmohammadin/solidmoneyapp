@@ -533,9 +533,9 @@
           </div>
         </div>
       </div>
-    </div>
+  </div>
 
-    <div class="p-4 bg-white border-t border-slate-200 shrink-0 max-w-4xl mx-auto w-full">
+  <div class="p-4 bg-white border-t border-slate-200 shrink-0 max-w-4xl mx-auto w-full">
       <button type="button" id="applyCalcToAmountBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-2xl shadow-lg transition duration-200 flex items-center justify-center gap-2 text-base">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
         Complete Sale & Generate QR
@@ -684,7 +684,7 @@
           </div>
         </div>
       </div>
-    </div>
+  </div>
   </header>
 
   <!-- MAIN INTERFACE CARD -->
@@ -1348,8 +1348,8 @@
               <td class="p-2.5 text-center space-x-1">
                 <button onclick="saveStockEdit(${originalIdx})" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-lg text-[11px] shadow-2xs transition">Save</button>
                 <button onclick="deleteMasterItem(${originalIdx})" class="px-2 py-1 bg-red-50 hover:bg-red-100 text-red-600 font-bold rounded-lg text-[11px] transition">×</button>
-              </td>
-            </tr>
+            </td>
+          </tr>
           `;
         }).join('');
 
@@ -1633,8 +1633,12 @@
         displayUnitStr = "Flat Amount";
       } else {
         const rate = parseFloat(ratePerKg.value) || 0;
-        const qty = parseFloat(purchaseQty.value) || 0;
-        if (rate <= 0 || qty <= 0) return;
+        const qty = parseFloat(purchaseQty.value) || 1; // Default to 1 if empty
+        if (rate <= 0) {
+          alert('Please enter a valid rate before adding.');
+          ratePerKg.focus();
+          return;
+        }
         numericQty = qty;
 
         if (selectedUnit === 'pcs') {
@@ -1657,6 +1661,7 @@
       flatPriceInput.value = '';
       suggestionsBox.classList.add('hidden');
       renderCartTable();
+      itemNameInput.focus(); // Focus back to item name for instant continuous billing
     });
 
     clearCartBtn.addEventListener('click', () => {
