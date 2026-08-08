@@ -399,7 +399,7 @@
         </div>
         <div>
           <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">WhatsApp Mobile</label>
-          <input type="tel" id="custPhone" inputmode="tel" placeholder="e.g. 9133359954" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-mono font-bold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
+          <input type="tel" id="custPhone" inputmode="tel" placeholder="e.g. 9876543210" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-mono font-bold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
         </div>
       </div>
 
@@ -721,7 +721,7 @@
             <svg class="w-7 h-7 text-purple-700" id="calcSvg" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
             <span class="absolute -top-1 -right-1 bg-amber-500 text-white text-[9px] font-black px-1.5 py-0.2 rounded-full uppercase tracking-tighter">POS</span>
           </div>
-          <span class="text-xs font-bold text-slate-700 group-hover:brand-text leading-tight">POS Bill<br>Calcy</span>
+          <span class="text-xs font-bold text-slate-700 group-hover:brand-text leading-tight">POS Bill<br>Checkout</span>
         </button>
       </div>
     </div>
@@ -746,7 +746,7 @@
       <div>
         <div class="flex items-center justify-between mb-1.5">
           <label id="upiFieldLabel" for="upiInput" class="block text-xs font-extrabold uppercase tracking-wider text-slate-600">
-            Terminal (9 Digits) <span class="text-red-500">*</span>
+            UPI ID / VPA <span class="text-red-500">*</span>
           </label>
           <label class="flex items-center gap-1.5 cursor-pointer text-xs font-bold text-slate-600 select-none">
             <span id="upiFixLabel">Fix Details</span>
@@ -754,7 +754,7 @@
             <div class="w-8 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-emerald-600 relative"></div>
           </label>
         </div>
-        <input type="text" id="upiInput" value="" maxlength="9" placeholder="e.g. 9133359954" required class="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-purple-600 outline-none transition bg-slate-50/50 focus:bg-white font-mono font-bold" />
+        <input type="text" id="upiInput" value="" maxlength="9" placeholder="e.g. Terminal ID 9 Digit" required class="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-purple-600 outline-none transition bg-slate-50/50 focus:bg-white font-mono font-bold" />
         <p class="text-[11px] text-slate-400 mt-1.5 flex items-center justify-between font-medium">
           <span>Payload VPA:</span>
           <span id="vpaPreview" class="font-mono brand-text font-bold bg-slate-100 px-2 py-0.5 rounded-lg border border-slate-200">-</span>
@@ -1574,8 +1574,8 @@
         genericSvg.className = "w-7 h-7 text-purple-700";
         badgeGeneric.classList.add('hidden');
 
-        upiFieldLabel.innerHTML = 'Terminal (9 Digits) <span class="text-red-500">*</span>';
-        upiInput.placeholder = "e.g. 9133359954";
+        upiFieldLabel.innerHTML = 'UPI / VPA <span class="text-red-500">*</span>';
+        upiInput.placeholder = "e.g. Terminal 9 Digits";
         upiInput.setAttribute('maxlength', '9');
       } else {
         iconStandee.className = "w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shadow-md transition transform group-active:scale-95 group-hover:scale-105 mb-2 relative";
@@ -1586,7 +1586,7 @@
         badgeGeneric.classList.remove('hidden');
 
         upiFieldLabel.innerHTML = 'UPI ID / VPA <span class="text-red-500">*</span>';
-        upiInput.placeholder = "e.g. 9133359954@AXL";
+        upiInput.placeholder = "e.g. XYZ@UPI";
         upiInput.removeAttribute('maxlength');
       }
       updateVpaPreview();
