@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Invoice Generator</title>
+  <style>
+    /* Global Styles */
+    * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: #f4f6f8; margin: 0; padding: 20px; color: #333; }
+    .container { max-width: 800px; margin: auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    
+    /* Header Section */
+    .header { display: flex; justify-content: space-between; border-bottom: 2px solid #eee; padding-bottom: 20px; margin-bottom: 20px; }
+    .header input { font-size: 1.2rem; font-weight: bold; border: none; outline: none; }
+    .invoice-details { text-align: right; }
+    .invoice-details input { text-align: right; margin-bottom: 5px; border: 1px solid #ddd; border-radius: 4px; padding: 4px 8px; }
+
+    /* Addresses */
+    .address-section { display: flex; justify-content: space-between; margin-bottom: 30px; }
+    .address-box { width: 48%; }
+    .address-box textarea { width: 100%; height: 80px; border: 1px solid #ddd; border-radius: 4px; padding: 8px; resize: none; }
+
+    /* Items Table */
+    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+    th { background: #f8f9fa; text-align: left; padding: 10px; border-bottom: 2px solid #ddd; }
+    td { padding: 10px; border-bottom: 1px solid #eee; }
+    input[type="number"], input[type="text"] { width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; }
+    .action-btn { background: #e74c3c; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
+
+    /* Summary Section */
+    .summary-section { display: flex; justify-content: flex-end; margin-bottom: 20px; }
+    .summary-table { width: 300px; }
+    .summary-table td { padding: 6px 10px; }
+    .summary-table tr.total-row { font-weight: bold; font-size: 1.1rem; border-top: 2px solid #333; }
+
+    /* Control Buttons */
+    .controls { display: flex; justify-content: space-between; margin-top: 20px; }
+    .btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 1rem; }
+    .btn-add { background: #2ecc71; color: white; }
+    .btn-print { background: #3498db; color: white; }
+
+    /* --- PRINT STYLES --- */
+    @media print {
+      body { background: white; padding: 0; }
+      .container { box-shadow: none; padding: 0; width: 100%; max-width: none; }
+      .no-print, .action-btn { display: none !important; }
+      input, textarea { border: none !important; background: transparent !important; }
+      th, td { border-bottom: 1px solid #ddd; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <div>
+      <input type="text" value="YOUR COMPANY NAME" />
+    </div>
+    <div class="invoice-details">
+      <h2>INVOICE</h2>
+      <label>Invoice #: </label><input type="text" value="INV-001" /><br>
+      <label>Date: </label><input type="date" id="invoiceDate" />
+    </div>
+  </div>
+
+  <!-- Addresses -->
+  <div class="address-section">
+    <div class="address-box">
+      <strong>Billed From:</strong>
+      <textarea placeholder="Your Business Name&#10;Address&#10;City, State, Zip"></textarea>
+    </div>
+    <div class="address-box">
+      <strong>Billed To:</strong>
+      <textarea placeholder="Client Name&#10;Client Address&#10;City, State, Zip"></textarea>
+    </div>
+  </div>
+
+  <!-- Line Items Table -->
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 45%;">Description</th>
+        <th style="width: 15%;">Quantity</th>
+        <th style="width: 20%;">Price ($)</th>
+        <th style="width: 15%;">Amount ($)</th>
+        <th class="no-print" style="width: 5%;"></th>
+      </tr>
+    </thead>
+    <tbody id="itemsBody">
+      <!-- Items dynamically added here -->
+    </tbody>
+  </table>
+
+  <!-- Controls (Add Row) -->
+  <div class="controls no-print">
+    <button class="btn btn-add" onclick="addRow()">+ Add Item</button>
+  </div>
+
+  <!-- Totals Section -->
+  <div class="summary-section">
+    <table class="summary-table">
+      <tr>
+        <td>Subtotal:</td>
+        <td id="subtotal" style="text-align: right;">$0.00</td>
+      </tr>
+      <tr>
+        <td>Tax Rate (%):</td>
+        <td><input type="number" id="taxRate" value="10" min="0" oninput="calculateTotals()" style="text-align: right;" /></td>
+      </tr>
+      <tr>
+        <td>Tax Amount:</td>
+        <td id="taxAmount" style="text-align: right;">$0.00</td>
+      </tr>
+      <tr class="total-row">
+        <td>Total:</td>
+        <td id="grandTotal" style="text-align: right;">$0.00</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Print Action -->
+  <div class="controls no-print" style="justify-content: flex-end;">
+    <button class="btn btn-print" onclick="window.print()">Print / Save as PDF</button>
+  </div>
+</div>
+
+<script>
+  // Set current date on load
+  document.getElementById('invoiceDate').valueAsDate = new Date();
+
+  // Add initial row on load
+  window.onload = function() {
+    addRow();
+  };
+
+  function addRow() {
+    const tbody = document.getElementById('itemsBody');
+    const tr = document.createElement('tr');
+    
+    tr.innerHTML = `
+      <td><input type="text" placeholder="Item or Service description" /></td>
+      <td><input type="number" value="1" min="1" class="qty" oninput="calculateTotals()" /></td>
+      <td><input type="number" value="0.00" step="0.01" min="0" class="price" oninput="calculateTotals()" /></td>
+      <td class="row-amount" style="text-align: right;">$0.00</td>
+      <td class="no-print"><button class="action-btn" onclick="removeRow(this)">X</button></td>
+    `;
+    
+    tbody.appendChild(tr);
+    calculateTotals();
+  }
+
+  function removeRow(btn) {
+    const row = btn.parentElement.parentElement;
+    row.remove();
+    calculateTotals();
+  }
+
+  function calculateTotals() {
+    const rows = document.querySelectorAll('#itemsBody tr');
+    let subtotal = 0;
+
+    rows.forEach(row => {
+      const qty = parseFloat(row.querySelector('.qty').value) || 0;
+      const price = parseFloat(row.querySelector('.price').value) || 0;
+      const amount = qty * price;
+      
+      row.querySelector('.row-amount').innerText = '$' + amount.toFixed(2);
+      subtotal += amount;
+    });
+
+    const taxRate = parseFloat(document.getElementById('taxRate').value) || 0;
+    const taxAmount = subtotal * (taxRate / 100);
+    const grandTotal = subtotal + taxAmount;
+
+    document.getElementById('subtotal').innerText = '$' + subtotal.toFixed(2);
+    document.getElementById('taxAmount').innerText = '$' + taxAmount.toFixed(2);
+    document.getElementById('grandTotal').innerText = '$' + grandTotal.toFixed(2);
+  }
+</script>
+
+</body>
+</html>
