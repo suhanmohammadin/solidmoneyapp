@@ -71,7 +71,9 @@
       #printableArea, #printableArea * { visibility: visible; }
       #printableArea { position: absolute; left: 0; top: 0; width: 100%; display: flex; justify-content: center; }
     }
-  </style></head><body class="theme-purple bg-slate-100 text-slate-800 min-h-screen flex flex-col items-center justify-between antialiased selection:bg-purple-500 selection:text-white pb-20">
+  </style>
+</head>
+<body class="theme-purple bg-slate-100 text-slate-800 min-h-screen flex flex-col items-center justify-between antialiased selection:bg-purple-500 selection:text-white pb-20">
 
   <!-- PIN Authentication Modal Overlay -->
   <div id="pinAuthModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 z-[100]">
@@ -137,6 +139,30 @@
     </div>
   </div>
 
+  <!-- POPUP MODAL: Stock Alerts (Stock Below 10) -->
+  <div id="alertsModalOverlay" class="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl border border-slate-100 overflow-hidden transform transition-all flex flex-col p-6 space-y-4">
+      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 bg-red-100 text-red-600 rounded-xl flex items-center justify-center font-bold text-sm">
+            <span>⚠️</span>
+          </div>
+          <h3 class="font-extrabold text-slate-800 text-base">Low Stock Alerts (&lt; 10)</h3>
+        </div>
+        <button type="button" id="closeAlertsModalBtn" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100 transition">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <div class="space-y-3">
+        <p class="text-xs text-slate-500">The following inventory items have stock levels below 10 units:</p>
+        <div id="lowStockList" class="divide-y divide-slate-100 max-h-60 overflow-y-auto border border-slate-200 rounded-2xl bg-slate-50 p-2">
+          <!-- Dynamic low stock list items -->
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Side Navigation Drawer Backdrop -->
   <div id="drawerOverlay" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-40 hidden transition-opacity duration-300 opacity-0"></div>
 
@@ -158,7 +184,6 @@
         </button>
       </div>
 
-      <!-- Account Status Card in Side Drawer -->
       <div class="p-4 bg-purple-50/50 border-b border-purple-100 flex items-center justify-between">
         <div class="flex items-center gap-2.5 overflow-hidden">
           <div id="userAvatar" class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold text-slate-600 shrink-0">
@@ -193,7 +218,6 @@
 
   <!-- FULL-SCREEN MODAL: Item Master / Inventory Configurator -->
   <div id="masterInventoryModalOverlay" class="fixed inset-0 bg-slate-900 z-50 hidden flex flex-col h-full w-full overflow-hidden">
-    
     <div class="brand-gradient p-4 sm:p-5 text-white flex items-center justify-between shrink-0 shadow-lg">
       <div class="flex items-center gap-3">
         <div class="w-9 h-9 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-md">
@@ -211,8 +235,6 @@
     </div>
 
     <div class="grow bg-slate-100 p-3 sm:p-6 overflow-y-auto max-w-4xl mx-auto w-full space-y-4 pb-24 sm:pb-6">
-      
-      <!-- STOCK SECTION WITH POPUP MODAL BUTTON -->
       <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
         <div>
           <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-700 flex items-center gap-2">
@@ -234,9 +256,7 @@
           </div>
         </div>
         
-        <!-- Mobile Card-based full-screen layout & Desktop Table View wrapper -->
         <div class="bg-white rounded-2xl overflow-hidden max-h-[55vh] overflow-y-auto divide-y divide-slate-100 sm:divide-y-0 sm:border sm:border-slate-200">
-          <!-- Desktop Table Format -->
           <table class="w-full text-left text-xs hidden sm:table">
             <thead class="bg-slate-100 text-slate-600 font-bold uppercase tracking-wider text-[10px] sticky top-0">
               <tr>
@@ -247,19 +267,13 @@
                 <th class="p-2.5 text-center">Action / Edit</th>
               </tr>
             </thead>
-            <tbody id="masterInventoryTableBody" class="divide-y divide-slate-100 font-medium">
-              <!-- Configured items list -->
-            </tbody>
+            <tbody id="masterInventoryTableBody" class="divide-y divide-slate-100 font-medium"></tbody>
           </table>
 
-          <!-- Mobile Responsive Stacked Fullscreen Cards Format -->
-          <div id="masterInventoryMobileList" class="sm:hidden space-y-3 p-1">
-            <!-- Dynamic Mobile Cards -->
-          </div>
+          <div id="masterInventoryMobileList" class="sm:hidden space-y-3 p-1"></div>
         </div>
       </div>
     </div>
-
   </div>
 
   <!-- POPUP MODAL: Add New Stock Item Options -->
@@ -317,7 +331,6 @@
 
   <!-- FULL-SCREEN MODAL: Instant Transaction & Customer/Name Search -->
   <div id="searchModalOverlay" class="fixed inset-0 bg-slate-900 z-50 hidden flex flex-col h-full w-full overflow-hidden">
-    
     <div class="brand-gradient p-4 sm:p-5 text-white flex items-center justify-between shrink-0 shadow-lg">
       <div class="flex items-center gap-3">
         <div class="w-9 h-9 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-md">
@@ -357,7 +370,6 @@
         </div>
       </div>
     </div>
-
   </div>
 
   <!-- FULL-SCREEN MODAL: Multi-Item POS Calculator -->
@@ -379,7 +391,6 @@
     </div>
 
     <div class="grow bg-slate-100 p-3 sm:p-6 overflow-y-auto max-w-4xl mx-auto w-full space-y-4 pb-24 sm:pb-6">
-
       <div class="grid grid-cols-2 gap-3 bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-xs">
         <div>
           <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Customer Name</label>
@@ -471,7 +482,6 @@
             <span class="flex items-center gap-1">Custom GST (%):</span>
             <div class="flex items-center gap-1">
               <input type="number" id="gstRateInput" inputmode="decimal" min="0" max="100" step="0.1" placeholder="0" class="w-20 px-2 py-1 text-right border border-slate-300 rounded-lg font-mono text-xs outline-none bg-white font-bold">
-              <span class="text-slate-500 font-bold"></span>
             </div>
           </div>
 
@@ -534,7 +544,6 @@
 
   <!-- FULL-SCREEN MODAL: Daily Sales Ledger History -->
   <div id="ledgerModalOverlay" class="fixed inset-0 bg-slate-900 z-50 hidden flex flex-col h-full w-full overflow-hidden">
-    
     <div class="brand-gradient p-4 sm:p-5 text-white flex items-center justify-between shrink-0 shadow-lg">
       <div class="flex items-center gap-3">
         <div class="w-9 h-9 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-md">
@@ -552,7 +561,6 @@
     </div>
 
     <div class="grow bg-slate-100 p-3 sm:p-6 overflow-y-auto max-w-4xl mx-auto w-full space-y-4 pb-24 sm:pb-6">
-
       <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3">
         <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
           <span class="text-xs font-bold text-slate-600 uppercase tracking-wider w-full sm:w-auto">Filter Date:</span>
@@ -611,16 +619,13 @@
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
         Export CSV Log
       </button>
-      <!-- Click to Clear All, Hold/Long-Press for 1.5s to Recover All -->
       <button type="button" id="clearLedgerBtn" class="px-5 bg-red-50 hover:bg-red-100 text-red-600 font-bold py-3 rounded-2xl transition text-xs">Clear All</button>
     </div>
-
   </div>
 
   <!-- POPUP MODAL: Generated QR Preview Standee -->
   <div id="qrResultModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 sm:p-4">
     <div class="bg-white w-full max-w-sm sm:max-w-md rounded-3xl shadow-2xl border border-slate-100 overflow-hidden transform transition-all flex flex-col items-center p-4 sm:p-6 space-y-3 sm:space-y-4 max-h-[92vh]">
-      
       <div class="flex justify-between items-center w-full border-b border-slate-100 pb-2.5">
         <h3 class="font-extrabold text-base sm:text-lg brand-text flex items-center gap-2">
           <span>✨</span> Generated Standee
@@ -648,7 +653,6 @@
       <button id="whatsappInvoiceBtn" class="w-full bg-green-600 hover:bg-green-700 text-white text-xs font-bold py-3 px-3 rounded-xl shadow transition flex items-center justify-center gap-1.5 shrink-0">
         <span>💬</span> Invoice via WhatsApp
       </button>
-
     </div>
   </div>
 
@@ -688,7 +692,10 @@
     <div class="space-y-3">
       <div class="flex items-center justify-between">
         <h2 class="text-sm font-extrabold text-slate-800 tracking-tight">Utilities</h2>
-        <span class="text-[10px] font-bold brand-text bg-purple-50 px-2 py-0.5 rounded-full border border-purple-100">Quick Actions</span>
+        <!-- UPDATED: Quick Actions text changed into an interactive Alerts Button -->
+        <button type="button" id="alertsBtn" class="text-[10px] font-bold text-red-600 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-full border border-red-200 transition shadow-2xs flex items-center gap-1.5 cursor-pointer">
+          <span>⚠️</span> <span>Alerts (&lt; 10)</span>
+        </button>
       </div>
 
       <div class="grid grid-cols-3 gap-3">
@@ -788,7 +795,6 @@
       <span>Home</span>
     </button>
     
-    <!-- Search Button -->
     <button type="button" id="openSearchModalBtn" class="flex flex-col items-center text-slate-400 hover:text-purple-600 font-semibold text-[10px] transition">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
       <span>Search</span>
@@ -800,7 +806,6 @@
       </button>
     </div>
 
-    <!-- Stock Button -->
     <button type="button" id="openStockBottomBtn" onclick="document.getElementById('openMasterInventoryModalBtn').click()" class="flex flex-col items-center text-slate-400 hover:text-purple-600 font-semibold text-[10px] transition">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
       <span>Stock</span>
@@ -919,6 +924,33 @@
         modalElem.classList.add('hidden');
       }
     }
+
+    // --- ALERTS MODAL LOGIC FOR STOCK < 10 ---
+    const alertsBtn = document.getElementById('alertsBtn');
+    const alertsModalOverlay = document.getElementById('alertsModalOverlay');
+    const closeAlertsModalBtn = document.getElementById('closeAlertsModalBtn');
+    const lowStockList = document.getElementById('lowStockList');
+
+    alertsBtn.addEventListener('click', () => {
+      const lowStockItems = inventoryMaster.filter(item => (item.stock || 0) < 10);
+      if (lowStockItems.length === 0) {
+        lowStockList.innerHTML = `<div class="p-6 text-center text-slate-400 text-xs italic">All stock levels are 10 or above. No alerts!</div>`;
+      } else {
+        lowStockList.innerHTML = lowStockItems.map(item => `
+          <div class="p-3 flex items-center justify-between text-xs font-semibold">
+            <div>
+              <span class="text-slate-800">[${item.rackSrNo || 'R-001'}] ${item.name}</span>
+            </div>
+            <span class="font-mono font-bold text-red-600 bg-red-50 px-2.5 py-1 rounded-lg border border-red-200">
+              ${item.stock || 0} ${item.unit || 'pcs'} left
+            </span>
+          </div>
+        `).join('');
+      }
+      toggleModal(alertsModalOverlay, true);
+    });
+
+    closeAlertsModalBtn.addEventListener('click', () => toggleModal(alertsModalOverlay, false));
 
     const authModalOverlay = document.getElementById('authModalOverlay');
     const openAuthModalBtn = document.getElementById('openAuthModalBtn');
@@ -1055,9 +1087,9 @@
     function loadDefaultInventory() {
       const defaultItems = [
         { rackSrNo: 'R-101', name: 'Paracetamol 500mg', rate: 20, stock: 150, unit: 'pcs' },
-        { rackSrNo: 'R-102', name: 'Apples', rate: 180, stock: 50, unit: 'kg' },
+        { rackSrNo: 'R-102', name: 'Apples', rate: 180, stock: 5, unit: 'kg' },
         { rackSrNo: 'R-103', name: 'Rice', rate: 60, stock: 200, unit: 'kg' },
-        { rackSrNo: 'R-104', name: 'Sugar', rate: 45, stock: 100, unit: 'kg' }
+        { rackSrNo: 'R-104', name: 'Sugar', rate: 45, stock: 8, unit: 'kg' }
       ];
       return JSON.parse(localStorage.getItem('inventoryMasterList') || JSON.stringify(defaultItems));
     }
@@ -1092,6 +1124,7 @@
         toggleModal(ledgerModalOverlay, false);
         toggleModal(searchModalOverlay, false);
         toggleModal(authModalOverlay, false);
+        toggleModal(alertsModalOverlay, false);
         closeQrModal();
         closeDrawer();
       }
@@ -1117,8 +1150,6 @@
     const iconGeneric = document.getElementById('iconGeneric');
     const genericSvg = document.getElementById('genericSvg');
     const badgeGeneric = document.getElementById('badgeGeneric');
-    const iconCalc = document.getElementById('iconCalc');
-    const calcSvg = document.getElementById('calcSvg');
 
     const closeDrawerBtn = document.getElementById('closeDrawerBtn');
     const sideDrawer = document.getElementById('sideDrawer');
@@ -1303,7 +1334,7 @@
               </td>
               <td class="p-2.5 text-center font-mono font-bold">
                 <div class="flex items-center justify-center gap-1">
-                  <input type="number" id="editStock_${originalIdx}" value="${item.stock || 0}" step="0.01" inputmode="decimal" class="w-16 px-2 py-1 text-center border border-slate-200 rounded-lg text-xs font-mono font-bold bg-slate-50 focus:bg-white focus:ring-2 focus:ring-purple-600 outline-none ${(item.stock || 0) <= 5 ? 'text-red-500' : 'text-slate-800'}" />
+                  <input type="number" id="editStock_${originalIdx}" value="${item.stock || 0}" step="0.01" inputmode="decimal" class="w-16 px-2 py-1 text-center border border-slate-200 rounded-lg text-xs font-mono font-bold bg-slate-50 focus:bg-white focus:ring-2 focus:ring-purple-600 outline-none ${(item.stock || 0) < 10 ? 'text-red-500' : 'text-slate-800'}" />
                   <span class="text-[10px] text-slate-500 font-normal uppercase">${item.unit || 'pcs'}</span>
                 </div>
               </td>
@@ -1333,7 +1364,7 @@
                 </div>
                 <div>
                   <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-0.5">Stock (${item.unit || 'pcs'})</label>
-                  <input type="number" id="editStock_m_${originalIdx}" value="${item.stock || 0}" step="0.01" inputmode="decimal" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-xl text-xs font-mono font-bold bg-white focus:ring-2 focus:ring-purple-600 outline-none ${(item.stock || 0) <= 5 ? 'text-red-500' : 'text-slate-800'}" />
+                  <input type="number" id="editStock_m_${originalIdx}" value="${item.stock || 0}" step="0.01" inputmode="decimal" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-xl text-xs font-mono font-bold bg-white focus:ring-2 focus:ring-purple-600 outline-none ${(item.stock || 0) < 10 ? 'text-red-500' : 'text-slate-800'}" />
                 </div>
               </div>
               <button onclick="saveStockEditMobile(${originalIdx})" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-xl text-xs transition shadow-xs">Save Changes</button>
@@ -1790,7 +1821,6 @@
 
     closeLedgerModalBtn.addEventListener('click', () => toggleModal(ledgerModalOverlay, false));
 
-    // --- HOLD TO RECOVER / CLICK TO CLEAR LOGIC (Popups/Alerts completely removed) ---
     let clearBtnTimer = null;
 
     clearLedgerBtn.addEventListener('mousedown', (e) => {
@@ -1993,7 +2023,6 @@
       if (amount) upiUri += `&am=${encodeURIComponent(amount)}`;
 
       const qrSourceCanvas = await generateQrCode(upiUri);
-
       const centerX = canvas.width / 2;
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -2124,4 +2153,6 @@
     });
 
     printBtn.addEventListener('click', () => { window.print(); });
-  </script></body></html>
+  </script>
+</body>
+</html>
