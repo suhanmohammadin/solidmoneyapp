@@ -98,15 +98,15 @@
     </div>
   </div>
 
-  <!-- POPUP MODAL: Gmail Account Cloud Sync -->
+  <!-- POPUP MODAL: Firebase Cloud Login & Signup -->
   <div id="authModalOverlay" class="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 sm:p-4">
     <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl border border-slate-100 overflow-hidden transform transition-all flex flex-col p-6 space-y-4">
       <div class="flex justify-between items-center border-b border-slate-100 pb-3">
         <div class="flex items-center gap-2">
           <div class="w-8 h-8 brand-bg text-white rounded-xl flex items-center justify-center font-bold text-sm">
-            <span>✉️</span>
+            <span>☁️</span>
           </div>
-          <h3 class="font-extrabold text-slate-800 text-base">Gmail Cloud Sync</h3>
+          <h3 class="font-extrabold text-slate-800 text-base">Cloud Account Sync</h3>
         </div>
         <button type="button" id="closeAuthModalBtn" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100 transition">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -114,15 +114,25 @@
       </div>
 
       <div class="space-y-3">
-        <p class="text-xs text-slate-500">Enter your Gmail address to securely load and sync your live inventory from the cloud across any device or browser.</p>
+        <p class="text-xs text-slate-500">Sign in or create an account to securely sync your live inventory across all your devices.</p>
         <div>
-          <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Gmail Address</label>
+          <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Email Address</label>
           <input type="email" id="userEmailInput" placeholder="e.g. yourname@gmail.com" class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
         </div>
-        <button type="button" id="directGmailSignInBtn" class="w-full brand-bg hover:opacity-90 text-white font-bold py-3 rounded-2xl text-xs shadow-md transition flex items-center justify-center gap-2">
-          <span id="signInBtnText">Sign In & Load Cloud Data</span>
-          <div id="signInSpinner" class="hidden w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-        </button>
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Password</label>
+          <input type="password" id="userPasswordInput" placeholder="Enter secure password" class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
+        </div>
+        <p id="firebaseErrorMsg" class="text-xs text-red-500 font-bold hidden"></p>
+        
+        <div class="grid grid-cols-2 gap-2 pt-1">
+          <button type="button" id="firebaseLoginBtn" class="w-full brand-bg hover:opacity-90 text-white font-bold py-3 rounded-2xl text-xs shadow-md transition">
+            Sign In
+          </button>
+          <button type="button" id="firebaseSignupBtn" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 rounded-2xl text-xs shadow-md transition">
+            Sign Up
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -805,6 +815,37 @@
     &copy; All rights reserved by SMGC PVT LTD
   </footer>
 
+  <!-- Firebase Integration Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBvntl7gJYnz63oNdY6MFqV7JJSAaGMDMA",
+      authDomain: "solidmoneyapp.firebaseapp.com",
+      projectId: "solidmoneyapp",
+      storageBucket: "solidmoneyapp.firebasestorage.app",
+      messagingSenderId: "230087802254",
+      appId: "1:230087802254:web:89c69e10df4a0547f878df",
+      measurementId: "G-6KD8MP807V"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    window.firebaseAuth = auth;
+    window.firebaseDb = db;
+    window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+    window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
+    window.signOut = signOut;
+    window.doc = doc;
+    window.setDoc = setDoc;
+    window.getDoc = getDoc;
+    window.onAuthStateChanged = onAuthStateChanged;
+  </script>
+
   <script>
     function triggerIosPulse(element) {
       if (!element) return;
@@ -877,44 +918,54 @@
       }
     }
 
-    const CLOUD_SYNC_ENDPOINT = "https://api.jsonbin.io/v3/b";
-    const CLOUD_MASTER_KEY = "$2a$10$7qDshY54H2u30.D70A37zeQGf5V3R.o5a17Vb6S6Kx7v0V3eP3O3e";
-
     const authModalOverlay = document.getElementById('authModalOverlay');
     const openAuthModalBtn = document.getElementById('openAuthModalBtn');
     const closeAuthModalBtn = document.getElementById('closeAuthModalBtn');
     const userEmailInput = document.getElementById('userEmailInput');
-    const directGmailSignInBtn = document.getElementById('directGmailSignInBtn');
-    const signInBtnText = document.getElementById('signInBtnText');
-    const signInSpinner = document.getElementById('signInSpinner');
+    const userPasswordInput = document.getElementById('userPasswordInput');
+    const firebaseLoginBtn = document.getElementById('firebaseLoginBtn');
+    const firebaseSignupBtn = document.getElementById('firebaseSignupBtn');
+    const firebaseErrorMsg = document.getElementById('firebaseErrorMsg');
+    
     const accountEmailLabel = document.getElementById('accountEmailLabel');
     const accountSyncBadge = document.getElementById('accountSyncBadge');
     const userAvatar = document.getElementById('userAvatar');
 
-    async function updateAccountStatusUI() {
-      const loggedEmail = localStorage.getItem('gmailUserAccount');
-      if (loggedEmail) {
-        accountEmailLabel.textContent = loggedEmail;
-        accountSyncBadge.textContent = "☁️ Cloud Sync Active";
-        accountSyncBadge.className = "text-[10px] text-emerald-600 font-bold";
-        openAuthModalBtn.textContent = "Sign Out";
-        userAvatar.textContent = loggedEmail.charAt(0).toUpperCase();
-      } else {
-        accountEmailLabel.textContent = "Not Signed In";
-        accountSyncBadge.textContent = "Local Storage Active";
-        accountSyncBadge.className = "text-[10px] text-slate-500 font-medium";
-        openAuthModalBtn.textContent = "Sign In";
-        userAvatar.textContent = "👤";
-      }
-      inventoryMaster = loadInventoryMaster();
-      renderMasterInventory();
-    }
+    let currentUserUid = null;
 
-    openAuthModalBtn.addEventListener('click', () => {
-      const loggedEmail = localStorage.getItem('gmailUserAccount');
-      if (loggedEmail) {
-        localStorage.removeItem('gmailUserAccount');
-        updateAccountStatusUI();
+    window.addEventListener('load', () => {
+      const checkInterval = setInterval(() => {
+        if (window.firebaseAuth) {
+          clearInterval(checkInterval);
+          window.onAuthStateChanged(window.firebaseAuth, async (user) => {
+            if (user) {
+              currentUserUid = user.uid;
+              accountEmailLabel.textContent = user.email;
+              accountSyncBadge.textContent = "☁️ Cloud Synced";
+              accountSyncBadge.className = "text-[10px] text-emerald-600 font-bold";
+              openAuthModalBtn.textContent = "Sign Out";
+              userAvatar.textContent = user.email.charAt(0).toUpperCase();
+
+              await loadCloudInventory(user.uid);
+            } else {
+              currentUserUid = null;
+              accountEmailLabel.textContent = "Not Signed In";
+              accountSyncBadge.textContent = "Local Storage Active";
+              accountSyncBadge.className = "text-[10px] text-slate-500 font-medium";
+              openAuthModalBtn.textContent = "Sign In";
+              userAvatar.textContent = "👤";
+              inventoryMaster = loadDefaultInventory();
+              renderMasterInventory();
+            }
+          });
+        }
+      }, 100);
+    });
+
+    openAuthModalBtn.addEventListener('click', async () => {
+      if (currentUserUid) {
+        await window.signOut(window.firebaseAuth);
+        toggleModal(authModalOverlay, false);
       } else {
         toggleModal(authModalOverlay, true);
       }
@@ -922,119 +973,80 @@
 
     closeAuthModalBtn.addEventListener('click', () => toggleModal(authModalOverlay, false));
 
-    directGmailSignInBtn.addEventListener('click', async () => {
-      const email = userEmailInput.value.trim().toLowerCase();
-      if (email && email.includes('@')) {
-        signInBtnText.textContent = "Loading Cloud Data...";
-        signInSpinner.classList.remove('hidden');
-        directGmailSignInBtn.disabled = true;
-
-        localStorage.setItem('gmailUserAccount', email);
-
-        const cloudInventory = await fetchInventoryFromCloud(email);
-        if (cloudInventory && Array.isArray(cloudInventory)) {
-          inventoryMaster = cloudInventory;
-          localStorage.setItem(`inventoryMaster_${email}`, JSON.stringify(inventoryMaster));
-        } else {
-          await syncInventoryToCloud();
-        }
-
-        signInBtnText.textContent = "Sign In & Load Cloud Data";
-        signInSpinner.classList.add('hidden');
-        directGmailSignInBtn.disabled = false;
-
-        updateAccountStatusUI();
+    firebaseLoginBtn.addEventListener('click', async () => {
+      firebaseErrorMsg.classList.add('hidden');
+      try {
+        await window.signInWithEmailAndPassword(window.firebaseAuth, userEmailInput.value.trim(), userPasswordInput.value);
         toggleModal(authModalOverlay, false);
         userEmailInput.value = '';
-      } else {
-        alert("Please enter a valid Gmail address.");
+        userPasswordInput.value = '';
+      } catch (err) {
+        firebaseErrorMsg.textContent = err.message;
+        firebaseErrorMsg.classList.remove('hidden');
       }
     });
 
-    async function syncInventoryToCloud() {
-      const loggedEmail = localStorage.getItem('gmailUserAccount');
-      if (!loggedEmail) return;
-
-      const payload = {
-        email: loggedEmail,
-        inventory: inventoryMaster,
-        updatedAt: new Date().toISOString()
-      };
-
+    firebaseSignupBtn.addEventListener('click', async () => {
+      firebaseErrorMsg.classList.add('hidden');
       try {
-        let binId = localStorage.getItem(`binId_${loggedEmail}`);
-        if (binId) {
-          await fetch(`${CLOUD_SYNC_ENDPOINT}/${binId}`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-Master-Key': CLOUD_MASTER_KEY
-            },
-            body: JSON.stringify(payload)
-          });
+        await window.createUserWithEmailAndPassword(window.firebaseAuth, userEmailInput.value.trim(), userPasswordInput.value);
+        toggleModal(authModalOverlay, false);
+        userEmailInput.value = '';
+        userPasswordInput.value = '';
+      } catch (err) {
+        firebaseErrorMsg.textContent = err.message;
+        firebaseErrorMsg.classList.remove('hidden');
+      }
+    });
+
+    async function saveInventoryToCloud() {
+      if (!currentUserUid || !window.firebaseDb) return;
+      try {
+        const docRef = window.doc(window.firebaseDb, "inventories", currentUserUid);
+        await window.setDoc(docRef, { items: inventoryMaster, updatedAt: new Date().toISOString() });
+      } catch (err) {
+        console.error("Error saving to Firestore:", err);
+      }
+    }
+
+    async function loadCloudInventory(uid) {
+      if (!window.firebaseDb) return;
+      try {
+        const docRef = window.doc(window.firebaseDb, "inventories", uid);
+        const docSnap = await window.getDoc(docRef);
+        if (docSnap.exists() && docSnap.data().items) {
+          inventoryMaster = docSnap.data().items;
         } else {
-          const response = await fetch(CLOUD_SYNC_ENDPOINT, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-Master-Key': CLOUD_MASTER_KEY,
-              'X-Bin-Name': `inventory_${loggedEmail.replace(/[^a-zA-Z0-9]/g, '_')}`
-            },
-            body: JSON.stringify(payload)
-          });
-          const result = await response.json();
-          if (result.metadata && result.metadata.id) {
-            localStorage.setItem(`binId_${loggedEmail}`, result.metadata.id);
-          }
+          inventoryMaster = loadDefaultInventory();
+          await saveInventoryToCloud();
         }
+        renderMasterInventory();
       } catch (err) {
-        console.warn("Cloud Sync pending connectivity:", err);
+        console.error("Error loading from Firestore:", err);
       }
     }
 
-    async function fetchInventoryFromCloud(email) {
-      let binId = localStorage.getItem(`binId_${email}`);
-      if (!binId) return null;
-
-      try {
-        const response = await fetch(`${CLOUD_SYNC_ENDPOINT}/${binId}/latest`, {
-          headers: { 'X-Master-Key': CLOUD_MASTER_KEY }
-        });
-        if (response.ok) {
-          const data = await response.json();
-          return data.record ? data.record.inventory : null;
-        }
-      } catch (err) {
-        console.warn("Cloud Fetch Error:", err);
-      }
-      return null;
-    }
-
-    function getInventoryStorageKey() {
-      const loggedEmail = localStorage.getItem('gmailUserAccount');
-      return loggedEmail ? `inventoryMaster_${loggedEmail}` : 'inventoryMasterList';
-    }
-
-    function loadInventoryMaster() {
-      const key = getInventoryStorageKey();
+    function loadDefaultInventory() {
       const defaultItems = [
         { rackSrNo: 'R-101', name: 'Paracetamol 500mg', rate: 20, stock: 150, unit: 'pcs' },
         { rackSrNo: 'R-102', name: 'Apples', rate: 180, stock: 50, unit: 'kg' },
         { rackSrNo: 'R-103', name: 'Rice', rate: 60, stock: 200, unit: 'kg' },
         { rackSrNo: 'R-104', name: 'Sugar', rate: 45, stock: 100, unit: 'kg' }
       ];
-      return JSON.parse(localStorage.getItem(key) || JSON.stringify(defaultItems));
+      return JSON.parse(localStorage.getItem('inventoryMasterList') || JSON.stringify(defaultItems));
     }
 
     function saveInventoryToStorage() {
-      localStorage.setItem(getInventoryStorageKey(), JSON.stringify(inventoryMaster));
-      syncInventoryToCloud();
+      localStorage.setItem('inventoryMasterList', JSON.stringify(inventoryMaster));
+      if (currentUserUid) {
+        saveInventoryToCloud();
+      }
     }
 
     let currentMode = 'standee';
     let cartItems = [];
     let salesLedger = JSON.parse(localStorage.getItem('salesLedgerLogs') || '[]');
-    let inventoryMaster = loadInventoryMaster();
+    let inventoryMaster = loadDefaultInventory();
 
     const themeMap = {
       'theme-purple': { primary: '#5f259f', dark: '#391163', pill: '#eb7c28' },
@@ -2001,17 +2013,6 @@
       document.fonts.ready.then(async () => {
         loadFixedStates();
         updateVpaPreview();
-        
-        // Auto-fetch from cloud if logged in
-        const savedEmail = localStorage.getItem('gmailUserAccount');
-        if (savedEmail) {
-          const cloudInventory = await fetchInventoryFromCloud(savedEmail);
-          if (cloudInventory && Array.isArray(cloudInventory)) {
-            inventoryMaster = cloudInventory;
-            localStorage.setItem(`inventoryMaster_${savedEmail}`, JSON.stringify(inventoryMaster));
-          }
-        }
-        updateAccountStatusUI();
       });
     });
 
