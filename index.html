@@ -1,852 +1,4 @@
-<!DOCTYPE html><html lang="en"><head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Solid Money App - Pro Merchant Suite</title>
-  
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- QRCode.js Library -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
-
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Plus Jakarta Sans', 'sans-serif'],
-            mono: ['JetBrains Mono', 'monospace'],
-          }
-        }
-      }
-    }
-  </script>
-
-  <style>
-    .theme-purple { --primary: #5f259f; --primary-dark: #391163; --accent: #eb7c28; }
-    .theme-blue { --primary: #002e6e; --primary-dark: #00193d; --accent: #00baf2; }
-    .theme-teal { --primary: #00796b; --primary-dark: #004d40; --accent: #00bfa5; }
-    .theme-emerald { --primary: #047857; --primary-dark: #064e3b; --accent: #10b981; }
-    .theme-dark { --primary: #0f172a; --primary-dark: #020617; --accent: #6366f1; }
-
-    .brand-gradient {
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-    }
-    .brand-text {
-      color: var(--primary);
-    }
-    .brand-border {
-      border-color: var(--primary);
-    }
-    .brand-bg {
-      background-color: var(--primary);
-    }
-
-    /* iOS Visual Lookup Glow Effect */
-    @keyframes iosPulseRing {
-      0% {
-        transform: scale(0.95);
-        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.9), 0 0 0 0 rgba(235, 124, 40, 0.8);
-      }
-      50% {
-        transform: scale(1.12);
-        box-shadow: 0 0 0 12px rgba(255, 255, 255, 0), 0 0 20px 8px rgba(235, 124, 40, 0.6);
-      }
-      100% {
-        transform: scale(1);
-        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0), 0 0 0 0 rgba(235, 124, 40, 0);
-      }
-    }
-
-    .ios-lookup-active {
-      animation: iosPulseRing 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-      border: 2px solid #ffffff;
-    }
-
-    @media print {
-      body * { visibility: hidden; }
-      #printableArea, #printableArea * { visibility: visible; }
-      #printableArea { position: absolute; left: 0; top: 0; width: 100%; display: flex; justify-content: center; }
-    }
-  </style></head><body class="theme-purple bg-slate-100 text-slate-800 min-h-screen flex flex-col items-center justify-between antialiased selection:bg-purple-500 selection:text-white pb-20">
-
-  <!-- PIN Authentication Modal Overlay -->
-  <div id="pinAuthModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 z-[100]">
-    <div class="bg-white rounded-3xl shadow-2xl p-6 md:p-8 max-w-sm w-full text-center space-y-4 border border-slate-100">
-      <div class="w-12 h-12 bg-purple-100 brand-text rounded-2xl flex items-center justify-center mx-auto shadow-inner">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 002-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-        </svg>
-      </div>
-      <div>
-        <h2 class="text-xl font-black text-slate-800">Authentication Required</h2>
-        <p class="text-xs text-slate-500 mt-1 font-medium">Please enter the security PIN to access the application.</p>
-      </div>
-      
-      <form id="pinForm" onsubmit="return false;" class="space-y-3">
-        <input type="password" id="pinInput" placeholder="Enter 8-digit PIN" maxlength="8" inputmode="numeric"
-          class="w-full text-center tracking-widest text-lg font-mono px-4 py-3 border border-slate-300 rounded-2xl focus:ring-2 focus:ring-purple-600 outline-none transition bg-slate-50 font-bold" />
-        <p id="pinErrorMsg" class="text-xs text-red-500 hidden font-bold">Incorrect PIN! Try again.</p>
-        <button type="button" id="submitPinBtn"
-          class="w-full brand-bg hover:opacity-95 text-white font-bold py-3 rounded-2xl shadow-lg transition duration-200">
-          Unlock App
-        </button>
-      </form>
-    </div>
-  </div>
-
-  <!-- POPUP MODAL: Firebase Cloud Login & Signup -->
-  <div id="authModalOverlay" class="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 sm:p-4">
-    <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl border border-slate-100 overflow-hidden transform transition-all flex flex-col p-6 space-y-4">
-      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-        <div class="flex items-center gap-2">
-          <div class="w-8 h-8 brand-bg text-white rounded-xl flex items-center justify-center font-bold text-sm">
-            <span>☁️</span>
-          </div>
-          <h3 class="font-extrabold text-slate-800 text-base">Cloud Account Sync</h3>
-        </div>
-        <button type="button" id="closeAuthModalBtn" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100 transition">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-        </button>
-      </div>
-
-      <div class="space-y-3">
-        <p class="text-xs text-slate-500">Sign in or create an account to securely sync your live inventory across all your devices.</p>
-        <div>
-          <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Email Address</label>
-          <input type="email" id="userEmailInput" placeholder="e.g. yourname@gmail.com" class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
-        </div>
-        <div>
-          <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Password</label>
-          <input type="password" id="userPasswordInput" placeholder="Enter secure password" class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
-        </div>
-        <p id="firebaseErrorMsg" class="text-xs text-red-500 font-bold hidden"></p>
-        
-        <div class="grid grid-cols-2 gap-2 pt-1">
-          <button type="button" id="firebaseLoginBtn" class="w-full brand-bg hover:opacity-90 text-white font-bold py-3 rounded-2xl text-xs shadow-md transition">
-            Sign In
-          </button>
-          <button type="button" id="firebaseSignupBtn" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 rounded-2xl text-xs shadow-md transition">
-            Sign Up
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Side Navigation Drawer Backdrop -->
-  <div id="drawerOverlay" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-40 hidden transition-opacity duration-300 opacity-0"></div>
-
-  <!-- Side Navigation Drawer -->
-  <aside id="sideDrawer" class="fixed top-0 left-0 h-full w-80 bg-white z-50 shadow-2xl transform -translate-x-full transition-transform duration-300 ease-in-out flex flex-col justify-between">
-    <div>
-      <div class="brand-gradient p-6 text-white flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <div id="smDrawerLogo" class="w-10 h-10 bg-white rounded-xl flex items-center justify-center brand-text font-black text-lg shadow-inner cursor-pointer" title="SM Logo">
-            <span>SM</span>
-          </div>
-          <div>
-            <h2 id="appDrawerTitle" class="font-extrabold text-lg leading-none">Solid Money App</h2>
-            <p class="text-xs text-white/70 mt-1">Pro Merchant Suite</p>
-          </div>
-        </div>
-        <button id="closeDrawerBtn" class="text-white/80 hover:text-white p-1 rounded-lg hover:bg-white/10 transition">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-        </button>
-      </div>
-
-      <!-- Account Status Card in Side Drawer -->
-      <div class="p-4 bg-purple-50/50 border-b border-purple-100 flex items-center justify-between">
-        <div class="flex items-center gap-2.5 overflow-hidden">
-          <div id="userAvatar" class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold text-slate-600 shrink-0">
-            👤
-          </div>
-          <div class="truncate">
-            <span id="accountEmailLabel" class="block text-xs font-bold text-slate-800 truncate">Not Signed In</span>
-            <span id="accountSyncBadge" class="text-[10px] text-slate-500 font-medium">Local Storage Active</span>
-          </div>
-        </div>
-        <button type="button" id="openAuthModalBtn" class="text-xs font-bold brand-text hover:underline px-2.5 py-1 bg-white border border-purple-200 rounded-lg shadow-2xs shrink-0">
-          Sign In
-        </button>
-      </div>
-
-      <nav class="p-4 space-y-2">
-        <button type="button" id="openMasterInventoryModalBtn" class="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-2xl transition text-left">
-          <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
-          Item & Stock Configurator
-        </button>
-        <button type="button" id="openLedgerModalBtn" class="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-2xl transition text-left">
-          <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-          Daily Sales & History
-        </button>
-      </nav>
-    </div>
-
-    <div class="p-4 border-t border-slate-100 text-xs text-slate-400 text-center font-medium">
-      SMGC PVT LTD • v4.6 Pro POS
-    </div>
-  </aside>
-
-  <!-- FULL-SCREEN MODAL: Item Master / Inventory Configurator -->
-  <div id="masterInventoryModalOverlay" class="fixed inset-0 bg-slate-900 z-50 hidden flex flex-col h-full w-full overflow-hidden">
-    
-    <div class="brand-gradient p-4 sm:p-5 text-white flex items-center justify-between shrink-0 shadow-lg">
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-md">
-          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
-        </div>
-        <div>
-          <h3 class="font-extrabold text-base sm:text-lg leading-none">Item & Stock Configurator</h3>
-          <p class="text-[11px] text-white/70 mt-1">Inventory Management</p>
-        </div>
-      </div>
-      <button type="button" id="closeMasterInventoryModalBtn" class="text-white/80 hover:text-white p-2 rounded-xl bg-white/10 hover:bg-white/20 transition flex items-center gap-1 text-xs font-bold">
-        <span>Close</span>
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-      </button>
-    </div>
-
-    <div class="grow bg-slate-100 p-3 sm:p-6 overflow-y-auto max-w-4xl mx-auto w-full space-y-4 pb-24 sm:pb-6">
-      
-      <!-- STOCK SECTION WITH POPUP MODAL BUTTON -->
-      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
-        <div>
-          <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-700 flex items-center gap-2">
-            <span>📦</span> Stock Management
-          </h4>
-          <p class="text-[11px] text-slate-500 mt-0.5">Manage and add stock items with custom rack details, pricing & quantity.</p>
-        </div>
-        <button type="button" id="openAddStockModalBtn" class="brand-bg hover:opacity-90 text-white font-extrabold px-4 py-2.5 rounded-xl text-xs transition shadow-md flex items-center gap-1.5 shrink-0">
-          <span>+ Add Stock Item</span>
-        </button>
-      </div>
-
-      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
-          <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-500">Stock Holder & Remaining Quantities</h4>
-          <div class="relative w-full sm:w-64">
-            <input type="text" id="stockSearchInput" placeholder="Search by rack or item name..." class="w-full px-3 py-1.5 pl-8 border border-slate-300 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
-            <svg class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-          </div>
-        </div>
-        
-        <!-- Mobile Card-based full-screen layout & Desktop Table View wrapper -->
-        <div class="bg-white rounded-2xl overflow-hidden max-h-[55vh] overflow-y-auto divide-y divide-slate-100 sm:divide-y-0 sm:border sm:border-slate-200">
-          <!-- Desktop Table Format -->
-          <table class="w-full text-left text-xs hidden sm:table">
-            <thead class="bg-slate-100 text-slate-600 font-bold uppercase tracking-wider text-[10px] sticky top-0">
-              <tr>
-                <th class="p-2.5">Rack Sr. No.</th>
-                <th class="p-2.5">Item Name</th>
-                <th class="p-2.5 text-right">Rate (₹)</th>
-                <th class="p-2.5 text-center">Remaining Stock</th>
-                <th class="p-2.5 text-center">Action / Edit</th>
-              </tr>
-            </thead>
-            <tbody id="masterInventoryTableBody" class="divide-y divide-slate-100 font-medium">
-              <!-- Configured items list -->
-            </tbody>
-          </table>
-
-          <!-- Mobile Responsive Stacked Fullscreen Cards Format -->
-          <div id="masterInventoryMobileList" class="sm:hidden space-y-3 p-1">
-            <!-- Dynamic Mobile Cards -->
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- POPUP MODAL: Add New Stock Item Options -->
-  <div id="addStockModalOverlay" class="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-[60] hidden flex items-center justify-center p-3 sm:p-4">
-    <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl border border-slate-100 overflow-hidden transform transition-all flex flex-col p-6 space-y-4">
-      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-        <div class="flex items-center gap-2">
-          <div class="w-8 h-8 brand-bg text-white rounded-xl flex items-center justify-center font-bold text-sm">
-            <span>📦</span>
-          </div>
-          <h3 class="font-extrabold text-slate-800 text-base">Add New Stock Item</h3>
-        </div>
-        <button type="button" id="closeAddStockModalBtn" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100 transition">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-        </button>
-      </div>
-
-      <div class="space-y-3">
-        <div>
-          <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Rack Sr. No.</label>
-          <input type="text" id="masterRackSrNo" placeholder="e.g. R-105" class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-xs font-bold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white font-mono" />
-        </div>
-
-        <div>
-          <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Item Name</label>
-          <input type="text" id="masterItemName" placeholder="e.g. Paracetamol Tablets" class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
-        </div>
-
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Rate / Unit (₹)</label>
-            <input type="number" id="masterItemRate" inputmode="decimal" placeholder="e.g. 50" step="0.01" class="w-full px-3 py-2.5 border border-slate-300 rounded-xl text-xs font-mono font-bold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white text-emerald-600" />
-          </div>
-          <div>
-            <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Quantity & Unit</label>
-            <div class="flex">
-              <input type="number" id="masterItemStock" inputmode="decimal" placeholder="Qty" step="0.01" class="w-full px-2 py-2.5 border border-r-0 border-slate-300 rounded-l-xl text-xs font-mono font-bold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
-              <select id="masterItemUnit" class="bg-slate-100 border border-slate-300 rounded-r-xl px-2 text-xs font-bold text-slate-700 outline-none cursor-pointer">
-                <option value="pcs">Pcs</option>
-                <option value="kg">Kg</option>
-                <option value="l">Litre</option>
-                <option value="ml">Ml</option>
-                <option value="grams">Grams</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <button type="button" id="saveMasterItemBtn" class="w-full brand-bg hover:opacity-90 text-white font-extrabold py-3 rounded-2xl text-xs shadow-md transition flex items-center justify-center gap-1.5 mt-2">
-          <span>Save & Add Stock Item</span>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- FULL-SCREEN MODAL: Instant Transaction & Customer/Mobile Search -->
-  <div id="searchModalOverlay" class="fixed inset-0 bg-slate-900 z-50 hidden flex flex-col h-full w-full overflow-hidden">
-    
-    <div class="brand-gradient p-4 sm:p-5 text-white flex items-center justify-between shrink-0 shadow-lg">
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-md">
-          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-        </div>
-        <div>
-          <h3 class="font-extrabold text-base sm:text-lg leading-none">Search Transactions</h3>
-          <p class="text-[11px] text-white/70 mt-1">Customer or Mobile No</p>
-        </div>
-      </div>
-      <button type="button" id="closeSearchModalBtn" class="text-white/80 hover:text-white p-2 rounded-xl bg-white/10 hover:bg-white/20 transition flex items-center gap-1 text-xs font-bold">
-        <span>Close</span>
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-      </button>
-    </div>
-
-    <div class="grow bg-slate-100 p-3 sm:p-6 overflow-y-auto max-w-4xl mx-auto w-full space-y-4 pb-24 sm:pb-6">
-      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3">
-        <div class="relative">
-          <input type="tel" id="liveSearchInput" placeholder="Enter customer name or mobile number (e.g. 91333...)" inputmode="tel" class="w-full px-4 py-3 pl-10 border border-slate-300 rounded-2xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white font-mono" />
-          <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-        </div>
-
-        <div class="border border-slate-200 rounded-2xl overflow-hidden min-h-[220px] max-h-[55vh] overflow-y-auto bg-white">
-          <table class="w-full text-left text-xs">
-            <thead class="bg-slate-100 text-slate-600 font-bold uppercase tracking-wider text-[10px] sticky top-0">
-              <tr>
-                <th class="p-2.5">Date / Time</th>
-                <th class="p-2.5">Customer & Mobile</th>
-                <th class="p-2.5 text-right">Amount</th>
-              </tr>
-            </thead>
-            <tbody id="searchTableBody" class="divide-y divide-slate-100 font-medium">
-              <tr><td colspan="3" class="p-8 text-center text-slate-400 italic">Type above to search transactions...</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- FULL-SCREEN MODAL: Multi-Item POS Calculator -->
-  <div id="calcModalOverlay" class="fixed inset-0 bg-slate-900 z-50 hidden flex flex-col h-full w-full overflow-hidden">
-    <div class="brand-gradient p-4 sm:p-5 text-white flex items-center justify-between shrink-0 shadow-lg">
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-md">
-          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-        </div>
-        <div>
-          <h3 class="font-extrabold text-base sm:text-lg leading-none">Weight & Billing POS</h3>
-          <p class="text-[11px] text-white/70 mt-1">Checkout Mode</p>
-        </div>
-      </div>
-      <button type="button" id="closeCalcModalBtn" class="text-white/80 hover:text-white p-2 rounded-xl bg-white/10 hover:bg-white/20 transition flex items-center gap-1 text-xs font-bold">
-        <span>Close</span>
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-      </button>
-    </div>
-
-    <div class="grow bg-slate-100 p-3 sm:p-6 overflow-y-auto max-w-4xl mx-auto w-full space-y-4 pb-24 sm:pb-6">
-
-      <div class="grid grid-cols-2 gap-3 bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-xs">
-        <div>
-          <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Customer Name</label>
-          <input type="text" id="custName" placeholder="e.g. Suhan" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
-        </div>
-        <div>
-          <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">WhatsApp Mobile</label>
-          <input type="tel" id="custPhone" inputmode="tel" placeholder="e.g. 9133359954" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-mono font-bold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
-        </div>
-      </div>
-
-      <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3">
-        <div class="flex items-center justify-between">
-          <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">
-            Item Name <span class="text-slate-400 font-normal">(Type to search stock or rack)</span>
-          </label>
-          <label class="flex items-center gap-1.5 cursor-pointer text-xs font-bold text-slate-600 select-none">
-            <span class="text-[10px] uppercase text-purple-700 font-extrabold">Flat Amount (₹)</span>
-            <input type="checkbox" id="flatPriceToggle" class="sr-only peer">
-            <div class="w-7 h-3.5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-2.5 after:w-2.5 after:transition-all peer-checked:bg-purple-600 relative"></div>
-          </label>
-        </div>
-
-        <div class="relative">
-          <input type="text" id="itemNameInput" placeholder="e.g. Apples" autocomplete="off" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
-          
-          <div id="suggestionsBox" class="absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-xl z-20 max-h-48 overflow-y-auto hidden divide-y divide-slate-100 text-xs">
-            <!-- Dynamic suggestions -->
-          </div>
-        </div>
-
-        <div class="grid grid-cols-12 gap-2">
-          <div id="rateContainer" class="col-span-5">
-            <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Rate / Unit (₹)</label>
-            <input type="number" id="ratePerKg" inputmode="decimal" placeholder="e.g. 120" step="0.01" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm font-mono outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
-          </div>
-
-          <div id="flatPriceContainer" class="col-span-10 hidden">
-            <label class="text-[10px] font-bold uppercase tracking-wider text-purple-700 block mb-1">Direct Total Cost (₹)</label>
-            <input type="number" id="flatPriceInput" inputmode="decimal" placeholder="e.g. 50" step="0.01" class="w-full px-3 py-2 border border-purple-300 rounded-xl text-sm font-mono font-bold text-purple-900 outline-none focus:ring-2 focus:ring-purple-600 bg-purple-50/30" />
-          </div>
-
-          <div id="qtyContainer" class="col-span-5">
-            <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Qty / Weight</label>
-            <div class="flex">
-              <input type="number" id="purchaseQty" inputmode="decimal" placeholder="e.g. 1" step="0.01" class="w-full px-2 py-2 border border-r-0 border-slate-300 rounded-l-xl text-sm font-mono outline-none focus:ring-2 focus:ring-purple-600 bg-slate-50/50 focus:bg-white" />
-              <select id="purchaseUnit" class="bg-slate-100 border border-slate-300 rounded-r-xl px-1.5 text-xs font-bold text-slate-700 outline-none">
-                <option value="pcs">pcs</option>
-                <option value="kg">kg</option>
-                <option value="l">l</option>
-                <option value="ml">ml</option>
-                <option value="grams">grams</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="col-span-2 flex items-end">
-            <button type="button" id="addItemBtn" class="w-full brand-bg text-white font-bold py-2 rounded-xl text-xs hover:opacity-90 transition shadow-sm h-[38px]">Add</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="flex items-center justify-between">
-        <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Bill Items List</span>
-        <button type="button" id="clearCartBtn" class="text-xs font-bold text-red-600 hover:text-red-700 flex items-center gap-1 hover:underline">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-          Clear All Items
-        </button>
-      </div>
-
-      <div class="border border-slate-200 rounded-2xl overflow-hidden bg-white min-h-[120px] max-h-[220px] overflow-y-auto shadow-xs">
-        <table class="w-full text-left text-xs">
-          <thead class="bg-slate-100 text-slate-600 font-bold uppercase tracking-wider text-[10px] sticky top-0">
-            <tr>
-              <th class="p-2.5">Item Details</th>
-              <th class="p-2.5 text-right">Cost</th>
-              <th class="p-2.5 text-center">Action</th>
-            </tr>
-          </thead>
-          <tbody id="cartTableBody" class="divide-y divide-slate-100 font-medium">
-            <tr id="emptyCartRow"><td colspan="3" class="p-6 text-center text-slate-400 italic">No items added to bill yet.</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div class="flex justify-between items-center text-xs font-semibold text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-            <span class="flex items-center gap-1">Custom GST Tax (%):</span>
-            <div class="flex items-center gap-1">
-              <input type="number" id="gstRateInput" inputmode="decimal" min="0" max="100" step="0.1" placeholder="0" class="w-20 px-2 py-1 text-right border border-slate-300 rounded-lg font-mono text-xs outline-none bg-white font-bold">
-              <span class="text-slate-500 font-bold">%</span>
-            </div>
-          </div>
-
-          <div class="flex justify-between items-center text-xs font-semibold text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-            <span>Discount Amount (₹):</span>
-            <input type="number" id="discountInput" inputmode="decimal" value="" min="0" step="1" placeholder="0" class="w-20 px-2 py-1 text-right border border-slate-300 rounded-lg font-mono text-xs outline-none bg-white font-bold">
-          </div>
-        </div>
-
-        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200/80 space-y-1.5 shadow-2xs text-xs">
-          <div class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 border-b border-slate-200 pb-1 mb-1">
-            Bill Amount Summary
-          </div>
-          <div class="flex justify-between text-slate-600 font-medium">
-            <span>Subtotal:</span>
-            <span id="subtotalText" class="font-mono font-bold">₹ 0.00</span>
-          </div>
-          <div class="flex justify-between text-slate-600 font-medium">
-            <span>GST Tax (<span id="gstPctDisplay">0</span>%):</span>
-            <span id="gstCalculatedText" class="font-mono text-emerald-600 font-bold">+₹ 0.00</span>
-          </div>
-          <div class="flex justify-between text-slate-600 font-medium">
-            <span>Discount Offered:</span>
-            <span id="discountCalculatedText" class="font-mono text-red-500 font-bold">-₹ 0.00</span>
-          </div>
-          <div class="flex justify-between items-center pt-1.5 border-t border-slate-200 font-extrabold text-slate-800 text-sm">
-            <span>Total Bill Amount:</span>
-            <span id="grandTotalText" class="font-mono brand-text text-base">₹0.00</span>
-          </div>
-        </div>
-
-        <div class="flex justify-between items-center text-xs font-semibold text-slate-600 pt-1">
-          <span class="text-amber-700 font-bold flex items-center gap-1">
-            💵 Cash Paid (Split):
-          </span>
-          <input type="number" id="cashSplitInput" inputmode="decimal" value="" min="0" step="1" placeholder="0" class="w-24 px-2 py-1.5 text-right border border-amber-300 rounded-lg font-mono text-xs outline-none bg-amber-50/50 font-bold text-amber-800">
-        </div>
-
-        <div id="changeReturnRow" class="hidden flex justify-between items-center bg-emerald-50 p-2 rounded-xl border border-emerald-200 text-xs font-bold text-emerald-800">
-          <span>🔄 Change To Return:</span>
-          <span id="changeReturnText" class="font-mono text-emerald-900 font-black">₹0.00</span>
-        </div>
-
-        <div class="pt-2 border-t border-slate-200 flex justify-between items-center">
-          <div>
-            <span class="text-xs font-bold text-slate-500 block">Remaining UPI QR Pay:</span>
-            <span id="billResult" class="font-mono text-2xl font-black brand-text">₹ 0.00</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="p-4 bg-white border-t border-slate-200 shrink-0 max-w-4xl mx-auto w-full">
-      <button type="button" id="applyCalcToAmountBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-2xl shadow-lg transition duration-200 flex items-center justify-center gap-2 text-base">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-        Complete Sale & Generate QR
-      </button>
-    </div>
-  </div>
-
-  <!-- FULL-SCREEN MODAL: Daily Sales Ledger History -->
-  <div id="ledgerModalOverlay" class="fixed inset-0 bg-slate-900 z-50 hidden flex flex-col h-full w-full overflow-hidden">
-    
-    <div class="brand-gradient p-4 sm:p-5 text-white flex items-center justify-between shrink-0 shadow-lg">
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-md">
-          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-        </div>
-        <div>
-          <h3 class="font-extrabold text-base sm:text-lg leading-none">Daily Sales & History</h3>
-          <p class="text-[11px] text-white/70 mt-1">Transaction Ledger</p>
-        </div>
-      </div>
-      <button type="button" id="closeLedgerModalBtn" class="text-white/80 hover:text-white p-2 rounded-xl bg-white/10 hover:bg-white/20 transition flex items-center gap-1 text-xs font-bold">
-        <span>Close</span>
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-      </button>
-    </div>
-
-    <div class="grow bg-slate-100 p-3 sm:p-6 overflow-y-auto max-w-4xl mx-auto w-full space-y-4 pb-24 sm:pb-6">
-
-      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3">
-        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
-          <span class="text-xs font-bold text-slate-600 uppercase tracking-wider w-full sm:w-auto">Filter Date:</span>
-          <div class="flex items-center gap-2 w-full sm:w-auto">
-            <select id="ledgerDateFilter" class="px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-purple-600 grow sm:grow-0">
-              <option value="today">Today</option>
-              <option value="yesterday">Yesterday</option>
-              <option value="custom">Custom Date</option>
-              <option value="all">All Time</option>
-            </select>
-            <input type="date" id="customDateInput" class="hidden px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-purple-600 font-mono" />
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-3">
-          <div class="bg-purple-50 border border-purple-100 p-3.5 rounded-2xl">
-            <span class="text-[11px] font-bold uppercase tracking-wider text-purple-600 block mb-0.5">Filtered Sales</span>
-            <span id="ledgerTotalSales" class="font-mono text-2xl font-black brand-text">₹ 0.00</span>
-          </div>
-          <div class="bg-slate-50 border border-slate-200 p-3.5 rounded-2xl">
-            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-0.5">Transactions</span>
-            <span id="ledgerCount" class="font-mono text-2xl font-black text-slate-800">0</span>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-2 bg-slate-50 p-2.5 rounded-2xl border border-slate-200 text-xs font-semibold">
-          <div class="flex justify-between items-center bg-amber-50/70 p-2 rounded-xl border border-amber-200/80">
-            <span class="text-amber-800">💵 Cash Paid:</span>
-            <span id="ledgerCashTotal" class="font-mono font-bold text-amber-900">₹0.00</span>
-          </div>
-          <div class="flex justify-between items-center bg-emerald-50/70 p-2 rounded-xl border border-emerald-200/80">
-            <span class="text-emerald-800">📱 UPI Paid:</span>
-            <span id="ledgerUpiTotal" class="font-mono font-bold text-emerald-900">₹0.00</span>
-          </div>
-        </div>
-
-        <div class="border border-slate-200 rounded-2xl overflow-hidden min-h-[220px] max-h-[45vh] overflow-y-auto bg-white">
-          <table class="w-full text-left text-xs">
-            <thead class="bg-slate-100 text-slate-600 font-bold uppercase tracking-wider text-[10px] sticky top-0">
-              <tr>
-                <th class="p-2.5">Date / Time</th>
-                <th class="p-2.5">Customer & Mobile</th>
-                <th class="p-2.5 text-right">Amount</th>
-              </tr>
-            </thead>
-            <tbody id="ledgerTableBody" class="divide-y divide-slate-100 font-medium">
-              <tr><td colspan="3" class="p-8 text-center text-slate-400 italic">No transactions recorded today yet.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <div class="p-4 bg-white border-t border-slate-200 shrink-0 max-w-4xl mx-auto w-full flex gap-2">
-      <button type="button" id="exportCsvBtn" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 rounded-2xl shadow-md transition flex items-center justify-center gap-2 text-xs">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-        Export CSV Log
-      </button>
-      <button type="button" id="clearLedgerBtn" class="px-5 bg-red-50 hover:bg-red-100 text-red-600 font-bold py-3 rounded-2xl transition text-xs">Clear All</button>
-    </div>
-
-  </div>
-
-  <!-- POPUP MODAL: Generated QR Preview Standee -->
-  <div id="qrResultModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 sm:p-4">
-    <div class="bg-white w-full max-w-sm sm:max-w-md rounded-3xl shadow-2xl border border-slate-100 overflow-hidden transform transition-all flex flex-col items-center p-4 sm:p-6 space-y-3 sm:space-y-4 max-h-[92vh]">
-      
-      <div class="flex justify-between items-center w-full border-b border-slate-100 pb-2.5">
-        <h3 class="font-extrabold text-base sm:text-lg brand-text flex items-center gap-2">
-          <span>✨</span> Generated Standee
-        </h3>
-        <button type="button" id="closeQrModalBtn" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100 transition">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-        </button>
-      </div>
-
-      <div id="printableArea" class="bg-white p-2 rounded-2xl shadow-lg border border-slate-200/80 flex items-center justify-center w-full overflow-hidden shrink min-h-0">
-        <canvas id="standeeCanvas" width="800" height="1200" class="w-auto h-auto max-h-[48vh] sm:max-h-[52vh] max-w-full aspect-[800/1200] rounded-xl border border-slate-100 shadow-sm object-contain"></canvas>
-      </div>
-
-      <div class="grid grid-cols-2 gap-2.5 w-full shrink-0">
-        <button id="downloadBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-3 px-3 rounded-xl shadow-lg transition duration-200 flex items-center justify-center gap-1.5 active:scale-[0.99]">
-          <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"/></svg>
-          Download PNG
-        </button>
-        <button id="printBtn" class="bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold py-3 px-3 rounded-xl shadow-lg transition duration-200 flex items-center justify-center gap-1.5 active:scale-[0.99]">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-          Print Standee
-        </button>
-      </div>
-
-      <button id="whatsappInvoiceBtn" class="w-full bg-green-600 hover:bg-green-700 text-white text-xs font-bold py-3 px-3 rounded-xl shadow transition flex items-center justify-center gap-1.5 shrink-0">
-        <span>💬</span> Invoice via WhatsApp
-      </button>
-
-    </div>
-  </div>
-
-  <!-- HEADER WITH 3-LINE MENU BAR -->
-  <header class="w-full max-w-2xl brand-gradient text-white pt-4 pb-6 px-4 rounded-b-3xl shadow-xl relative overflow-hidden">
-    <div class="flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <button type="button" id="openDrawerBtn" class="w-10 h-10 bg-white rounded-2xl flex items-center justify-center brand-text shadow-md transition-transform transform active:scale-90 focus:outline-none" aria-label="Open Menu">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"></path>
-          </svg>
-        </button>
-
-        <div>
-          <h1 id="mainAppTitle" class="text-lg font-black tracking-tight leading-none">Solid Money App</h1>
-          <p class="text-white/80 text-[11px] font-medium mt-0.5">Pro Merchant Suite</p>
-        </div>
-      </div>
-
-      <div class="flex items-center gap-3">
-        <div class="flex items-center justify-center gap-1 bg-black/20 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/15">
-          <div class="flex items-center gap-1">
-            <button type="button" data-theme="theme-purple" class="w-4 h-4 rounded-full bg-[#5f259f] border border-white transition transform hover:scale-110" title="PhonePe Purple"></button>
-            <button type="button" data-theme="theme-blue" class="w-4 h-4 rounded-full bg-[#002e6e] border border-white transition transform hover:scale-110" title="Paytm Blue"></button>
-            <button type="button" data-theme="theme-teal" class="w-4 h-4 rounded-full bg-[#00796b] border border-white transition transform hover:scale-110" title="GPay Teal"></button>
-            <button type="button" data-theme="theme-emerald" class="w-4 h-4 rounded-full bg-[#047857] border border-white transition transform hover:scale-110" title="Emerald Green"></button>
-            <button type="button" data-theme="theme-dark" class="w-4 h-4 rounded-full bg-[#0f172a] border border-white transition transform hover:scale-110" title="Dark Obsidian"></button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <!-- MAIN INTERFACE CARD -->
-  <main class="max-w-2xl w-full bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-200/80 -mt-3 mb-auto p-4 sm:p-6 space-y-6">
-
-    <div class="space-y-3">
-      <div class="flex items-center justify-between">
-        <h2 class="text-sm font-extrabold text-slate-800 tracking-tight">Merchant Utilities</h2>
-        <span class="text-[10px] font-bold brand-text bg-purple-50 px-2 py-0.5 rounded-full border border-purple-100">Quick Actions</span>
-      </div>
-
-      <div class="grid grid-cols-3 gap-3">
-        <button type="button" id="cardStandeeBtn" class="flex flex-col items-center text-center group focus:outline-none">
-          <div id="iconStandee" class="w-14 h-14 sm:w-16 sm:h-16 rounded-full brand-bg text-white flex items-center justify-center shadow-md transition transform group-active:scale-95 group-hover:scale-105 mb-2 relative">
-            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-            <span id="badgeStandee" class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full"></span>
-          </div>
-          <span class="text-xs font-bold text-slate-700 group-hover:brand-text leading-tight">Standee<br>Mode</span>
-        </button>
-
-        <button type="button" id="cardGenericBtn" class="flex flex-col items-center text-center group focus:outline-none">
-          <div id="iconGeneric" class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shadow-md transition transform group-active:scale-95 group-hover:scale-105 mb-2 relative">
-            <svg class="w-7 h-7 text-purple-700" id="genericSvg" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-            <span id="badgeGeneric" class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full hidden"></span>
-          </div>
-          <span class="text-xs font-bold text-slate-700 group-hover:brand-text leading-tight">All In One<br>QR</span>
-        </button>
-
-        <button type="button" id="cardCalcBtn" class="flex flex-col items-center text-center group focus:outline-none">
-          <div id="iconCalc" class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shadow-md transition transform group-active:scale-95 group-hover:scale-105 mb-2 relative">
-            <svg class="w-7 h-7 text-purple-700" id="calcSvg" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-            <span class="absolute -top-1 -right-1 bg-amber-500 text-white text-[9px] font-black px-1.5 py-0.2 rounded-full uppercase tracking-tighter">POS</span>
-          </div>
-          <span class="text-xs font-bold text-slate-700 group-hover:brand-text leading-tight">POS Bill<br>Calcy</span>
-        </button>
-      </div>
-    </div>
-
-    <hr class="border-slate-100" />
-
-    <form id="qrForm" class="space-y-4" onsubmit="return false;">
-      <div>
-        <div class="flex items-center justify-between mb-1.5">
-          <label for="merchantName" class="block text-xs font-extrabold uppercase tracking-wider text-slate-600">
-            Merchant / Name <span class="text-red-500">*</span>
-          </label>
-          <label class="flex items-center gap-1.5 cursor-pointer text-xs font-bold text-slate-600 select-none">
-            <span id="nameFixLabel">Fix Details</span>
-            <input type="checkbox" id="fixNameToggle" class="sr-only peer">
-            <div class="w-8 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-emerald-600 relative"></div>
-          </label>
-        </div>
-        <input type="text" id="merchantName" value="" placeholder="e.g. Suhan Traders" required class="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-purple-600 outline-none transition bg-slate-50/50 focus:bg-white font-semibold" />
-      </div>
-
-      <div>
-        <div class="flex items-center justify-between mb-1.5">
-          <label id="upiFieldLabel" for="upiInput" class="block text-xs font-extrabold uppercase tracking-wider text-slate-600">
-            Terminal (9 Digits) <span class="text-red-500">*</span>
-          </label>
-          <label class="flex items-center gap-1.5 cursor-pointer text-xs font-bold text-slate-600 select-none">
-            <span id="upiFixLabel">Fix Details</span>
-            <input type="checkbox" id="fixUpiToggle" class="sr-only peer">
-            <div class="w-8 h-4 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-emerald-600 relative"></div>
-          </label>
-        </div>
-        <input type="text" id="upiInput" value="" maxlength="9" placeholder="e.g. 9133359954" required class="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-purple-600 outline-none transition bg-slate-50/50 focus:bg-white font-mono font-bold" />
-        <p class="text-[11px] text-slate-400 mt-1.5 flex items-center justify-between font-medium">
-          <span>Payload VPA:</span>
-          <span id="vpaPreview" class="font-mono brand-text font-bold bg-slate-100 px-2 py-0.5 rounded-lg border border-slate-200">-</span>
-        </p>
-      </div>
-
-      <div>
-        <label for="amount" class="block text-xs font-extrabold uppercase tracking-wider text-slate-600 mb-1">
-          Fixed Amount (₹) <span class="text-slate-400 font-normal">(Optional)</span>
-        </label>
-        <input type="number" id="amount" inputmode="decimal" step="0.01" min="1" placeholder="Dynamic Input" class="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-purple-600 outline-none transition bg-slate-50/50 focus:bg-white font-mono font-bold brand-text" />
-        
-        <div class="flex flex-wrap items-center gap-2 mt-2.5">
-          <span class="text-[10px] font-bold uppercase text-slate-400 w-full sm:w-auto">Quick Add:</span>
-          <div class="flex flex-wrap gap-1.5 w-full sm:w-auto">
-            <button type="button" class="quick-amt-btn px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-bold text-slate-700 transition grow sm:grow-0" data-amt="50">₹50</button>
-            <button type="button" class="quick-amt-btn px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-bold text-slate-700 transition grow sm:grow-0" data-amt="100">₹100</button>
-            <button type="button" class="quick-amt-btn px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-bold text-slate-700 transition grow sm:grow-0" data-amt="200">₹200</button>
-            <button type="button" class="quick-amt-btn px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-bold text-slate-700 transition grow sm:grow-0" data-amt="500">₹500</button>
-            <button type="button" id="clearAmtBtn" class="px-3 py-1.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg text-xs font-bold transition grow sm:grow-0">Clear</button>
-          </div>
-        </div>
-      </div>
-
-      <div id="rawQrWrapper" class="hidden"></div>
-
-      <button type="button" id="renderBtn" class="w-full brand-bg hover:opacity-95 text-white font-black py-4 rounded-2xl shadow-xl transition duration-200 active:scale-[0.99] flex items-center justify-center gap-2 text-base">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-        Generate QR
-      </button>
-    </form>
-
-  </main>
-
-  <!-- BOTTOM NAVIGATION BAR -->
-  <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-6 py-2 flex items-center justify-between z-40 max-w-2xl mx-auto rounded-t-2xl shadow-lg">
-    <button type="button" class="flex flex-col items-center brand-text font-bold text-[10px]">
-      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l1.293 1.293a1 1 0 001.414-1.414l-7-7z"/></svg>
-      <span>Home</span>
-    </button>
-    
-    <!-- Search Button -->
-    <button type="button" id="openSearchModalBtn" class="flex flex-col items-center text-slate-400 hover:text-purple-600 font-semibold text-[10px] transition">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-      <span>Search</span>
-    </button>
-
-    <div class="-mt-6">
-      <button type="button" onclick="document.getElementById('renderBtn').click()" class="w-12 h-12 brand-bg text-white rounded-full flex items-center justify-center shadow-xl border-4 border-white transition active:scale-95">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-      </button>
-    </div>
-
-    <!-- Stock Button -->
-    <button type="button" id="openStockBottomBtn" onclick="document.getElementById('openMasterInventoryModalBtn').click()" class="flex flex-col items-center text-slate-400 hover:text-purple-600 font-semibold text-[10px] transition">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-      <span>Stock</span>
-    </button>
-
-    <button type="button" id="openLedgerBottomBtn" onclick="document.getElementById('openLedgerModalBtn').click()" class="flex flex-col items-center text-slate-400 font-semibold text-[10px]">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-      <span>History</span>
-    </button>
-  </nav>
-
-  <footer class="text-center my-4 text-xs font-semibold text-slate-400">
-    &copy; All rights reserved by SMGC PVT LTD
-  </footer>
-
-  <!-- Firebase Integration Script -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyBvntl7gJYnz63oNdY6MFqV7JJSAaGMDMA",
-      authDomain: "solidmoneyapp.firebaseapp.com",
-      projectId: "solidmoneyapp",
-      storageBucket: "solidmoneyapp.firebasestorage.app",
-      messagingSenderId: "230087802254",
-      appId: "1:230087802254:web:89c69e10df4a0547f878df",
-      measurementId: "G-6KD8MP807V"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    window.firebaseAuth = auth;
-    window.firebaseDb = db;
-    window.signInWithEmailAndPassword = signInWithEmailAndPassword;
-    window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
-    window.signOut = signOut;
-    window.doc = doc;
-    window.setDoc = setDoc;
-    window.getDoc = getDoc;
-    window.onAuthStateChanged = onAuthStateChanged;
-  </script>
-
-  <script>
+<script>
     function triggerIosPulse(element) {
       if (!element) return;
       element.classList.remove('ios-lookup-active');
@@ -946,7 +98,7 @@
               openAuthModalBtn.textContent = "Sign Out";
               userAvatar.textContent = user.email.charAt(0).toUpperCase();
 
-              await loadCloudInventory(user.uid);
+              await loadCloudData(user.uid);
             } else {
               currentUserUid = null;
               accountEmailLabel.textContent = "Not Signed In";
@@ -955,7 +107,9 @@
               openAuthModalBtn.textContent = "Sign In";
               userAvatar.textContent = "👤";
               inventoryMaster = loadDefaultInventory();
+              salesLedger = JSON.parse(localStorage.getItem('salesLedgerLogs') || '[]');
               renderMasterInventory();
+              renderLedgerModal();
             }
           });
         }
@@ -1005,24 +159,45 @@
         const docRef = window.doc(window.firebaseDb, "inventories", currentUserUid);
         await window.setDoc(docRef, { items: inventoryMaster, updatedAt: new Date().toISOString() });
       } catch (err) {
-        console.error("Error saving to Firestore:", err);
+        console.error("Error saving inventory to Firestore:", err);
       }
     }
 
-    async function loadCloudInventory(uid) {
+    async function saveLedgerToCloud() {
+      if (!currentUserUid || !window.firebaseDb) return;
+      try {
+        const docRef = window.doc(window.firebaseDb, "ledgers", currentUserUid);
+        await window.setDoc(docRef, { logs: salesLedger, updatedAt: new Date().toISOString() });
+      } catch (err) {
+        console.error("Error saving ledger to Firestore:", err);
+      }
+    }
+
+    async function loadCloudData(uid) {
       if (!window.firebaseDb) return;
       try {
-        const docRef = window.doc(window.firebaseDb, "inventories", uid);
-        const docSnap = await window.getDoc(docRef);
-        if (docSnap.exists() && docSnap.data().items) {
-          inventoryMaster = docSnap.data().items;
+        const invRef = window.doc(window.firebaseDb, "inventories", uid);
+        const invSnap = await window.getDoc(invRef);
+        if (invSnap.exists() && invSnap.data().items) {
+          inventoryMaster = invSnap.data().items;
         } else {
           inventoryMaster = loadDefaultInventory();
           await saveInventoryToCloud();
         }
         renderMasterInventory();
+
+        const ledgerRef = window.doc(window.firebaseDb, "ledgers", uid);
+        const ledgerSnap = await window.getDoc(ledgerRef);
+        if (ledgerSnap.exists() && ledgerSnap.data().logs) {
+          salesLedger = ledgerSnap.data().logs;
+          localStorage.setItem('salesLedgerLogs', JSON.stringify(salesLedger));
+        } else {
+          salesLedger = JSON.parse(localStorage.getItem('salesLedgerLogs') || '[]');
+          await saveLedgerToCloud();
+        }
+        renderLedgerModal();
       } catch (err) {
-        console.error("Error loading from Firestore:", err);
+        console.error("Error loading cloud data:", err);
       }
     }
 
@@ -1046,6 +221,7 @@
     let currentMode = 'standee';
     let cartItems = [];
     let salesLedger = JSON.parse(localStorage.getItem('salesLedgerLogs') || '[]');
+    let backupSalesLedger = JSON.parse(localStorage.getItem('backupSalesLedgerLogs') || '[]');
     let inventoryMaster = loadDefaultInventory();
 
     const themeMap = {
@@ -1695,6 +871,9 @@
     function logTransaction(item) {
       salesLedger.unshift(item);
       localStorage.setItem('salesLedgerLogs', JSON.stringify(salesLedger));
+      if (currentUserUid) {
+        saveLedgerToCloud();
+      }
     }
 
     function renderLedgerModal() {
@@ -1760,10 +939,75 @@
 
     closeLedgerModalBtn.addEventListener('click', () => toggleModal(ledgerModalOverlay, false));
 
-    clearLedgerBtn.addEventListener('click', () => {
-      salesLedger = [];
-      localStorage.removeItem('salesLedgerLogs');
-      renderLedgerModal();
+    // --- HOLD TO RECOVER / CLICK TO CLEAR LOGIC ---
+    let clearBtnTimer = null;
+
+    clearLedgerBtn.addEventListener('mousedown', () => {
+      clearBtnTimer = setTimeout(() => {
+        // Recover history from backup
+        if (backupSalesLedger.length > 0) {
+          salesLedger = [...backupSalesLedger];
+          localStorage.setItem('salesLedgerLogs', JSON.stringify(salesLedger));
+          renderLedgerModal();
+          if (currentUserUid) saveLedgerToCloud();
+          alert("History recovered successfully!");
+        } else {
+          alert("No backup history found to recover.");
+        }
+        clearBtnTimer = null;
+      }, 1500); // 1.5 seconds hold duration
+    });
+
+    clearLedgerBtn.addEventListener('mouseup', () => {
+      if (clearBtnTimer) {
+        clearTimeout(clearBtnTimer);
+        clearBtnTimer = null;
+        // Normal click behavior: Clear All
+        if (salesLedger.length > 0) {
+          backupSalesLedger = [...salesLedger];
+          localStorage.setItem('backupSalesLedgerLogs', JSON.stringify(backupSalesLedger));
+        }
+        salesLedger = [];
+        localStorage.removeItem('salesLedgerLogs');
+        renderLedgerModal();
+        if (currentUserUid) {
+          saveLedgerToCloud();
+        }
+      }
+    });
+
+    clearLedgerBtn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      clearBtnTimer = setTimeout(() => {
+        if (backupSalesLedger.length > 0) {
+          salesLedger = [...backupSalesLedger];
+          localStorage.setItem('salesLedgerLogs', JSON.stringify(salesLedger));
+          renderLedgerModal();
+          if (currentUserUid) saveLedgerToCloud();
+          alert("History recovered successfully!");
+        } else {
+          alert("No backup history found to recover.");
+        }
+        clearBtnTimer = null;
+      }, 1500);
+    });
+
+    clearLedgerBtn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      if (clearBtnTimer) {
+        clearTimeout(clearBtnTimer);
+        clearBtnTimer = null;
+        if (salesLedger.length > 0) {
+          backupSalesLedger = [...salesLedger];
+          localStorage.setItem('backupSalesLedgerLogs', JSON.stringify(backupSalesLedger));
+        }
+        salesLedger = [];
+        localStorage.removeItem('salesLedgerLogs');
+        renderLedgerModal();
+        if (currentUserUid) {
+          saveLedgerToCloud();
+        }
+      }
     });
 
     exportCsvBtn.addEventListener('click', () => {
@@ -2029,4 +1273,4 @@
     });
 
     printBtn.addEventListener('click', () => { window.print(); });
-  </script></body></html>
+  </script>
