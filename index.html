@@ -83,11 +83,11 @@
       </div>
       <div>
         <h2 class="text-xl font-black text-slate-800">Authentication Required</h2>
-        <p class="text-xs text-slate-500 mt-1 font-medium">Please enter the security PIN to access the application.</p>
+        <p class="text-xs text-slate-500 mt-1 font-medium">Please enter the security PIN (YYYYMMDDHH) to access the application.</p>
       </div>
       
       <form id="pinForm" onsubmit="return false;" class="space-y-3">
-        <input type="password" id="pinInput" placeholder="Enter 8-digit PIN" maxlength="8" inputmode="numeric"
+        <input type="password" id="pinInput" placeholder="Enter 10-digit PIN" maxlength="10" inputmode="numeric"
           class="w-full text-center tracking-widest text-lg font-mono px-4 py-3 border border-slate-300 rounded-2xl focus:ring-2 focus:ring-purple-600 outline-none transition bg-slate-50 font-bold" />
         <p id="pinErrorMsg" class="text-xs text-red-500 hidden font-bold">Incorrect PIN! Try again.</p>
         <button type="button" id="submitPinBtn"
@@ -879,7 +879,8 @@
       const year = today.getFullYear().toString();
       const month = String(today.getMonth() + 1).padStart(2, '0');
       const day = String(today.getDate()).padStart(2, '0');
-      return `${year}${month}${day}`;
+      const hour = String(today.getHours()).padStart(2, '0');
+      return `${year}${month}${day}${hour}`;
     }
 
     function checkAuth() {
@@ -966,7 +967,7 @@
     });
 
     openAuthModalBtn.addEventListener('click', async () => {
-      closeDrawer(); // Automatically close side drawer when opening Sign In
+      closeDrawer();
       if (currentUserUid) {
         await window.signOut(window.firebaseAuth);
         toggleModal(authModalOverlay, false);
@@ -1789,10 +1790,11 @@
 
     closeLedgerModalBtn.addEventListener('click', () => toggleModal(ledgerModalOverlay, false));
 
-    // --- HOLD TO RECOVER / CLICK TO CLEAR LOGIC ---
+    // --- HOLD TO RECOVER / CLICK TO CLEAR LOGIC (Fixed with preventDefault) ---
     let clearBtnTimer = null;
 
-    clearLedgerBtn.addEventListener('mousedown', () => {
+    clearLedgerBtn.addEventListener('mousedown', (e) => {
+      e.preventDefault();
       clearBtnTimer = setTimeout(() => {
         if (backupSalesLedger.length > 0) {
           salesLedger = [...backupSalesLedger];
@@ -1807,7 +1809,8 @@
       }, 1500);
     });
 
-    clearLedgerBtn.addEventListener('mouseup', () => {
+    clearLedgerBtn.addEventListener('mouseup', (e) => {
+      e.preventDefault();
       if (clearBtnTimer) {
         clearTimeout(clearBtnTimer);
         clearBtnTimer = null;
@@ -1876,7 +1879,6 @@
     whatsappInvoiceBtn.addEventListener('click', () => {
       const merchant = merchantNameInput.value.trim() || 'Merchant Store';
       
-      // Fixed to use the WhatsApp mobile number entered in POS section (custPhone)
       let phone = custPhone.value.trim().replace(/\D/g, '');
       if (phone.length === 10) {
         phone = '91' + phone;
