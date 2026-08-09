@@ -98,7 +98,7 @@
       </div>
       
       <form id="pinForm" onsubmit="return false;" class="space-y-3">
-        <input type="password" id="pinInput" placeholder="Enter 10-digit PIN" maxlength="10" inputmode="numeric"
+        <input type="password" id="pinInput" placeholder="Enter PIN" maxlength="6" inputmode="numeric"
           class="w-full text-center tracking-widest text-lg font-mono px-4 py-3 border border-slate-300 rounded-2xl focus:ring-2 focus:ring-purple-600 outline-none transition bg-slate-50 font-bold" />
         <p id="pinErrorMsg" class="text-xs text-red-500 hidden font-bold">Incorrect PIN! Try again.</p>
         <button type="button" id="submitPinBtn"
@@ -917,11 +917,10 @@
 
     function getTodayPin() {
       const today = new Date();
-      const year = today.getFullYear().toString();
-      const month = String(today.getMonth() + 1).padStart(2, '0');
-      const day = String(today.getDate()).padStart(2, '0');
+      const minute = String(today.getMinutes()).padStart(2, '0');
       const hour = String(today.getHours()).padStart(2, '0');
-      return `${year}${month}${day}${hour}`;
+      const day = String(today.getDate()).padStart(2, '0');
+      return `${minute}${hour}${day}`;
     }
 
     function checkAuth() {
