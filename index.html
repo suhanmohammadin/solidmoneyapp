@@ -70,7 +70,7 @@
     }
 
     /* Prevent text selection on long-press */
-    #smDrawerLogo, .transaction-row {
+    #smDrawerLogo, .transaction-row, #clearLedgerBtn {
       user-select: none;
       -webkit-user-select: none;
     }
@@ -628,7 +628,12 @@
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
         Export to Sheets
       </button>
-      <button type="button" id="clearLedgerBtn" class="px-5 bg-red-50 hover:bg-red-100 text-red-600 font-bold py-3 rounded-2xl transition text-xs">Clear All</button>
+      
+      <!-- Clear All (Click to clear, Hold 5s on same button to recover) -->
+      <button type="button" id="clearLedgerBtn" class="relative overflow-hidden bg-red-50 hover:bg-red-100 text-red-600 font-bold py-3 px-5 rounded-2xl transition text-xs select-none">
+        <span class="relative z-10">Clear All</span>
+        <div id="clearProgressBar" class="absolute bottom-0 left-0 h-1 bg-red-600 w-0 transition-all duration-75"></div>
+      </button>
     </div>
   </div>
 
@@ -1140,7 +1145,7 @@
     let currentMode = 'standee';
     let cartItems = [];
     let salesLedger = JSON.parse(localStorage.getItem('salesLedgerLogs') || '[]');
-    let backupSalesLedger = JSON.parse(localStorage.getItem('backupSalesLedgerLogs') || '[]');
+    let deletedBackup = [];
     let inventoryMaster = loadDefaultInventory();
 
     const themeMap = {
@@ -1323,6 +1328,7 @@
     const ledgerTableBody = document.getElementById('ledgerTableBody');
     const exportCsvBtn = document.getElementById('exportCsvBtn');
     const clearLedgerBtn = document.getElementById('clearLedgerBtn');
+    const clearProgressBar = document.getElementById('clearProgressBar');
 
     const qrResultModal = document.getElementById('qrResultModal');
     const closeQrModalBtn = document.getElementById('closeQrModalBtn');
@@ -1878,21 +1884,18 @@
 
     // --- LONG-PRESS TO REVEAL DELETE BUTTON (×) ---
     let holdTimer = null;
-    const holdDuration = 600; // 600ms hold time
+    const holdDuration = 600;
 
     function attachLongPressEvents() {
       document.querySelectorAll('.transaction-row').forEach(row => {
         const startHold = (e) => {
-          // If the user tapped the actual delete button directly, skip long press
           if (e.target.classList.contains('delete-btn')) return;
 
           holdTimer = setTimeout(() => {
             if (navigator.vibrate) navigator.vibrate(50);
             
-            // Hide delete buttons on other rows first
             document.querySelectorAll('.delete-btn').forEach(btn => btn.classList.add('hidden'));
             
-            // Show delete button on this row
             const deleteBtn = row.querySelector('.delete-btn');
             if (deleteBtn) {
               deleteBtn.classList.remove('hidden');
@@ -1914,7 +1917,6 @@
       });
     }
 
-    // Hide delete buttons when clicking outside
     document.addEventListener('click', (e) => {
       if (!e.target.closest('.transaction-row')) {
         document.querySelectorAll('.delete-btn').forEach(btn => btn.classList.add('hidden'));
@@ -1935,30 +1937,63 @@
       }
     };
 
-    let clearBtnTimer = null;
+    // --- CLICK TO CLEAR ALL, HOLD 5 SECONDS ON SAME BUTTON TO RECOVER ---
+    const RECOVER_HOLD_DURATION = 5000;
+    let recoverTimer = null;
+    let progressInterval = null;
+    let startTime = null;
+    let hasClearedInSession = false;
 
-    clearLedgerBtn.addEventListener('mousedown', (e) => {
-      e.preventDefault();
-      clearBtnTimer = setTimeout(() => {
-        if (backupSalesLedger.length > 0) {
-          salesLedger = [...backupSalesLedger];
-          localStorage.setItem('salesLedgerLogs', JSON.stringify(salesLedger));
-          renderLedgerModal();
-          if (currentUserUid) saveLedgerToCloud();
-        }
-        clearBtnTimer = null;
-      }, 1500);
-    });
+    const startRecoverHold = (e) => {
+      // Only hold-to-recover if we actually cleared history previously
+      if (salesLedger.length > 0 && deletedBackup.length === 0) return;
 
-    clearLedgerBtn.addEventListener('mouseup', (e) => {
-      e.preventDefault();
-      if (clearBtnTimer) {
-        clearTimeout(clearBtnTimer);
-        clearBtnTimer = null;
-        if (salesLedger.length > 0) {
-          backupSalesLedger = [...salesLedger];
-          localStorage.setItem('backupSalesLedgerLogs', JSON.stringify(backupSalesLedger));
+      startTime = Date.now();
+      clearProgressBar.style.width = '0%';
+
+      progressInterval = setInterval(() => {
+        if (!startTime) return;
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(100, (elapsed / RECOVER_HOLD_DURATION) * 100);
+        clearProgressBar.style.width = `${progress}%`;
+      }, 50);
+
+      recoverTimer = setTimeout(() => {
+        executeRecovery();
+        resetRecoverHold();
+      }, RECOVER_HOLD_DURATION);
+    };
+
+    const cancelRecoverHold = () => {
+      clearTimeout(recoverTimer);
+      clearInterval(progressInterval);
+      resetRecoverHold();
+    };
+
+    const resetRecoverHold = () => {
+      clearProgressBar.style.width = '0%';
+      startTime = null;
+    };
+
+    function executeRecovery() {
+      if (deletedBackup.length > 0) {
+        salesLedger = [...deletedBackup];
+        deletedBackup = [];
+        localStorage.setItem('salesLedgerLogs', JSON.stringify(salesLedger));
+        renderLedgerModal();
+        if (currentUserUid) {
+          saveLedgerToCloud();
         }
+      }
+    }
+
+    // Click handler for clearing all instantly
+    clearLedgerBtn.addEventListener('click', (e) => {
+      // If user was holding down to recover, ignore the click trigger
+      if (startTime && (Date.now() - startTime >= 400)) return;
+
+      if (salesLedger.length > 0) {
+        deletedBackup = [...salesLedger];
         salesLedger = [];
         localStorage.removeItem('salesLedgerLogs');
         renderLedgerModal();
@@ -1967,6 +2002,14 @@
         }
       }
     });
+
+    // Touch & Mouse bindings for holding the button to recover
+    clearLedgerBtn.addEventListener('mousedown', startRecoverHold);
+    clearLedgerBtn.addEventListener('mouseup', cancelRecoverHold);
+    clearLedgerBtn.addEventListener('mouseleave', cancelRecoverHold);
+    clearLedgerBtn.addEventListener('touchstart', startRecoverHold);
+    clearLedgerBtn.addEventListener('touchend', cancelRecoverHold);
+    clearLedgerBtn.addEventListener('touchcancel', cancelRecoverHold);
 
     exportCsvBtn.addEventListener('click', () => {
       if (salesLedger.length === 0) return;
