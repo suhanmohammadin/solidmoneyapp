@@ -1145,7 +1145,7 @@
     let currentMode = 'standee';
     let cartItems = [];
     let salesLedger = JSON.parse(localStorage.getItem('salesLedgerLogs') || '[]');
-    let deletedBackup = [];
+    let deletedBackup = JSON.parse(localStorage.getItem('salesLedgerDeletedBackup') || '[]');
     let inventoryMaster = loadDefaultInventory();
 
     const themeMap = {
@@ -1552,7 +1552,7 @@
         upiInput.classList.add('bg-slate-200', 'cursor-not-allowed');
         upiFixLabel.textContent = "Fixed 🔒";
         upiFixLabel.classList.add('text-emerald-600');
-        localStorage.setItem('fixedUpiValue', upiInput.value);
+        localStorage.setItem('fixedUpiValue',upiInput.value);
         localStorage.setItem('isUpiFixed', 'true');
       } else {
         upiInput.readOnly = false;
@@ -1677,8 +1677,9 @@
         const rate = parseFloat(ratePerKg.value) || 0;
         const qty = parseFloat(purchaseQty.value) || 1;
         if (rate <= 0) {
-          alert('Please enter a valid rate before adding.');
           ratePerKg.focus();
+          ratePerKg.classList.add('border-red-500', 'ring-2', 'ring-red-500');
+          setTimeout(() => ratePerKg.classList.remove('border-red-500', 'ring-2', 'ring-red-500'), 1500);
           return;
         }
         numericQty = qty;
@@ -1942,12 +1943,8 @@
     let recoverTimer = null;
     let progressInterval = null;
     let startTime = null;
-    let hasClearedInSession = false;
 
     const startRecoverHold = (e) => {
-      // Only hold-to-recover if we actually cleared history previously
-      if (salesLedger.length > 0 && deletedBackup.length === 0) return;
-
       startTime = Date.now();
       clearProgressBar.style.width = '0%';
 
@@ -1978,7 +1975,6 @@
     function executeRecovery() {
       if (deletedBackup.length > 0) {
         salesLedger = [...deletedBackup];
-        deletedBackup = [];
         localStorage.setItem('salesLedgerLogs', JSON.stringify(salesLedger));
         renderLedgerModal();
         if (currentUserUid) {
@@ -1989,11 +1985,11 @@
 
     // Click handler for clearing all instantly
     clearLedgerBtn.addEventListener('click', (e) => {
-      // If user was holding down to recover, ignore the click trigger
       if (startTime && (Date.now() - startTime >= 400)) return;
 
       if (salesLedger.length > 0) {
         deletedBackup = [...salesLedger];
+        localStorage.setItem('salesLedgerDeletedBackup', JSON.stringify(deletedBackup));
         salesLedger = [];
         localStorage.removeItem('salesLedgerLogs');
         renderLedgerModal();
