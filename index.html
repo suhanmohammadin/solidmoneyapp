@@ -1,4 +1,6 @@
-<!DOCTYPE html><html lang="en"><head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="google-adsense-account" content="ca-pub-5188217885189630">
@@ -68,7 +70,7 @@
     }
 
     /* Prevent text selection on long-press */
-    #smDrawerLogo {
+    #smDrawerLogo, .transaction-row {
       user-select: none;
       -webkit-user-select: none;
     }
@@ -345,7 +347,7 @@
         </div>
         <div>
           <h3 class="font-extrabold text-base sm:text-lg leading-none">Search Transactions</h3>
-          <p class="text-[11px] text-white/70 mt-1"></p>
+          <p class="text-[11px] text-white/70 mt-1">Hold row to show delete button (×)</p>
         </div>
       </div>
       <button type="button" id="closeSearchModalBtn" class="text-white/80 hover:text-white p-2 rounded-xl bg-white/10 hover:bg-white/20 transition flex items-center gap-1 text-xs font-bold">
@@ -367,7 +369,7 @@
               <tr>
                 <th class="p-2.5">Date / Time</th>
                 <th class="p-2.5">Customer & Mobile</th>
-                <th class="p-2.5 text-right">Amount</th>
+                <th class="p-2.5 text-right">Amount / Delete</th>
               </tr>
             </thead>
             <tbody id="searchTableBody" class="divide-y divide-slate-100 font-medium">
@@ -539,9 +541,9 @@
           </div>
         </div>
       </div>
-  </div>
+    </div>
 
-  <div class="p-4 bg-white border-t border-slate-200 shrink-0 max-w-4xl mx-auto w-full">
+    <div class="p-4 bg-white border-t border-slate-200 shrink-0 max-w-4xl mx-auto w-full">
       <button type="button" id="applyCalcToAmountBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-2xl shadow-lg transition duration-200 flex items-center justify-center gap-2 text-base">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
         Complete Sale & Generate QR
@@ -558,7 +560,7 @@
         </div>
         <div>
           <h3 class="font-extrabold text-base sm:text-lg leading-none">Daily Sales & History</h3>
-          <p class="text-[11px] text-white/70 mt-1">Transaction Ledger</p>
+          <p class="text-[11px] text-white/70 mt-1">Hold row to show delete button (×)</p>
         </div>
       </div>
       <button type="button" id="closeLedgerModalBtn" class="text-white/80 hover:text-white p-2 rounded-xl bg-white/10 hover:bg-white/20 transition flex items-center gap-1 text-xs font-bold">
@@ -610,7 +612,7 @@
               <tr>
                 <th class="p-2.5">Date / Time</th>
                 <th class="p-2.5">Customer & Mobile</th>
-                <th class="p-2.5 text-right">Amount</th>
+                <th class="p-2.5 text-right">Amount / Delete</th>
               </tr>
             </thead>
             <tbody id="ledgerTableBody" class="divide-y divide-slate-100 font-medium">
@@ -698,7 +700,6 @@
     <div class="space-y-3">
       <div class="flex items-center justify-between">
         <h2 class="text-sm font-extrabold text-slate-800 tracking-tight">Utilities</h2>
-        <!-- UPDATED: Alerts button is initially hidden and only shows when inventory stock goes below 10 -->
         <button type="button" id="alertsBtn" class="hidden text-[10px] font-bold text-red-600 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-full border border-red-200 transition shadow-2xs flex items-center gap-1.5 cursor-pointer">
           <span>⚠️</span> <span>Alerts (&lt; 10)</span>
         </button>
@@ -874,12 +875,11 @@
       openDrawer();
     });
 
-    // --- 5-SECOND LONG-PRESS POPUP TRIGGER FOR SM LOGO ---
     let smLogoPressTimer = null;
 
     function handleLogoLongPress() {
       closeDrawer();
-      localStorage.removeItem('appUnlocked'); // Clear persistent unlock to require PIN on next app load
+      localStorage.removeItem('appUnlocked');
       pinAuthModal.classList.remove('hidden');
       pinInput.value = '';
       pinErrorMsg.classList.add('hidden');
@@ -889,7 +889,7 @@
     function startLogoPress(e) {
       e.preventDefault();
       clearTimeout(smLogoPressTimer);
-      smLogoPressTimer = setTimeout(handleLogoLongPress, 5000); // 5 seconds
+      smLogoPressTimer = setTimeout(handleLogoLongPress, 5000);
     }
 
     function cancelLogoPress() {
@@ -920,7 +920,6 @@
     }
 
     function checkAuth() {
-      // Using localStorage so unlock status persists across browser closures/reopens until manually locked
       if (localStorage.getItem('appUnlocked') === 'true') {
         pinAuthModal.classList.add('hidden');
       } else {
@@ -957,7 +956,6 @@
       }
     }
 
-    // --- CONDITIONAL ALERTS BUTTON LOGIC FOR STOCK < 10 ---
     const alertsBtn = document.getElementById('alertsBtn');
     const alertsModalOverlay = document.getElementById('alertsModalOverlay');
     const closeAlertsModalBtn = document.getElementById('closeAlertsModalBtn');
@@ -966,9 +964,9 @@
     function checkLowStockAlerts() {
       const lowStockItems = inventoryMaster.filter(item => (item.stock || 0) < 10);
       if (lowStockItems.length > 0) {
-        alertsBtn.classList.remove('hidden'); // Show button only when items are below 10
+        alertsBtn.classList.remove('hidden');
       } else {
-        alertsBtn.classList.add('hidden'); // Hide button when no items are below 10
+        alertsBtn.classList.add('hidden');
       }
     }
 
@@ -1259,16 +1257,23 @@
       if (filtered.length === 0) {
         searchTableBody.innerHTML = `<tr><td colspan="3" class="p-8 text-center text-slate-400 italic">No matching transactions found.</td></tr>`;
       } else {
-        searchTableBody.innerHTML = filtered.map(item => `
-          <tr>
-            <td class="p-2.5 font-mono text-slate-500">${item.isoDate || 'Today'} • ${item.time}</td>
-            <td class="p-2.5 font-bold text-slate-800">
-              ${item.customer}
-              ${item.phone ? `<span class="block text-[11px] font-mono text-slate-500 font-normal">+91 ${item.phone}</span>` : ''}
-            </td>
-            <td class="p-2.5 text-right font-mono font-extrabold brand-text">₹${item.amount.toFixed(2)}</td>
-          </tr>
-        `).join('');
+        searchTableBody.innerHTML = filtered.map(item => {
+          const originalIdx = salesLedger.indexOf(item);
+          return `
+            <tr class="transaction-row cursor-pointer select-none transition hover:bg-slate-50 relative" data-index="${originalIdx}">
+              <td class="p-2.5 font-mono text-slate-500">${item.isoDate || 'Today'} • ${item.time}</td>
+              <td class="p-2.5 font-bold text-slate-800">
+                ${item.customer}
+                ${item.phone ? `<span class="block text-[11px] font-mono text-slate-500 font-normal">+91 ${item.phone}</span>` : ''}
+              </td>
+              <td class="p-2.5 text-right font-mono font-extrabold brand-text flex items-center justify-end gap-2">
+                <span class="amount-text">₹${item.amount.toFixed(2)}</span>
+                <button onclick="deleteLedgerItem(${originalIdx})" class="delete-btn hidden px-2 py-0.5 bg-red-500 text-white rounded-lg text-xs font-bold shadow hover:bg-red-600">×</button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+        attachLongPressEvents();
       }
     }
 
@@ -1379,8 +1384,8 @@
               <td class="p-2.5 text-center space-x-1">
                 <button onclick="saveStockEdit(${originalIdx})" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-lg text-[11px] shadow-2xs transition">Save</button>
                 <button onclick="deleteMasterItem(${originalIdx})" class="px-2 py-1 bg-red-50 hover:bg-red-100 text-red-600 font-bold rounded-lg text-[11px] transition">×</button>
-            </td>
-          </tr>
+              </td>
+            </tr>
           `;
         }).join('');
 
@@ -1664,7 +1669,7 @@
         displayUnitStr = "Flat Amount";
       } else {
         const rate = parseFloat(ratePerKg.value) || 0;
-        const qty = parseFloat(purchaseQty.value) || 1; // Default to 1 if empty
+        const qty = parseFloat(purchaseQty.value) || 1;
         if (rate <= 0) {
           alert('Please enter a valid rate before adding.');
           ratePerKg.focus();
@@ -1692,7 +1697,7 @@
       flatPriceInput.value = '';
       suggestionsBox.classList.add('hidden');
       renderCartTable();
-      itemNameInput.focus(); // Focus back to item name for instant continuous billing
+      itemNameInput.focus();
     });
 
     clearCartBtn.addEventListener('click', () => {
@@ -1838,16 +1843,23 @@
       if (filteredLogs.length === 0) {
         ledgerTableBody.innerHTML = `<tr><td colspan="3" class="p-8 text-center text-slate-400 italic">No transactions recorded for this period.</td></tr>`;
       } else {
-        ledgerTableBody.innerHTML = filteredLogs.map(item => `
-          <tr>
-            <td class="p-2.5 font-mono text-slate-500">${item.isoDate || 'Today'} • ${item.time}</td>
-            <td class="p-2.5 font-bold text-slate-800">
-              ${item.customer}
-              ${item.phone ? `<span class="block text-[11px] font-mono text-slate-500 font-normal">+91 ${item.phone}</span>` : ''}
-            </td>
-            <td class="p-2.5 text-right font-mono font-extrabold brand-text">₹${item.amount.toFixed(2)}</td>
-          </tr>
-        `).join('');
+        ledgerTableBody.innerHTML = filteredLogs.map(item => {
+          const originalIdx = salesLedger.indexOf(item);
+          return `
+            <tr class="transaction-row cursor-pointer select-none transition hover:bg-slate-50 relative" data-index="${originalIdx}">
+              <td class="p-2.5 font-mono text-slate-500">${item.isoDate || 'Today'} • ${item.time}</td>
+              <td class="p-2.5 font-bold text-slate-800">
+                ${item.customer}
+                ${item.phone ? `<span class="block text-[11px] font-mono text-slate-500 font-normal">+91 ${item.phone}</span>` : ''}
+              </td>
+              <td class="p-2.5 text-right font-mono font-extrabold brand-text flex items-center justify-end gap-2">
+                <span class="amount-text">₹${item.amount.toFixed(2)}</span>
+                <button onclick="deleteLedgerItem(${originalIdx})" class="delete-btn hidden px-2 py-0.5 bg-red-500 text-white rounded-lg text-xs font-bold shadow hover:bg-red-600">×</button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+        attachLongPressEvents();
       }
     }
 
@@ -1863,6 +1875,61 @@
     });
 
     closeLedgerModalBtn.addEventListener('click', () => toggleModal(ledgerModalOverlay, false));
+
+    // --- LONG-PRESS TO REVEAL DELETE BUTTON (×) ---
+    let holdTimer = null;
+    const holdDuration = 600; // 600ms hold time
+
+    function attachLongPressEvents() {
+      document.querySelectorAll('.transaction-row').forEach(row => {
+        const startHold = (e) => {
+          if (e.target.classList.contains('delete-btn')) return;
+
+          holdTimer = setTimeout(() => {
+            if (navigator.vibrate) navigator.vibrate(50);
+            
+            document.querySelectorAll('.delete-btn').forEach(btn => btn.classList.add('hidden'));
+            
+            const deleteBtn = row.querySelector('.delete-btn');
+            if (deleteBtn) {
+              deleteBtn.classList.remove('hidden');
+            }
+          }, holdDuration);
+        };
+
+        const cancelHold = () => {
+          clearTimeout(holdTimer);
+        };
+
+        row.addEventListener('mousedown', startHold);
+        row.addEventListener('mouseup', cancelHold);
+        row.addEventListener('mouseleave', cancelHold);
+
+        row.addEventListener('touchstart', startHold);
+        row.addEventListener('touchend', cancelHold);
+        row.addEventListener('touchmove', cancelHold);
+      });
+    }
+
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.transaction-row')) {
+        document.querySelectorAll('.delete-btn').forEach(btn => btn.classList.add('hidden'));
+      }
+    });
+
+    window.deleteLedgerItem = function(index) {
+      if (index >= 0 && index < salesLedger.length) {
+        salesLedger.splice(index, 1);
+        localStorage.setItem('salesLedgerLogs', JSON.stringify(salesLedger));
+        renderLedgerModal();
+        if (liveSearchInput.value.trim() !== '') {
+          renderSearchResults(liveSearchInput.value.trim().toLowerCase());
+        }
+        if (currentUserUid) {
+          saveLedgerToCloud();
+        }
+      }
+    };
 
     let clearBtnTimer = null;
 
@@ -1880,37 +1947,6 @@
     });
 
     clearLedgerBtn.addEventListener('mouseup', (e) => {
-      e.preventDefault();
-      if (clearBtnTimer) {
-        clearTimeout(clearBtnTimer);
-        clearBtnTimer = null;
-        if (salesLedger.length > 0) {
-          backupSalesLedger = [...salesLedger];
-          localStorage.setItem('backupSalesLedgerLogs', JSON.stringify(backupSalesLedger));
-        }
-        salesLedger = [];
-        localStorage.removeItem('salesLedgerLogs');
-        renderLedgerModal();
-        if (currentUserUid) {
-          saveLedgerToCloud();
-        }
-      }
-    });
-
-    clearLedgerBtn.addEventListener('touchstart', (e) => {
-      e.preventDefault();
-      clearBtnTimer = setTimeout(() => {
-        if (backupSalesLedger.length > 0) {
-          salesLedger = [...backupSalesLedger];
-          localStorage.setItem('salesLedgerLogs', JSON.stringify(salesLedger));
-          renderLedgerModal();
-          if (currentUserUid) saveLedgerToCloud();
-        }
-        clearBtnTimer = null;
-      }, 1500);
-    });
-
-    clearLedgerBtn.addEventListener('touchend', (e) => {
       e.preventDefault();
       if (clearBtnTimer) {
         clearTimeout(clearBtnTimer);
@@ -2180,7 +2216,7 @@
       document.fonts.ready.then(async () => {
         loadFixedStates();
         updateVpaPreview();
-        checkLowStockAlerts(); // Check alerts state on initial load
+        checkLowStockAlerts();
       });
     });
 
